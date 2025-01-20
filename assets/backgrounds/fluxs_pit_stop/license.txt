@@ -1,0 +1,8 @@
+Model Information:
+* title:	Flux's Pit Stop
+* source:	https://sketchfab.com/3d-models/fluxs-pit-stop-6bb8bd116e384d9f9e7041dbb84e5e24
+* author:	Phil_XG (https://sketchfab.com/phil_xg)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

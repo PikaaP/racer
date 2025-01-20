@@ -1,0 +1,51 @@
+[gd_scene load_steps=7 format=3 uid="uid://bkgsjkjobwbg7"]
+
+[ext_resource type="PackedScene" uid="uid://ci52bv1m15cbs" path="res://cars/Doge.tscn" id="1_4oryg"]
+[ext_resource type="PackedScene" uid="uid://cjax2w0wag0if" path="res://track_small.tscn" id="2_sqw0t"]
+[ext_resource type="PackedScene" uid="uid://diqkticubts3f" path="res://City_v1.tscn" id="3_od0ki"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_b7tlo"]
+sky_top_color = Color(0.419608, 0.54902, 0.619608, 1)
+sky_horizon_color = Color(0.654902, 0.679505, 0.688152, 1)
+ground_horizon_color = Color(0.654902, 0.679505, 0.688152, 1)
+
+[sub_resource type="Sky" id="Sky_ye2ye"]
+sky_material = SubResource("ProceduralSkyMaterial_b7tlo")
+
+[sub_resource type="Environment" id="Environment_8dxyn"]
+background_mode = 2
+sky = SubResource("Sky_ye2ye")
+tonemap_mode = 2
+ssr_enabled = true
+ssao_enabled = true
+ssao_radius = 1.5
+ssao_intensity = 0.6
+ssao_power = 32.7849
+ssil_enabled = true
+sdfgi_y_scale = 2
+glow_enabled = true
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_8dxyn")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.80696, 0.183487, -0.56138, 0, 0.950516, 0.310676, 0.590606, -0.250704, 0.767029, 0, 43.5687, 0)
+shadow_enabled = true
+directional_shadow_max_distance = 200.0
+
+[node name="TrackSmall" parent="." instance=ExtResource("2_sqw0t")]
+transform = Transform3D(-7, 6.11959e-07, 2.67496e-14, 0, -3.0598e-07, 7, 6.11959e-07, 7, 3.0598e-07, -42.0508, 238.991, -892.112)
+
+[node name="car" parent="." instance=ExtResource("1_4oryg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 236.793, -221.928)
+engine_force_value = 400
+
+[node name="City_v1" parent="." instance=ExtResource("3_od0ki")]
+transform = Transform3D(-4.37114e-06, 0, 100, 0, 100, 0, -100, 0, -4.37114e-06, -189.006, 0, -303.775)
+
+[node name="City_v2" parent="." instance=ExtResource("3_od0ki")]
+transform = Transform3D(-100, 0, -8.74228e-06, 0, 100, 0, 8.74228e-06, 0, -100, 757.158, 0, -303.775)
+
+[editable path="TrackSmall"]
