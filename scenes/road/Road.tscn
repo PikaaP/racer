@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://dt0ydir47eb2p"]
+
+[ext_resource type="Material" uid="uid://dtq6n1hnyg388" path="res://resources/track/materials/road/Track_3_road.tres" id="1_ydab2"]
+
+[node name="Road" type="CSGPolygon3D"]
+material_override = ExtResource("1_ydab2")
+use_collision = true
+collision_mask = 0
+polygon = PackedVector2Array(-2, 0, -2, -0.1, 2, -0.1, 2, 0)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 0.01
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = false
+path_continuous_u = true
+path_u_distance = 10.0
+path_joined = true

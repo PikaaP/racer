@@ -1,0 +1,22 @@
+[gd_resource type="StandardMaterial3D" load_steps=5 format=3 uid="uid://dtq6n1hnyg388"]
+
+[ext_resource type="Texture2D" uid="uid://bjbdbgvhbheen" path="res://assets/road/track_3/square_tiles_4k.blend/textures/square_tiles_diff_4k.jpg" id="1_5weuq"]
+[ext_resource type="Texture2D" uid="uid://dbxcoag3mpsyw" path="res://assets/road/track_3/square_tiles_4k.blend/textures/square_tiles_nor_gl_4k.png" id="2_02cj8"]
+[ext_resource type="Texture2D" uid="uid://b4gdgap88ptsg" path="res://assets/road/track_3/square_tiles_4k.blend/textures/square_tiles_disp_4k.png" id="3_2rseb"]
+[ext_resource type="Texture2D" uid="uid://dhgs4f7t8s7nu" path="res://assets/road/track_3/square_tiles_4k.blend/textures/square_tiles_rough_4k.png" id="4_oem8f"]
+
+[resource]
+albedo_texture = ExtResource("1_5weuq")
+metallic = 1.0
+roughness_texture = ExtResource("4_oem8f")
+normal_enabled = true
+normal_texture = ExtResource("2_02cj8")
+rim_enabled = true
+clearcoat_enabled = true
+subsurf_scatter_enabled = true
+subsurf_scatter_texture = ExtResource("3_2rseb")
+refraction_enabled = true
+refraction_texture = ExtResource("3_2rseb")
+grow_amount = 2.391
+proximity_fade_enabled = true
+proximity_fade_distance = 0.2

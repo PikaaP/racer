@@ -1,0 +1,34 @@
+[gd_scene load_steps=2 format=3 uid="uid://cni43hjax6bl1"]
+
+[ext_resource type="Script" uid="uid://wygxts8pr12e" path="res://bot/noob_ai/noob_ai.gd" id="1_ule37"]
+
+[node name="NoobAi" type="Node3D"]
+script = ExtResource("1_ule37")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+
+[node name="RayHolder" type="Node3D" parent="."]
+
+[node name="RayCast3D" type="RayCast3D" parent="RayHolder" groups=["ray"]]
+target_position = Vector3(2, 0, 0)
+
+[node name="RayCast3D2" type="RayCast3D" parent="RayHolder" groups=["ray"]]
+target_position = Vector3(2, 0, -2)
+
+[node name="RayCast3D3" type="RayCast3D" parent="RayHolder" groups=["ray"]]
+target_position = Vector3(0, 0, -2)
+
+[node name="RayCast3D4" type="RayCast3D" parent="RayHolder" groups=["ray"]]
+target_position = Vector3(-2, 0, -2)
+
+[node name="RayCast3D5" type="RayCast3D" parent="RayHolder" groups=["ray"]]
+target_position = Vector3(-2, 0, 0)
+
+[node name="RayCast3D6" type="RayCast3D" parent="RayHolder" groups=["ray"]]
+target_position = Vector3(-2, 0, 2)
+
+[node name="RayCast3D7" type="RayCast3D" parent="RayHolder" groups=["ray"]]
+target_position = Vector3(0, 0, 2)
+
+[node name="RayCast3D8" type="RayCast3D" parent="RayHolder" groups=["ray"]]
+target_position = Vector3(2, 0, 2)

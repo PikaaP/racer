@@ -1,0 +1,51 @@
+[gd_scene load_steps=8 format=3 uid="uid://deqole8iu6dlk"]
+
+[ext_resource type="Script" uid="uid://djrh8c4d1i2mx" path="res://tracks/test_track/test_track.gd" id="1_0gv8t"]
+[ext_resource type="Environment" uid="uid://ceudxwfpmmwri" path="res://resources/enviroments/test_enviroment.tres" id="2_ba2j3"]
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="2_y824v"]
+[ext_resource type="PackedScene" uid="uid://dt0ydir47eb2p" path="res://scenes/road/Road.tscn" id="3_76g8f"]
+[ext_resource type="PackedScene" uid="uid://blbpshd8fafu3" path="res://scenes/inner_edge/InnerEdge.tscn" id="4_m8xbl"]
+[ext_resource type="PackedScene" uid="uid://bi87ynh7gvk7e" path="res://scenes/outer_edge/OuterEdge.tscn" id="5_86alf"]
+
+[sub_resource type="Curve3D" id="Curve3D_bdo03"]
+closed = true
+bake_interval = 0.01
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -19.77, 0, 0.108031, -3.6551, -0.340911, 3.06076, 3.6551, 0.340911, -3.06076, -13.3443, -0.0288083, -17.5557, -6.67203, 0, -1.57724, 6.67203, 0, 1.57724, 6.08584, 0, -22.5788, 1.1908, -1.0293, -9.55308, -1.1908, 1.0293, 9.55308, 18.9057, 0, -11.1994, 8.57939, -0.1071, 7.89849, -8.57939, 0.1071, -7.89849, -6.17214, -5.42023, -3.67622, -2.4034, -1.55179, 4.60835, 2.4034, 1.55179, -4.60835, -11.428, -3.57748, -27.0143, -10.3627, 0.129745, 1.78642, 10.3627, -0.129745, -1.78642, 4.04538, -0.95872, -39.1046, -4.10289, -0.678721, -6.97456, 4.10289, 0.678721, 6.97456, 24.9808, -5.96003, -31.2378, 8.26441, -1.2226, -6.01431, -8.26441, 1.2226, 6.01431, 33.4249, -4.95078, -0.784761, 14.9186, 5.08026, -5.21981, -14.9186, -5.08026, 5.21981, 17.7994, -6.32227, 12.2939, 0, 0, 0, 0, 0, 0, -25.1506, -38.4191, -14.4224, 0, 0, 0, 0, 0, 0, -66.4134, -10.4461, -23.6105, 0, 0, 0, 0, 0, 0, -73.7078, -28.1024, -5.64647, 0, 0, 0, 0, 0, 0, -41.453, -35.852, 2.23821, 0, 0, 0, 0, 0, 0, -0.536245, -37.6895, 4.10777, 0, 0, 0, 0, 0, 0, 25.222, -44.2407, 10.7732, 0, 0, 0, 0, 0, 0, -16.2874, -51.1181, 58.2271, 0, 0, 0, 0, 0, 0, -51.9822, -17.465, 46.5241, 0, 0, 0, 0, 0, 0, -40.9923, -17.8795, 21.4794, 0, 0, 0, 0, 0, 0, -14.9251, -14.1123, 20.3917, 0, 0, 0, 0, 0, 0, -19.77, 0, 0.108031),
+"tilts": PackedFloat32Array(-0.0158659, 0, 0, 0, 0.267244, 0.520628, 0.507677, 1.16437, 0.87027, 0.794918, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.0620638)
+}
+point_count = 21
+
+[node name="TestTrack2" type="Node3D"]
+script = ExtResource("1_0gv8t")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 22.0858, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("2_ba2j3")
+
+[node name="Path3D" type="Path3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0163851, 0, 0.0321379)
+curve = SubResource("Curve3D_bdo03")
+
+[node name="Road" parent="Path3D" instance=ExtResource("3_76g8f")]
+
+[node name="Inner" parent="Path3D" instance=ExtResource("4_m8xbl")]
+
+[node name="Outer" parent="Path3D" instance=ExtResource("5_86alf")]
+
+[node name="StartGrid" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70.8124, 4.04472, -22.8914)
+
+[node name="Marker3D" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.61331, 11.8669)
+
+[node name="Sprite3D" type="Sprite3D" parent="StartGrid/Marker3D"]
+texture = ExtResource("2_y824v")
+
+[node name="Marker3D2" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.08898, 2.46801, 13.3684)
+
+[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/Marker3D2"]
+texture = ExtResource("2_y824v")

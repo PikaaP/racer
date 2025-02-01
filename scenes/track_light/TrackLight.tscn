@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://vh5bhmjhd37k"]
+
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="1_dbgyl"]
+
+[node name="SpotLight3D" type="SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+light_energy = 10.0
+spot_range = 75.546
+spot_angle = 17.0
+spot_angle_attenuation = 3.4822
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+texture = ExtResource("1_dbgyl")

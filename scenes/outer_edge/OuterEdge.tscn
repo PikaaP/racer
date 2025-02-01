@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://bi87ynh7gvk7e"]
+
+[ext_resource type="Material" uid="uid://drbtshamtiyev" path="res://resources/track/materials/curb/red_white_curb.tres" id="1_vnul8"]
+
+[node name="Outer" type="CSGPolygon3D"]
+use_collision = true
+collision_mask = 0
+polygon = PackedVector2Array(-2, 0, -3, 0.2, -3, -0.1, -2, -0.1)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 0.01
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = false
+path_continuous_u = true
+path_u_distance = 15.0
+path_joined = true
+material = ExtResource("1_vnul8")

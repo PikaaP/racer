@@ -1,0 +1,51 @@
+[gd_scene load_steps=4 format=3 uid="uid://dw321mwofcoyh"]
+
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="1_2qlag"]
+[ext_resource type="Script" uid="uid://78qowk4pqvm1" path="res://scenes/check_point/check_point.gd" id="1_m6elv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_naw6m"]
+size = Vector3(40, 10, 1)
+
+[node name="Area3D" type="Area3D" groups=["checkpoint"]]
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("1_m6elv")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_naw6m")
+
+[node name="LeftFlag" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 0)
+
+[node name="Sprite3D" type="Sprite3D" parent="LeftFlag"]
+transform = Transform3D(1, 0, 0, 0, 10, 0, 0, 0, 1, 0, 0, 0)
+texture = ExtResource("1_2qlag")
+
+[node name="Sprite3D2" type="Sprite3D" parent="LeftFlag"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 10, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+texture = ExtResource("1_2qlag")
+
+[node name="RightFlag" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 0)
+
+[node name="Sprite3D" type="Sprite3D" parent="RightFlag"]
+transform = Transform3D(1, 0, 0, 0, 10, 0, 0, 0, 1, 0, 0, 0)
+texture = ExtResource("1_2qlag")
+
+[node name="Sprite3D2" type="Sprite3D" parent="RightFlag"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 10, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+texture = ExtResource("1_2qlag")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.51859, 0)
+pixel_size = 0.075
+billboard = 2
+text = "Check Point 0 , 
+ Target: 0 "
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(30, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+modulate = Color(1, 1, 1, 0.2)
+texture = ExtResource("1_2qlag")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
