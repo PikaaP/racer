@@ -15,9 +15,9 @@ signal win(player: PlayerCar)
 @export var player_index: int 
 
 @export var car_resource: CarStats
-@export var STEER_SPEED: float = 1.1
-@export var STEER_LIMIT = 0.4
-@export var engine_force_value = 200
+@export var STEER_SPEED: float = 2.0
+@export var STEER_LIMIT = 0.6
+@export var engine_force_value = 600
 @export var max_drift_recovery_time: float = 2.0
 
 var steer_target: float
@@ -78,8 +78,9 @@ func _physics_process(delta):
 
 		steering = move_toward(steering, steer_target, STEER_SPEED * delta )
 
+
 func traction(speed):
-		apply_central_force(-transform.basis.y * 5)
+		apply_central_force(-transform.basis.y *( 6 + (3 * speed/engine_force_value)))
 
 # Update checkpoint count
 func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add_lap: bool = false) -> void:
@@ -105,7 +106,7 @@ func respawn() -> void:
 			transform.basis =  checkpoint.transform.basis
 			var tween = get_tree().create_tween()
 			var start_pos = global_position
-			tween.tween_property(self, "global_position", checkpoint.global_position + Vector3.UP * 3.5, 1)
+			tween.tween_property(self, "global_position", checkpoint.global_position + Vector3.UP * 4, 1)
 			apply_central_force(Vector3.ZERO)
 			rotate_y(deg_to_rad(180))
 			break

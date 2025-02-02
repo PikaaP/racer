@@ -5,7 +5,7 @@ extends Camera3D
 @export var follow_this: VehicleBody3D
 @export var target_distance = 5
 @export var target_height = 2
-@export var speed:= 6.0
+@export var speed:= 10.0
 
 var last_lookat
 

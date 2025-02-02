@@ -12,7 +12,7 @@ var player_paths = ["res://cars/lambo/Lambo_v1.tscn", "res://cars/lambo/Lambo_v1
 var multiplayer_viewport = preload('res://scenes/multiplayer_viewport/MultiPlayerViewport.tscn')
 
 func _ready() -> void:
-	selected_track = preload("res://tracks/test_track/TestTrack.tscn").instantiate()
+	selected_track = preload('res://tracks/test_track/TestTrack.tscn').instantiate()
 	track_holder.add_child(selected_track)
 	for i in PlayerManager.num_players -1:
 		if i == 0:

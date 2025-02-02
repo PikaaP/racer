@@ -78,7 +78,7 @@ func spawn_light() -> void:
 	# For each point in offset, get each local upvector that corresponds to each point index
 	for offset_index in range(offsets.size()):
 		var index = clamp(int(points.size()) * offsets[offset_index], 0, points.size() -1)
-		var point = points[index]
+		var point = points[index] 
 		var up_vector = up_vectors[index]
 
 		# Add light scene as a child of None3D type

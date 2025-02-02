@@ -20,7 +20,7 @@ stretch = true
 
 [node name="SubViewport" type="SubViewport" parent="ViewportHolder/SubViewportContainer" groups=["viewport"]]
 handle_input_locally = false
-size = Vector2i(1152, 648)
+size = Vector2i(2, 2)
 render_target_update_mode = 4
 
 [node name="Track" type="Node" parent="ViewportHolder/SubViewportContainer/SubViewport"]
