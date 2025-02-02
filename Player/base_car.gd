@@ -11,9 +11,12 @@ signal win(player: PlayerCar)
 @export var current_lap: int = 0
 @export var max_lap_count: int
 
+@export var inputs = {}
+@export var player_index: int 
+
 @export var car_resource: CarStats
 @export var STEER_SPEED: float = 1.1
-@export var STEER_LIMIT = 0.6
+@export var STEER_LIMIT = 0.4
 @export var engine_force_value = 200
 @export var max_drift_recovery_time: float = 2.0
 
@@ -24,6 +27,7 @@ var speed = 0
 var respawning = false
 
 func _ready() -> void:
+	print('inputs for me: ' , name, ' ', inputs)
 	$Label3D.text = 'Current CHeck %s \n target: %s \n %s' % [str(current_checkpoint), str(target_checkpoint), str(current_lap)]
 	respawn_timer.timeout.connect(_handle_respawn)
 
@@ -37,35 +41,36 @@ func _physics_process(delta):
 		speed = linear_velocity.length()*Engine.get_frames_per_second()*delta
 		traction(speed)
 		
-		steer_target = Input.get_action_strength("ui_left") - Input.get_action_strength("ui_right")
+		steer_target = Input.get_action_strength(inputs['motions']['left']['control_string']) - Input.get_action_strength(inputs['motions']['right']['control_string'])
 		steer_target *= STEER_LIMIT
-		speed_input = (Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")) * engine_force_value
+		speed_input = (Input.get_action_strength(inputs['motions']['up']['control_string']) - Input.get_action_strength(inputs['motions']['down']['control_string'])) * engine_force_value
 		engine_force = speed_input
 		
 		drift_recovery_time = clamp(drift_recovery_time + delta/10 *abs(steer_target), 0, max_drift_recovery_time)
-		if Input.is_action_pressed("ui_select"):
-			drift_recovery_time = 0
-			$wheel_0.wheel_friction_slip=0.7
-			$wheel_1.wheel_friction_slip=0.7
-			$wheel_2.wheel_friction_slip=0.3
-			$wheel_3.wheel_friction_slip=0.3
-			apply_central_force(((transform.basis.x * -steer_target) * -engine_force_value * speed_input/engine_force_value * 1.1))
-			apply_central_force(((transform.basis.z * -speed_input/engine_force_value) * -engine_force_value * (1 + speed_input/engine_force_value)))
-		else:
-			$wheel_0.wheel_friction_slip= min($wheel_0.wheel_friction_slip+ drift_recovery_time , 2.2)
-			$wheel_1.wheel_friction_slip= min($wheel_0.wheel_friction_slip+ drift_recovery_time , 2.2)
-			$wheel_2.wheel_friction_slip= min($wheel_0.wheel_friction_slip+ drift_recovery_time , 2.0)
-			$wheel_3.wheel_friction_slip= min($wheel_0.wheel_friction_slip+ drift_recovery_time , 2.0)
+		if Input.is_action_pressed(inputs['buttons']["drift"]['control_string']):
+			pass
+			#drift_recovery_time = 0
+			#$wheel_0.wheel_friction_slip=0.7
+			#$wheel_1.wheel_friction_slip=0.7
+			#$wheel_2.wheel_friction_slip=0.3
+			#$wheel_3.wheel_friction_slip=0.3
+			#apply_central_force(((transform.basis.x * -steer_target) * -engine_force_value * speed_input/engine_force_value * 1.1))
+			#apply_central_force(((transform.basis.z * -speed_input/engine_force_value) * -engine_force_value * (1 + speed_input/engine_force_value)))
+		#else:
+			#$wheel_0.wheel_friction_slip= min($wheel_0.wheel_friction_slip+ drift_recovery_time , 2.2)
+			#$wheel_1.wheel_friction_slip= min($wheel_0.wheel_friction_slip+ drift_recovery_time , 2.2)
+			#$wheel_2.wheel_friction_slip= min($wheel_0.wheel_friction_slip+ drift_recovery_time , 2.0)
+			#$wheel_3.wheel_friction_slip= min($wheel_0.wheel_friction_slip+ drift_recovery_time , 2.0)
 
 		if $wheel_3.get_skidinfo() <= 0.5:
 			pass
 		
-		if Input.is_action_just_pressed('ui_down'):
+		if  Input.is_action_just_pressed(inputs['motions']['up']['control_string']):
 			$CarModel/BackLight.visible = true
 			$CarModel/BackLight2.visible = true
 			$"CarModel/Sketchfab_model/root/CarMesh/Lambo T M_126/chassis_57/chassis_emissive_ID_neons_LOD2_51/Object_90".get_active_material(0).emission_energy_multiplier = 16.0
 			$"CarModel/Sketchfab_model/root/CarMesh/Lambo T M_126/glass_93/glass_glass_LOD2_92/Object_169".get_active_material(0).emission_energy_multiplier = 16.0
-		if Input.is_action_just_released('ui_down'):
+		if  Input.get_action_strength(inputs['motions']['down']['control_string']):
 			$"CarModel/Sketchfab_model/root/CarMesh/Lambo T M_126/glass_93/glass_glass_LOD2_92/Object_169".get_active_material(0).emission_energy_multiplier = 0.3
 			$"CarModel/Sketchfab_model/root/CarMesh/Lambo T M_126/chassis_57/chassis_emissive_ID_neons_LOD2_51/Object_90".get_active_material(0).emission_energy_multiplier = 0.3
 			$CarModel/BackLight.visible = false

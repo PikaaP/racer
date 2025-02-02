@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Racer"
-run/main_scene="res://tracks/track_1/track_1.tscn"
+run/main_scene="uid://lfp4q0hibsik"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 

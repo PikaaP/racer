@@ -11,10 +11,8 @@ script = ExtResource("1_4jwvc")
 [node name="Play" parent="MainMenu" index="0"]
 visible = true
 
-[node name="PlayerConatiner" parent="MainMenu" index="1"]
-visible = false
-
-[node name="SelectTrack" parent="MainMenu" index="2"]
-visible = true
+[node name="SelectTrack" parent="MainMenu/PlayerConatiner/MarginContainer" index="0"]
+size_flags_horizontal = 3
+size_flags_vertical = 1
 
 [editable path="MainMenu"]

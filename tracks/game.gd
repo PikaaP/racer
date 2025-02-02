@@ -14,19 +14,24 @@ var multiplayer_viewport = preload('res://scenes/multiplayer_viewport/MultiPlaye
 func _ready() -> void:
 	selected_track = preload("res://tracks/test_track/TestTrack.tscn").instantiate()
 	track_holder.add_child(selected_track)
-	for i in 1:
+	for i in PlayerManager.num_players -1:
 		if i == 0:
 			var player: PlayerCar = load(player_paths[i]).instantiate()
 			player.max_lap_count = max_laps
+			player.inputs = PlayerManager.players[i]['inputs']
+			player.player_index = i
 			selected_track.add_to_grid(player, i)
 			var camera = player_camera.instantiate()
 			camera.follow_this = player
 			var port = get_tree().get_nodes_in_group('viewport')[i]
 			port.add_child(camera)
 		else:
+			print(' adding in game for: ',  i)
 			var viewport = multiplayer_viewport.instantiate()
 			viewport_holder.add_child(viewport)
 			var player: PlayerCar = load(player_paths[i]).instantiate()
+			player.inputs = PlayerManager.players[i]['inputs']
+			player.player_index = i
 			player.max_lap_count = max_laps
 			selected_track.add_to_grid(player, i)
 			var camera = player_camera.instantiate()
