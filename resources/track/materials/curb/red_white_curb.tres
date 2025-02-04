@@ -1,13 +1,20 @@
-[gd_resource type="StandardMaterial3D" load_steps=4 format=3 uid="uid://drbtshamtiyev"]
+[gd_resource type="StandardMaterial3D" load_steps=6 format=3 uid="uid://drbtshamtiyev"]
 
 [ext_resource type="Texture2D" uid="uid://dy5gxnynssdsg" path="res://assets/road/track_3/fabric_pattern_07_4k.blend/textures/fabric_pattern_07_col_1_4k.png" id="1_blui7"]
 [ext_resource type="Texture2D" uid="uid://drog8gx2n88il" path="res://assets/road/track_3/fabric_pattern_07_4k.blend/textures/fabric_pattern_07_nor_gl_4k.png" id="2_ouos2"]
 [ext_resource type="Texture2D" uid="uid://b7g1df7ic4s53" path="res://assets/road/track_3/fabric_pattern_07_4k.blend/textures/fabric_pattern_07_rough_4k.jpg" id="3_76bka"]
 
+[sub_resource type="Gradient" id="Gradient_rx8ae"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_1847l"]
+gradient = SubResource("Gradient_rx8ae")
+fill_from = Vector2(0, 0.0042735)
+
 [resource]
 diffuse_mode = 3
 albedo_texture = ExtResource("1_blui7")
-metallic = 1.0
+metallic = 0.6
+metallic_specular = 0.25
 roughness = 0.3
 roughness_texture = ExtResource("3_76bka")
 normal_enabled = true
@@ -16,6 +23,9 @@ normal_texture = ExtResource("2_ouos2")
 rim_enabled = true
 clearcoat_enabled = true
 anisotropy_enabled = true
-anisotropy = 0.33
+anisotropy = 1.0
+anisotropy_flowmap = SubResource("GradientTexture2D_1847l")
+subsurf_scatter_enabled = true
+subsurf_scatter_transmittance_enabled = true
 refraction_enabled = true
 proximity_fade_enabled = true

@@ -11,8 +11,10 @@ var player_camera = preload('res://Player/camera/camera_3d.tscn')
 var player_paths = ["res://cars/lambo/Lambo_v1.tscn", "res://cars/lambo/Lambo_v1.tscn", "res://cars/lambo/Lambo_v1.tscn" ]
 var multiplayer_viewport = preload('res://scenes/multiplayer_viewport/MultiPlayerViewport.tscn')
 
+const track = 'res://tracks/test_tracks/TestTrackFlat.tscn'
+
 func _ready() -> void:
-	selected_track = preload('res://tracks/test_track/TestTrack.tscn').instantiate()
+	selected_track = preload(track).instantiate()
 	track_holder.add_child(selected_track)
 	for i in PlayerManager.num_players -1:
 		if i == 0:
@@ -22,6 +24,7 @@ func _ready() -> void:
 			player.player_index = i
 			selected_track.add_to_grid(player, i)
 			var camera = player_camera.instantiate()
+			player.camera = camera
 			camera.follow_this = player
 			var port = get_tree().get_nodes_in_group('viewport')[i]
 			port.add_child(camera)
@@ -35,6 +38,7 @@ func _ready() -> void:
 			player.max_lap_count = max_laps
 			selected_track.add_to_grid(player, i)
 			var camera = player_camera.instantiate()
+			player.camera = camera
 			camera.follow_this = player
 			var port = get_tree().get_nodes_in_group('viewport')[i]
 			port.add_child(camera)

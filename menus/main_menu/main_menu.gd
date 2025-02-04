@@ -14,13 +14,13 @@ func _on_play_pressed() -> void:
 	select_car.show()
 
 func _on_select_track_pressed() -> void:
-	set_player_controls()
+	#set_player_controls()
 	set_player_choice()
 	select_car.hide()
 	select_track.show()
 
 func _on_start_game_pressed() -> void:
-	var game = preload("res://tracks/Game.tscn").instantiate()
+	#var game = preload('res://tracks/test_track/TestTrackOval.tscn').instantiate()
 	#game.max_laps = 
 	#game.selected_track = 
 	#get_tree().change_scene_to_packed(game)
