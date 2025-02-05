@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bib51xvteubnm"]
+
+[ext_resource type="Script" uid="uid://e2f2wglwkg23" path="res://cars/test_car/front_left_tire.gd" id="1_xc3b1"]
+
+[node name="FrontLeftTire" type="RayCast3D"]
+script = ExtResource("1_xc3b1")

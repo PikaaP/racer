@@ -100,8 +100,6 @@ func _physics_process(delta):
 		steering = move_toward(steering, steer_target, STEER_SPEED * delta )
 
 
-
-
 func traction(current_speed):
 		apply_central_force(-transform.basis.y *( 6 + (3 * current_speed/engine_force_value)))
 	
