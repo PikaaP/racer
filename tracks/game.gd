@@ -11,7 +11,7 @@ var player_camera = preload('res://Player/camera/camera_3d.tscn')
 var player_paths = ["res://cars/lambo/Lambo_v1.tscn", "res://cars/lambo/Lambo_v1.tscn", "res://cars/lambo/Lambo_v1.tscn" ]
 var multiplayer_viewport = preload('res://scenes/multiplayer_viewport/MultiPlayerViewport.tscn')
 
-const track = 'res://tracks/test_tracks/TestTrackFlat.tscn'
+const track = 'res://tracks/test_tracks/TestTrackOval.tscn'
 
 func _ready() -> void:
 	selected_track = preload(track).instantiate()

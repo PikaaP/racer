@@ -17,7 +17,7 @@ signal win(player: PlayerCar)
 @export var camera: PlayerCamera
 
 @export var car_resource: CarStats
-@export var STEER_SPEED: float = 2.0
+@export var STEER_SPEED: float = 2.5
 @export var STEER_LIMIT = 0.8
 @export var engine_force_value = 200
 @export var max_drift_recovery_time: float = 2.0
@@ -56,6 +56,7 @@ func _physics_process(delta):
 		if drift_recovery:
 			w_0 += delta 
 			w_b += delta
+
 			$wheel_0.wheel_friction_slip = lerpf($wheel_0.wheel_friction_slip, 1.2, w_0/1.2)
 			$wheel_1.wheel_friction_slip = lerpf($wheel_1.wheel_friction_slip, 1.2, w_0/1.2)
 			$wheel_2.wheel_friction_slip = lerpf($wheel_2.wheel_friction_slip, 1.15, w_0/1.15)
@@ -99,11 +100,8 @@ func _physics_process(delta):
 		
 		steering = move_toward(steering, steer_target, STEER_SPEED * delta )
 
-
-
-
 func traction(current_speed):
-		apply_central_force(-transform.basis.y *( 6 + (3 * current_speed/engine_force_value)))
+		apply_central_force(-transform.basis.y *( 1000 + (3 * current_speed/engine_force_value)))
 	
 # Update checkpoint count
 func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add_lap: bool = false) -> void:

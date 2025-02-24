@@ -11,7 +11,7 @@ func  _ready() -> void:
 	label.text = 'Check Point %s , \n Target: %s ' % [str(checkpoint_index), str(checkpoint_target)]
 
 func _on_body_entered(body: Node3D) -> void:
-	if body is PlayerCar:
+	if body is PlayerCar or body is Bot:
 		if body.target_checkpoint == checkpoint_index:
 			if is_start_finish:
 				body.add_checkpoint(checkpoint_index, checkpoint_target, true)

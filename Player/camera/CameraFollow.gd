@@ -2,7 +2,7 @@ class_name PlayerCamera extends Camera3D
 
 @onready var speed_kph = $Hud/speed
 
-@export var follow_this: PlayerCar
+@export var follow_this: Node
 @export var target_distance = 5
 @export var target_height = 2
 @export var speed:= 16
@@ -35,14 +35,16 @@ func _physics_process(delta):
 #
 		last_lookat = last_lookat.lerp(follow_this.global_transform.origin, delta * speed * 1.5) 
 
-		if follow_this.speed > 15:
-			look_at(last_lookat + Vector3(randf_range(0.0, 0.01), randf_range(0.0, 0.01),randf_range(0.0, 0.01)), Vector3.UP)
-		else:
-			look_at(last_lookat, Vector3.UP)
+		look_at(last_lookat, Vector3.UP)
 		
-
-func _process(delta: float) -> void:
-	speed_kph.text=str(round(follow_this.speed*3.8))+"  KMPH"
+		#if follow_this.speed > 15:
+			#look_at(last_lookat + Vector3(randf_range(0.0, 0.01), randf_range(0.0, 0.01),randf_range(0.0, 0.01)), Vector3.UP)
+		#else:
+			#look_at(last_lookat, Vector3.UP)
+		#
+#
+#func _process(delta: float) -> void:
+	#speed_kph.text=str(round(follow_this.speed*3.8))+"  KMPH"
 
 func move_to_checkpoint(new_position: Vector3) -> void:
 	global_position = new_position

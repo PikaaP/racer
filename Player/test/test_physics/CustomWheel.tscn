@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://caqtxdavlkvxw"]
+
+[ext_resource type="Script" uid="uid://djixe7vh7u2sg" path="res://Player/test/test_physics/custom_wheel.gd" id="1_skdhb"]
+
+[node name="CustomWheel" type="RayCast3D"]
+script = ExtResource("1_skdhb")

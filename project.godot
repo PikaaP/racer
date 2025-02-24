@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Racer"
-run/main_scene="uid://lfp4q0hibsik"
+run/main_scene="uid://dijn7u06f5o6t"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -36,3 +36,4 @@ reset={
 3d_physics/layer_1="World"
 3d_physics/layer_2="Player"
 3d_physics/layer_3="CheckPoint"
+3d_physics/layer_4="Bot"

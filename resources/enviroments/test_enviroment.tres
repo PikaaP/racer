@@ -1,6 +1,6 @@
 [gd_resource type="Environment" load_steps=3 format=3 uid="uid://ceudxwfpmmwri"]
 
-[ext_resource type="Material" uid="uid://dh6ykun8bv60u" path="res://sky/examples/day_sky.tres" id="1_d32c1"]
+[ext_resource type="Material" uid="uid://m80rmki4fbox" path="res://sky/examples/night_sky.tres" id="1_d32c1"]
 
 [sub_resource type="Sky" id="Sky_53y6i"]
 sky_material = ExtResource("1_d32c1")
@@ -18,7 +18,10 @@ sdfgi_enabled = true
 sdfgi_use_occlusion = true
 glow_enabled = true
 fog_enabled = true
-fog_light_energy = 0.02
-fog_sky_affect = 0.5
+fog_light_energy = 0.21
+fog_density = 0.0138
+fog_sky_affect = 0.359
 volumetric_fog_enabled = true
-volumetric_fog_density = 0.003
+volumetric_fog_density = 0.0195
+volumetric_fog_emission_energy = 196.42
+volumetric_fog_gi_inject = 4.7

@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://bwx5p8x1wy67s"]
+
+[ext_resource type="Script" uid="uid://b1f1670fv608v" path="res://Player/test/test_physics/custom_base_car.gd" id="1_5y6pt"]
+[ext_resource type="PackedScene" uid="uid://caqtxdavlkvxw" path="res://Player/test/test_physics/CustomWheel.tscn" id="2_yf5fj"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_yf5fj"]
+bounce = 0.1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_yf5fj"]
+
+[node name="CustomBaseCar" type="RigidBody3D"]
+mass = 80.0
+physics_material_override = SubResource("PhysicsMaterial_yf5fj")
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, -0.01, 0)
+script = ExtResource("1_5y6pt")
+
+[node name="FrontRightWheel" parent="." node_paths=PackedStringArray("car") instance=ExtResource("2_yf5fj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+car = NodePath("..")
+
+[node name="FrontLeftWheel" parent="." node_paths=PackedStringArray("car") instance=ExtResource("2_yf5fj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
+car = NodePath("..")
+
+[node name="Wheel3" parent="." node_paths=PackedStringArray("car") instance=ExtResource("2_yf5fj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
+car = NodePath("..")
+use_as_traction = true
+
+[node name="Wheel4" parent="." node_paths=PackedStringArray("car") instance=ExtResource("2_yf5fj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+car = NodePath("..")
+use_as_traction = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_yf5fj")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]

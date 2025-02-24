@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=3 uid="uid://eopu62c7unns"]
+
+[ext_resource type="Script" uid="uid://crxj0xrauh818" path="res://addons/free_look_camera.gd" id="2_p5jtm"]
+[ext_resource type="Material" uid="uid://dtq6n1hnyg388" path="res://resources/track/materials/road/Track_3_road.tres" id="3_5wn4e"]
+[ext_resource type="PackedScene" uid="uid://1ytwq2gqpsuc" path="res://Player/test/test_physics/custom_lambo/custom_racer.tscn" id="3_qdq2f"]
+[ext_resource type="Script" uid="uid://um6dhbbw4y4h" path="res://Player/camera/CameraFollow.gd" id="4_qdq2f"]
+
+[node name="Lab" type="Node3D"]
+
+[node name="Floor" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+use_collision = true
+size = Vector3(100, 1, 100)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.53839, 10.8917)
+script = ExtResource("2_p5jtm")
+
+[node name="Obastacl" type="CSGCylinder3D" parent="."]
+transform = Transform3D(-0.0204363, 0.999791, -4.37023e-08, 0, -4.37114e-08, -1, -0.999791, -0.0204363, 8.93301e-10, -0.255812, -0.616653, -12.6572)
+use_collision = true
+height = 15.887
+material = ExtResource("3_5wn4e")
+
+[node name="Obastacl2" type="CSGCylinder3D" parent="."]
+transform = Transform3D(-0.0204363, 0.999791, -4.37023e-08, 0, -4.37114e-08, -1, -0.999791, -0.0204363, 8.93301e-10, -0.126471, -0.917371, -6.32954)
+use_collision = true
+height = 15.887
+material = ExtResource("3_5wn4e")
+
+[node name="Obastacl3" type="CSGCylinder3D" parent="."]
+transform = Transform3D(-0.0204363, 0.999791, -4.37023e-08, 0, -4.37114e-08, -1, -0.999791, -0.0204363, 8.93301e-10, -0.180202, -0.828076, -8.95825)
+use_collision = true
+height = 15.887
+material = ExtResource("3_5wn4e")
+
+[node name="Obastacl4" type="CSGCylinder3D" parent="."]
+transform = Transform3D(-0.0204363, 0.999791, -4.37023e-08, 0, -4.37114e-08, -1, -0.999791, -0.0204363, 8.93301e-10, -0.364601, -0.0756197, -17.9795)
+use_collision = true
+height = 15.887
+material = ExtResource("3_5wn4e")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.633637, 0.77363, 0, -0.77363, 0.633637, 0, 17.7674, 0)
+
+[node name="CustomRacer" parent="." instance=ExtResource("3_qdq2f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.05824, 0)
+center_of_mass = Vector3(0, 0.01, 0)
+
+[node name="PlayerCamera" type="Camera3D" parent="CustomRacer" node_paths=PackedStringArray("follow_this")]
+current = true
+script = ExtResource("4_qdq2f")
+follow_this = NodePath("..")
+metadata/_custom_type_script = ExtResource("4_qdq2f")
