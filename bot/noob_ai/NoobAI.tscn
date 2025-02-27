@@ -1234,7 +1234,7 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_gn5xy")
 
 [node name="NoobAi" type="VehicleBody3D" groups=["bot"]]
-collision_layer = 9
+collision_layer = 8
 collision_mask = 11
 physics_material_override = SubResource("PhysicsMaterial_017he")
 script = ExtResource("1_ule37")

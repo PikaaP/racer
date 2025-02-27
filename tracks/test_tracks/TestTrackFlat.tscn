@@ -40,3 +40,8 @@ material = SubResource("StandardMaterial3D_0yqjd")
 [node name="CustomRacer" parent="." node_paths=PackedStringArray("start_position") instance=ExtResource("4_v8le0")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.00186, 0)
 start_position = NodePath("../StartGrid/Marker3D")
+
+[node name="Camera3D" parent="CustomRacer" index="11"]
+current = false
+
+[editable path="CustomRacer"]

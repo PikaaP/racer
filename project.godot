@@ -21,7 +21,7 @@ PlayerManager="*res://autoloads/PlayerManager.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/GPUTrail-main/plugin.cfg")
+enabled=PackedStringArray()
 
 [global_group]
 

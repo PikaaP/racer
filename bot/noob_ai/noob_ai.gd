@@ -97,17 +97,17 @@ func set_intrests() -> void:
 # Cast a ray in each direction. If there’s a hit, we add a 1 in that spot.
 func set_danger() -> void:
 	var space_state = get_world_3d().direct_space_state
-	var query
-	var result
+	var query: PhysicsRayQueryParameters3D
+	var result: Dictionary
 	
 	# Priorites forward direction when looking for danger
 	for i in num_rays:
 		var angle = i * 2 * PI / num_rays
 		# Forward facing rays are longer
 		if rad_to_deg(angle)< 90  or rad_to_deg(angle)> 270:
-			query = PhysicsRayQueryParameters3D.create(ray_holder.global_position, ray_holder.global_position + ray_directions[i] * 10, 12, [self])
+			query = PhysicsRayQueryParameters3D.create(ray_holder.global_position, ray_holder.global_position + ray_directions[i] * 10, pow(2, 1-1) + pow(2, 4-1), [self])
 		else:
-			query = PhysicsRayQueryParameters3D.create(ray_holder.global_position, ray_holder.global_position + ray_directions[i] * 10, 12, [self])
+			query = PhysicsRayQueryParameters3D.create(ray_holder.global_position, ray_holder.global_position + ray_directions[i] * 10, pow(2, 1-1) + pow(2, 4-1), [self])
 
 		result = space_state.intersect_ray(query)
 		if !result.is_empty():

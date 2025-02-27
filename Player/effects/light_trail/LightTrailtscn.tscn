@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://mbp078t4foy4"]
+
+[ext_resource type="Script" uid="uid://dt1cqgiscp462" path="res://Player/effects/light_trail/light_trial.gd" id="1_mcwbp"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_noarx"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_noarx"]
+
+[sub_resource type="Curve" id="Curve_noarx"]
+_data = [Vector2(0.00985222, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.015893), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="LightTrail" type="MeshInstance3D"]
+material_override = SubResource("StandardMaterial3D_noarx")
+mesh = SubResource("RibbonTrailMesh_noarx")
+script = ExtResource("1_mcwbp")
+width_profile = SubResource("Curve_noarx")
