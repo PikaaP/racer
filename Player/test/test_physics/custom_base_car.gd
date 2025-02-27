@@ -1,5 +1,9 @@
 class_name CustomCar extends RigidBody3D
 
+@export var start_position: Marker3D
+# Car stats resource
+@export var car_stat_resource: CarStats
+
 # Custom wheels
 @onready var fl_wheel = $FrontRightWheel
 @onready var fr_wheel = $FrontLeftWheel
@@ -12,37 +16,35 @@ class_name CustomCar extends RigidBody3D
 @onready var bl_wheel_visual = $BackLeftWheel/Wheel
 @onready var br_wheel_visual = $BackRightWheel/Wheel
 
-@export var spring_rest_distance: = 0.8
-@export var wheel_radius: float = 0.9
-@export var spring_strength: int = 6000
-@export var spring_dampener_strength: float = 350
-@export var front_grip: float = 1.0
-@export var rear_grip: float = 0.75
+var accel_input: float
+var steer_input: float
 
-@export var max_spring_strength: int = spring_strength + 200
+var fr_visual_start_position: Vector3
+var fl_visual_start_position: Vector3
+var br_visual_start_position: Vector3
+var bl_visual_start_position: Vector3
 
-@export var tire_grip: float = 1
-@export var steering_angle: int = 30
-@export var steer_speed: float = 1.5
-
-var accel_input: int
-var steer_input: int
-
-@export var fr_visual_start_position: Vector3 = Vector3(-0.058,-0.259, 0.034)
-@export var fl_visual_start_position: Vector3 = Vector3(0.11,-0.259, 0.027)
-@export var br_visual_start_position: Vector3 = Vector3(0.0,-0.259, -0.043)
-@export var bl_visual_start_position: Vector3 = Vector3(0.015,-0.259, -0.043)
-
-
-
+var boost
+var speed: float
+var normalized_speed: float
 
 func _ready() -> void:
-	fl_wheel.grip = front_grip
-	fr_wheel.grip = front_grip
-	bl_wheel.grip = rear_grip
-	br_wheel.grip = rear_grip
+	mass = car_stat_resource.mass
+
+	# Set tire variables
+	fr_wheel.grip = car_stat_resource.front_grip
+	fl_wheel.grip = car_stat_resource.front_grip
+	br_wheel.grip = car_stat_resource.rear_grip
+	bl_wheel.grip = car_stat_resource.rear_grip
 	
+	fr_visual_start_position = fr_wheel_visual.position
+	fl_visual_start_position = fl_wheel_visual.position
+	br_visual_start_position = br_wheel_visual.position
+	bl_visual_start_position = bl_wheel_visual.position
+
 	
+	global_position = start_position.global_position
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("reset"):
 		get_tree().reload_current_scene()
@@ -59,37 +61,59 @@ func _physics_process(delta: float) -> void:
 
 # Apply traction
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
-	apply_central_force(Vector3.DOWN * 300)
+	apply_central_force(Vector3.DOWN * 2000)
+
+	speed = abs(state.linear_velocity.dot(transform.basis.z))
+	normalized_speed = clampf(speed/car_stat_resource.max_speed, 0.0, 1.0)
 
 # Adjust wheel height and spin based on velocity 
 func wheel_visuals(delta) -> void:
 	# Move wheel position in accordance to suspension offset
-	fr_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(fr_visual_start_position.y + fr_wheel.offset, -spring_rest_distance, spring_rest_distance) , delta)
-	fl_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(fl_visual_start_position.y + fl_wheel.offset, -spring_rest_distance, spring_rest_distance) , delta)
-	br_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(br_visual_start_position.y + br_wheel.offset, -spring_rest_distance, spring_rest_distance) , delta)
-	bl_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(bl_visual_start_position.y + bl_wheel.offset, -spring_rest_distance, spring_rest_distance) , delta)
+	fr_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(fr_visual_start_position.y + fr_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
+	fl_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(fl_visual_start_position.y + fl_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
+	br_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(br_visual_start_position.y + br_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
+	bl_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(bl_visual_start_position.y + bl_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
 	
-	# Spin wheels when moving :D
-	fr_wheel_visual.rotation_degrees.x += linear_velocity.length()*Engine.get_frames_per_second()*delta
-	fl_wheel_visual.rotation_degrees.x += linear_velocity.length()*Engine.get_frames_per_second()*delta
-	br_wheel_visual.rotation_degrees.x += linear_velocity.length()*Engine.get_frames_per_second()*delta
-	bl_wheel_visual.rotation_degrees.x += linear_velocity.length()*Engine.get_frames_per_second()*delta
+	# Find wheel spin direction [-1 || 1]
+	var rotation_direction: int
 	
+	# Spin rear wheels even if not moving but trying to accelerate
+	if int(linear_velocity.z) == 0 and accel_input != 0:
+		rotation_direction = 1 if accel_input > 0 else -1
+		fr_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+		br_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * delta)
+		bl_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * delta)
+	else:
+		# If moving, spin wheels in direction of forward velocity
+		rotation_direction = 1  if linear_velocity.dot(basis.z) > 0 else -1
+		
+		fr_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+		br_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+		bl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
 	
 # Control steering for front wheels
-func steering(delta: float) -> void:
-	var steer_rotation = -steer_input * steering_angle
+func steering(delta: float) -> void: 
+	var steer_rotation = -steer_input * car_stat_resource.steering_angle * car_stat_resource.steer_limit
 	
 	if steer_rotation != 0:
-		var angle = clamp(fl_wheel.rotation.y + steer_rotation, -steering_angle, steering_angle)
+		var angle = clamp(fl_wheel.rotation.y + steer_rotation, -car_stat_resource.steering_angle, car_stat_resource.steering_angle)
 		var new_rotation = angle * delta
-		fl_wheel.rotation.y = move_toward(fl_wheel.rotation.y, new_rotation, steer_speed * delta)
-		fr_wheel.rotation.y = move_toward(fl_wheel.rotation.y, new_rotation, steer_speed * delta)
+		fl_wheel.rotation.y = move_toward(fl_wheel.rotation.y, new_rotation, car_stat_resource.steer_speed * delta)
+		fr_wheel.rotation.y = move_toward(fl_wheel.rotation.y, new_rotation, car_stat_resource.steer_speed * delta)
 
 	else:
-		fl_wheel.rotation.y = move_toward(fl_wheel.rotation.y, 0.0, steer_speed * delta)
-		fr_wheel.rotation.y = move_toward(fl_wheel.rotation.y, 0.0, steer_speed * delta)
+		fl_wheel.rotation.y = move_toward(fl_wheel.rotation.y, 0.0, car_stat_resource.steer_speed * delta)
+		fr_wheel.rotation.y = move_toward(fl_wheel.rotation.y, 0.0, car_stat_resource.steer_speed * delta)
 
 # Return torque value from torque graph
-func get_torque() -> int:
-	return 600
+func get_torque(curent_normalized_speed: float) -> float:
+	return car_stat_resource.torque_curve.sample(curent_normalized_speed)
+
+# Returns tire grip (between 0,1)
+func get_tire_grip(traction: bool = false) -> float:
+	if traction:
+		return car_stat_resource.front_grip_curve.sample(normalized_speed)
+	else:
+		return car_stat_resource.rear_grip_curve.sample(normalized_speed)

@@ -47,8 +47,9 @@ transform = Transform3D(1, 0, 0, 0, 0.633637, 0.77363, 0, -0.77363, 0.633637, 0,
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.05824, 0)
 center_of_mass = Vector3(0, 0.01, 0)
 
-[node name="PlayerCamera" type="Camera3D" parent="CustomRacer" node_paths=PackedStringArray("follow_this")]
+[node name="PlayerCamera2" type="Camera3D" parent="CustomRacer"]
 current = true
 script = ExtResource("4_qdq2f")
-follow_this = NodePath("..")
+target_distance = 10
+target_height = 6
 metadata/_custom_type_script = ExtResource("4_qdq2f")

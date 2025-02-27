@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://dn1ndl8pl6vkl"]
+[gd_scene load_steps=6 format=3 uid="uid://dn1ndl8pl6vkl"]
 
 [ext_resource type="Script" uid="uid://djrh8c4d1i2mx" path="res://tracks/test_tracks/test_track.gd" id="1_0yqjd"]
 [ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="1_1qkmk"]
 [ext_resource type="Texture2D" uid="uid://cpwiyoo7664vj" path="res://assets/testing/texture_10.png" id="2_8eju5"]
+[ext_resource type="PackedScene" uid="uid://1ytwq2gqpsuc" path="res://Player/test/test_physics/custom_lambo/custom_racer.tscn" id="4_v8le0"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0yqjd"]
 albedo_texture = ExtResource("2_8eju5")
@@ -33,5 +34,9 @@ texture = ExtResource("1_1qkmk")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
 use_collision = true
-size = Vector3(800, 1, 800)
+size = Vector3(8000, 1, 8000)
 material = SubResource("StandardMaterial3D_0yqjd")
+
+[node name="CustomRacer" parent="." node_paths=PackedStringArray("start_position") instance=ExtResource("4_v8le0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.00186, 0)
+start_position = NodePath("../StartGrid/Marker3D")

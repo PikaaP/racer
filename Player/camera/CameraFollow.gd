@@ -2,46 +2,42 @@ class_name PlayerCamera extends Camera3D
 
 @onready var speed_kph = $Hud/speed
 
-@export var follow_this: Node
-@export var target_distance = 5
+@export var follow_target: Node
+@export var target_distance = 4
 @export var target_height = 2
 @export var speed:= 16
 
-var last_lookat
+var last_lookat: Vector3
 var can_follow: bool = true
 var delta_v: Vector3
 var target_pos: Vector3
 var rng = RandomNumberGenerator
 
 func _ready():
-	global_transform.origin = follow_this.global_transform.origin - Vector3(0, 2, -4)
-	last_lookat = follow_this.global_transform.origin
-
+	#global_position = follow_target.start_position.global_position + Vector3(0, target_height, target_distance)
+	print(follow_target.global_position)
+	last_lookat = follow_target.global_position
+	
 func _physics_process(delta):
 	if can_follow:
-		delta_v = global_transform.origin - follow_this.global_transform.origin
-		
-		## ignore y
-		delta_v.y = 0.0
-		if delta_v.length() > target_distance:
-			delta_v = delta_v.normalized() * target_distance
-			delta_v.y = target_height
-			target_pos = follow_this.global_transform.origin + delta_v
-		else:
-			target_pos.y = follow_this.global_transform.origin.y + target_height
-
-#
-		global_transform.origin = global_transform.origin.lerp(target_pos, delta * speed)
-#
-		last_lookat = last_lookat.lerp(follow_this.global_transform.origin, delta * speed * 1.5) 
-
-		look_at(last_lookat, Vector3.UP)
-		
-		#if follow_this.speed > 15:
-			#look_at(last_lookat + Vector3(randf_range(0.0, 0.01), randf_range(0.0, 0.01),randf_range(0.0, 0.01)), Vector3.UP)
+		#var target_location = Vector3(follow_target.global_position.x, follow_target.transform.basis.y + Vector3.UP * target_height, follow_target.transform.basis.z + Vector3.BACK * target_distance)
+		#var target_location = Vector3(follow_target.global_position.x)
+		#if global_position.distance_to(target_location) >= 2:
+			#print('follow')
+			#global_position = global_position.lerp(target_location, 2 *  delta)
 		#else:
-			#look_at(last_lookat, Vector3.UP)
-		#
+			#print('its ok')
+			##global_position = target_location
+		
+		#global_position = follow_target.global_position + Vector3(follow_target.global_transform.basis.x.x, (follow_target.global_transform.basis.y + Vector3.UP * target_height).y, (follow_target.global_transform.basis.z + Vector3.BACK * target_distance).z)
+		
+		var look_at_target: Vector3 = follow_target.global_position
+		
+		look_at_target = last_lookat.lerp(follow_target.global_position, speed* delta)
+		look_at(look_at_target)
+		last_lookat = look_at_target
+		
+
 #
 #func _process(delta: float) -> void:
 	#speed_kph.text=str(round(follow_this.speed*3.8))+"  KMPH"
