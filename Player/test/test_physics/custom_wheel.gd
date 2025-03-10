@@ -1,8 +1,13 @@
-extends RayCast3D
+class_name CustomWheel extends RayCast3D
+
+@onready var drift_mesh = $DriftMesh
 
 @export var car: CustomCar
 @export var use_as_traction: bool
 @export_range(0.0, 1, 0.01) var grip: float
+
+@export var is_drifting: bool = false
+var drift_mesh_threshold: float = 3.0
 
 ######## Suspension variables ########
 var previous_spring_length: float = 0.0
@@ -35,29 +40,44 @@ var steer_force: float
 
 ######## Z Damp variables ########
 var z_damp_direction: Vector3
-var z_damp_force: int
+var z_damp_force: float
+
+var start_drift: bool = false
 
 func _ready() -> void:
 	target_position = Vector3(0, -car.car_stat_resource.wheel_radius, 0)
 
 func _physics_process(delta: float) -> void:
-	if is_colliding():
-		collision_point = get_collision_point()
-		
-		# Find point to aplly spring force to
-		point = Vector3(collision_point.x, collision_point.y + car.car_stat_resource.wheel_radius, collision_point.z)
-		# Get tire velocity
-		tire_velocity = get_point_velocity(global_position)
-		
-		# Apply movement forces
-		apply_suspension(delta)
-		apply_acceleration(delta)
+	if not Engine.is_editor_hint():
+		if is_colliding():
+			collision_point = get_collision_point()
 
-		apply_x_force(delta)
-		
-		# Slow down car if not actively accelerating
-		if car.accel_input == 0:
-			apply_z_force(delta)
+			# Find point to aplly spring force to
+			point = Vector3(collision_point.x, collision_point.y + car.car_stat_resource.wheel_radius, collision_point.z)
+			# Get tire velocity
+			tire_velocity = get_point_velocity(global_position)
+			
+			# Always apply suspension and deceleration forces 
+			# Apply suspension
+			apply_suspension(delta)
+
+			# Slow down car if not actively accelerating
+			if car.accel_input == 0:
+				apply_z_force(delta)
+
+			# Apply movement forces
+			if car.can_move:
+				apply_acceleration(delta)
+				apply_x_force(delta)
+
+
+func _process(delta: float) -> void:
+	if abs(lateral_velocity) >= 0.1:
+		if !is_drifting:
+			start_drift = true
+			is_drifting = true
+	else:
+		is_drifting = false
 
 # Control suspension
 func apply_suspension(delta: float) -> void:
@@ -91,6 +111,7 @@ func apply_suspension(delta: float) -> void:
 
 # Control drive train
 func apply_acceleration(delta) -> void:
+
 	# Only apply traction if set in car drive train
 	if not use_as_traction:
 		return

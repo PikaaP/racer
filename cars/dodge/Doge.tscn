@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://ci52bv1m15cbs"]
 
-[ext_resource type="Script" uid="uid://bc7qu102yy01n" path="res://Player/base_car.gd" id="1_3nttl"]
-[ext_resource type="Resource" uid="uid://cgsjxr7u1i3ja" path="res://resources/cars/car/dodge_stats.tres" id="2_bxyty"]
+[ext_resource type="Script" uid="uid://bc7qu102yy01n" path="res://player/base_car.gd" id="1_3nttl"]
+[ext_resource type="Resource" path="res://resources/cars/car/dodge_stats.tres" id="2_bxyty"]
 [ext_resource type="PackedScene" uid="uid://benmjny2guowm" path="res://assets/cars/dodge/Wheel.glb" id="2_eoiid"]
 [ext_resource type="PackedScene" uid="uid://bty2rpvw2dh0h" path="res://assets/cars/dodge/doge-body.glb" id="3_om8jj"]
 

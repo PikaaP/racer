@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CarStats" load_steps=5 format=3 uid="uid://8q12ua6myxe8"]
+
+[ext_resource type="Curve" uid="uid://ey7rhb0t3wqs" path="res://resources/cars/car/test_car/front_grip_curve.tres" id="1_e1sbw"]
+[ext_resource type="Script" uid="uid://b15ay3vef27tn" path="res://resources/cars/car_stats.gd" id="1_ydvh1"]
+[ext_resource type="Curve" uid="uid://utrqb3c525ad" path="res://resources/cars/car/test_car/rear_grip_curve.tres" id="2_vv5f8"]
+[ext_resource type="Curve" uid="uid://dxi1bg6r1ia2y" path="res://resources/cars/car/test_car/torque_curve.tres" id="4_gvxon"]
+
+[resource]
+script = ExtResource("1_ydvh1")
+spring_strength = 6000
+max_spring_strength = 6200
+spring_rest_distance = 0.8
+spring_dampener_strength = 350.0
+wheel_radius = 0.9
+front_grip = 1.0
+rear_grip = 1.0
+front_grip_curve = ExtResource("1_e1sbw")
+rear_grip_curve = ExtResource("2_vv5f8")
+steering_angle = 30
+steer_speed = 1.1
+steer_limit = 0.8
+mass = 80.0
+max_speed = 28.0
+torque_curve = ExtResource("4_gvxon")
+max_torque = 100.0
+light_trail_color = Color(1, 0, 0, 1)
+metadata/_custom_type_script = "uid://b15ay3vef27tn"

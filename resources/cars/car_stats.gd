@@ -7,7 +7,6 @@ class_name CarStats extends Resource
 @export var spring_dampener_strength: float = 350
 
 # Wheel stats
-@export var tire_grip_curve: Curve
 @export var wheel_radius: float = 0.9
 @export var front_grip: float = 1.0
 @export var rear_grip: float = 1.0
@@ -27,3 +26,6 @@ class_name CarStats extends Resource
 @export var max_speed: float = 28.0
 @export var torque_curve: Curve
 @export var max_torque: float = 1000.0
+
+# Light trail color
+@export var light_trail_color: Color = Color.RED

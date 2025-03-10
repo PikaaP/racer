@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dt0ydir47eb2p" path="res://scenes/road/Road.tscn" id="3_76g8f"]
 [ext_resource type="PackedScene" uid="uid://blbpshd8fafu3" path="res://scenes/inner_edge/InnerEdge.tscn" id="4_m8xbl"]
 [ext_resource type="PackedScene" uid="uid://bi87ynh7gvk7e" path="res://scenes/outer_edge/OuterEdge.tscn" id="5_86alf"]
-[ext_resource type="PackedScene" uid="uid://1ytwq2gqpsuc" path="res://Player/test/test_physics/custom_lambo/custom_racer.tscn" id="7_o3640"]
+[ext_resource type="PackedScene" uid="uid://1ytwq2gqpsuc" path="res://player/test/test_physics/custom_lambo/custom_racer.tscn" id="7_o3640"]
 
 [sub_resource type="Curve3D" id="Curve3D_bdo03"]
 closed = true

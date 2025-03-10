@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2lvga78cy20f"]
+
+[ext_resource type="Script" uid="uid://rmlh8jnmau5q" path="res://scenes/drift_mesh/old_drift_mesh/old_drift_mesh.gd" id="1_6d3ac"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6d3ac"]
+transparency = 4
+albedo_color = Color(0, 0, 0, 1)
+
+[node name="OldDriftMesh" type="MeshInstance3D"]
+material_override = SubResource("StandardMaterial3D_6d3ac")
+script = ExtResource("1_6d3ac")
+
+[node name="Timer" type="Timer" parent="."]

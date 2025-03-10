@@ -26,6 +26,9 @@ enabled=PackedStringArray()
 [global_group]
 
 checkpoint=""
+player=""
+track=""
+player_camera=""
 
 [input]
 

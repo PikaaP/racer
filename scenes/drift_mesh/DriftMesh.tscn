@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3 uid="uid://brsi5h2jvsvoo"]
+
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="1_4o8jj"]
+[ext_resource type="Script" uid="uid://bb7r5p3gnr3xu" path="res://scenes/drift_mesh/drift_mesh.gd" id="2_vlfw7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bai6t"]
+albedo_color = Color(0, 0, 0, 1)
+albedo_texture = ExtResource("1_4o8jj")
+uv1_world_triplanar = true
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_bai6t"]
+
+[node name="DriftMesh" type="MeshInstance3D"]
+top_level = true
+material_override = SubResource("StandardMaterial3D_bai6t")
+mesh = SubResource("ImmediateMesh_bai6t")
+script = ExtResource("2_vlfw7")

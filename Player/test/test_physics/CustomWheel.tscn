@@ -1,6 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://caqtxdavlkvxw"]
+[gd_scene load_steps=3 format=3 uid="uid://caqtxdavlkvxw"]
 
-[ext_resource type="Script" uid="uid://djixe7vh7u2sg" path="res://Player/test/test_physics/custom_wheel.gd" id="1_skdhb"]
+[ext_resource type="Script" uid="uid://djixe7vh7u2sg" path="res://player/test/test_physics/custom_wheel.gd" id="1_skdhb"]
+[ext_resource type="PackedScene" uid="uid://brsi5h2jvsvoo" path="res://scenes/drift_mesh/DriftMesh.tscn" id="2_bai6t"]
 
 [node name="CustomWheel" type="RayCast3D"]
 script = ExtResource("1_skdhb")
+
+[node name="DriftMesh" parent="." node_paths=PackedStringArray("target") instance=ExtResource("2_bai6t")]
+mesh = null
+target = NodePath("..")
+
+[node name="PastDrifts" type="Node3D" parent="."]

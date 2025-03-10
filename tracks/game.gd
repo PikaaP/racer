@@ -7,7 +7,7 @@ class_name Game extends Node
 @export var max_laps: int = 2
 
 
-var player_camera = preload('res://Player/camera/camera_3d.tscn')
+var player_camera = preload('res://player/camera/camera_3d.tscn')
 var player_paths = ["res://cars/lambo/Lambo_v1.tscn", "res://cars/lambo/Lambo_v1.tscn", "res://cars/lambo/Lambo_v1.tscn" ]
 var multiplayer_viewport = preload('res://scenes/multiplayer_viewport/MultiPlayerViewport.tscn')
 
