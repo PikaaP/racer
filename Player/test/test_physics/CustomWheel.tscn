@@ -6,8 +6,7 @@
 [node name="CustomWheel" type="RayCast3D"]
 script = ExtResource("1_skdhb")
 
-[node name="DriftMesh" parent="." node_paths=PackedStringArray("target") instance=ExtResource("2_bai6t")]
+[node name="DriftMesh" parent="." instance=ExtResource("2_bai6t")]
 mesh = null
-target = NodePath("..")
 
 [node name="PastDrifts" type="Node3D" parent="."]

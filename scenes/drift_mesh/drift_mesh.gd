@@ -3,7 +3,7 @@ extends MeshInstance3D
 @onready var past_drifts = $"../PastDrifts"
 
 @export var wheel_raidus: float = 0.9
-@export var target: CustomWheel
+
 @export var meep: float = 2.0
 
 const OLD_DRIFT_MESH = preload('res://scenes/drift_mesh/old_drift_mesh/OldDriftMesh.tscn')
@@ -22,10 +22,12 @@ class Point:
 		top_right_vertex = _top_right_vertex
 	
 var points: Array = []
+var target
 
 func _ready() -> void:
 	set_as_top_level(true)
 	mesh = ImmediateMesh.new()
+	target = get_parent()
 
 
 func _process(delta: float) -> void:
@@ -35,7 +37,6 @@ func _process(delta: float) -> void:
 	# When drift has ended, commit last drift mesh to past_drifts node
 	elif !points.is_empty():
 		build_previous_mesh(points)
-		print('here')
 		points.clear()
 
 # Build and update a mesh at runtime, save mesh once drift is over

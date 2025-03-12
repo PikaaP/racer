@@ -78,7 +78,7 @@ func _physics_process(delta: float) -> void:
 
 # Apply traction
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
-	apply_central_force(Vector3.DOWN * 2000)
+	apply_central_force(-transform.basis.y  * 2000)
 
 	speed = abs(state.linear_velocity.dot(transform.basis.z))
 	normalized_speed = clampf(speed/car_stat_resource.max_speed, 0.0, 1.0)

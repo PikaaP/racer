@@ -2,13 +2,13 @@ class_name CustomWheel extends RayCast3D
 
 @onready var drift_mesh = $DriftMesh
 
-@export var car: CustomCar
 @export var use_as_traction: bool
-@export_range(0.0, 1, 0.01) var grip: float
-
-@export var is_drifting: bool = false
 var drift_mesh_threshold: float = 3.0
+var start_drift: bool = false
 
+var is_drifting: bool = false
+var car: Node
+var grip: float
 ######## Suspension variables ########
 var previous_spring_length: float = 0.0
 var force_direction: Vector3
@@ -42,9 +42,9 @@ var steer_force: float
 var z_damp_direction: Vector3
 var z_damp_force: float
 
-var start_drift: bool = false
 
 func _ready() -> void:
+	car = get_parent()
 	target_position = Vector3(0, -car.car_stat_resource.wheel_radius, 0)
 
 func _physics_process(delta: float) -> void:
@@ -111,7 +111,6 @@ func apply_suspension(delta: float) -> void:
 
 # Control drive train
 func apply_acceleration(delta) -> void:
-
 	# Only apply traction if set in car drive train
 	if not use_as_traction:
 		return
@@ -121,6 +120,8 @@ func apply_acceleration(delta) -> void:
 
 	# Accelerate by avalible torque
 	torque = car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque)
+	
+
 	# Apply force to car :D
 	car.apply_force(acceleration_direction * torque, point - car.global_position)
 

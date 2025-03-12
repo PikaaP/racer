@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://0fn3naoojpuo" path="res://assets/cars/dodge/doge-body_GENERIC_BADGES_DIF.png" id="6_o48eo"]
 [ext_resource type="Texture2D" uid="uid://bgd27im5ixl4i" path="res://assets/cars/dodge/doge-body_Numberplates_dif.png" id="7_s3vg7"]
 [ext_resource type="Texture2D" uid="uid://bti0jlraphs7j" path="res://assets/cars/dodge/doge-body_GEN4DR_INTERIOR_dif.png" id="8_1fxrf"]
-[ext_resource type="Script" uid="uid://c68a80vos7yqy" path="res://bot/noob_ai/ai_cam.gd" id="11_017he"]
+[ext_resource type="Script" uid="uid://c68a80vos7yqy" path="res://bot/noob_ai/bot_cam.gd" id="11_017he"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_017he"]
 bounce = 0.1

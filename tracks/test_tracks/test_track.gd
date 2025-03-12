@@ -2,10 +2,12 @@ class_name Track extends Node3D
 
 @onready var player_holder = $PlayerHolder
 @onready var bot_holder = $BotHolder
+
+@onready var track_path: Path3D = $TrackPath
 @onready var start_grid = $StartGrid
 @onready var countdown_ui: CountDown = $UI/CountdownUI
 
-@export var bot_count: int = 0
+@export var bot_count: int = 2
 
 var ready_confirmation_count: int = 0
 var go_confirmation_count: int = 0
@@ -19,6 +21,7 @@ func _ready() -> void:
 		countdown_ui.race_start.connect(_start_race)
 		add_player_to_grid(test_car.instantiate(), 0)
 	
+	add_bot_to_grid()
 	
 # Add player to track TODO, add player type
 func add_player_to_grid(player, index: int) -> void:
@@ -30,7 +33,11 @@ func add_player_to_grid(player, index: int) -> void:
 # Add bot to track
 func add_bot_to_grid() -> void:
 	for i in bot_count:
-		pass
+		var start_marker: Marker3D = start_grid.get_child(i)
+		var bot: Bot2 = test_bot.instantiate()
+		bot.start_position = start_marker.global_position
+		bot.path = track_path
+		bot_holder.add_child(bot)
 
 # Call all player to start car opening
 func get_ready_showcase() -> void:
