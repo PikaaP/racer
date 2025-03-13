@@ -42,3 +42,27 @@ material = SubResource("StandardMaterial3D_0yqjd")
 [node name="CountdownUI" parent="UI" instance=ExtResource("5_akr5t")]
 
 [node name="PlayerHolder" type="Node" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.70692, 0)
+shadow_enabled = true
+
+[node name="Ramp" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.892539, -0.450971, 0, 0.450971, 0.892539, 0, -3.17745, 0)
+use_collision = true
+size = Vector3(10, 10, 10)
+
+[node name="Ramp2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.892539, -0.450971, 0, 0.450971, 0.892539, 11.4374, -4.47288, 0)
+use_collision = true
+size = Vector3(10, 10, 10)
+
+[node name="Ramp3" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.959196, -0.282743, 0, 0.282743, 0.959196, 23.8167, -4.47288, 0)
+use_collision = true
+size = Vector3(10, 10, 10)
+
+[node name="Ramp4" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.994536, -0.10439, 0, 0.10439, 0.994536, 38.1364, -4.47288, 0)
+use_collision = true
+size = Vector3(10, 10, 10)

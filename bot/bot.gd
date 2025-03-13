@@ -68,6 +68,17 @@ var speed: float
 var max_speed_particles: int = 30
 var max_turn_angle = 30
 
+enum State {NEUTRAL, DRIVE, DRIFT}
+var current_state = State.DRIVE
+
+var max_boost_reserve: float = 10.0
+var current_boost_reserve: float
+var current_boost_multiplier: float = 1.0
+var max_boost_multiplier: float = 2.0
+var boost_regen_rate_drive: float = 0.1
+var boost_regen_rate_drift: float = 0.2
+var boost_consumption_rate: float = 0.5
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("reset"):
 		get_tree().reload_current_scene()
@@ -81,18 +92,22 @@ func _ready() -> void:
 	points = path.curve.get_baked_points()
 	# Set poisition on start grid
 	global_position = start_position
-	
-	$BotCam.current = true
 
 func _process(delta: float) -> void:
-	# Apply traction
-	apply_central_force(-transform.basis.y * 500)
 	if not respawning:
 		if global_position.distance_to(next_path_point) <= min_dist or points_index == 0 or global_position.distance_to(next_path_point) > max_dist:
 			set_intrests()
 			set_danger()
 			choose_direction()
 		
+			match current_state:
+				State.DRIVE:
+					if current_boost_reserve < max_boost_reserve and current_boost_multiplier != max_boost_multiplier:
+						current_boost_reserve = clampf(current_boost_reserve + boost_regen_rate_drive, current_boost_reserve, max_boost_reserve)
+				_:
+					if current_boost_reserve < max_boost_reserve:
+						current_boost_reserve = clampf(current_boost_reserve + boost_regen_rate_drift, current_boost_reserve, max_boost_reserve)
+
 		var desired_velocity: Vector3 = chosen_direction
 #
 		steering(delta)
@@ -106,6 +121,10 @@ func _process(delta: float) -> void:
 	wheel_visuals(delta)
 	# Apply Speed effects, speed particles and light trails
 	speed_visuals()
+
+# Apply traction
+func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
+	apply_central_force(-transform.basis.y  * 2000)
 
 # Load and apply car stats form car_stat_resource
 func setup_car() -> void:
@@ -226,14 +245,13 @@ func steering(delta: float) -> void:
 	fl_wheel.look_at(global_position + chosen_direction * global_position.distance_to(next_path_point))
 	fr_wheel.look_at(global_position + chosen_direction * global_position.distance_to(next_path_point))
 
-
 # Adjust wheel height and spin based on velocity 
 func wheel_visuals(delta) -> void:
 	# Move wheel position in accordance to suspension offset
-	fr_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(fr_visual_start_position.y + fr_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
-	fl_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(fl_visual_start_position.y + fl_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
-	br_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(br_visual_start_position.y + br_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
-	bl_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(bl_visual_start_position.y + bl_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
+	fr_wheel_visual.position.y = move_toward(fr_wheel_visual.position.y, clampf(fr_visual_start_position.y + fr_wheel.offset, -car_stat_resource.spring_rest_distance, car_stat_resource.spring_rest_distance) , delta)
+	fl_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(fl_visual_start_position.y + fl_wheel.offset, -car_stat_resource.spring_rest_distance, car_stat_resource.spring_rest_distance) , delta)
+	br_wheel_visual.position.y = move_toward(br_wheel_visual.position.y, clampf(br_visual_start_position.y + br_wheel.offset, -car_stat_resource.spring_rest_distance, car_stat_resource.spring_rest_distance) , delta)
+	bl_wheel_visual.position.y = move_toward(bl_wheel_visual.position.y, clampf(bl_visual_start_position.y + bl_wheel.offset, -car_stat_resource.spring_rest_distance, car_stat_resource.spring_rest_distance) , delta)
 	
 	# Find wheel spin direction [-1 || 1]
 	var rotation_direction: int

@@ -1,6 +1,7 @@
 class_name CustomWheel extends RayCast3D
 
 @onready var drift_mesh = $DriftMesh
+@onready var drift_smoke = $DriftSmoke
 
 @export var use_as_traction: bool
 
@@ -9,6 +10,7 @@ var start_drift: bool = false
 var is_drifting: bool = false
 var car: Node
 var grip: float
+
 ######## Suspension variables ########
 var previous_spring_length: float = 0.0
 var force_direction: Vector3
@@ -71,11 +73,17 @@ func _physics_process(delta: float) -> void:
 				apply_x_force(delta)
 
 func _process(delta: float) -> void:
-	if abs(lateral_velocity) >= drift_mesh_threshold:
+	# Check if should draw mesh
+	if is_colliding() and abs(lateral_velocity) >= drift_mesh_threshold:
+		if use_as_traction:
+			drift_smoke.global_position = collision_point
+			drift_smoke.emitting = true
 		if !is_drifting:
 			start_drift = true
 			is_drifting = true
 	else:
+		if use_as_traction:
+			drift_smoke.emitting = false
 		is_drifting = false
 
 # Control suspension
@@ -116,8 +124,11 @@ func apply_acceleration(delta) -> void:
 	acceleration_direction = -global_basis.z
 
 	# Accelerate by avalible torque
-	torque = car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque * car.current_boost_multiplier) if car.current_state != car.State.NEUTRAL else car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque * 2)
+	torque = car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque) if car.current_state != car.State.NEUTRAL else car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque * 2)
 	
+	if car.current_boost_multiplier!= 1.0:
+		torque += car.car_stat_resource.max_torque/2 * car.current_boost_multiplier
+
 
 	# Apply force to car :D
 	car.apply_force(acceleration_direction * torque, point - car.global_position)
@@ -151,11 +162,9 @@ func apply_x_force(delta) -> void:
 	
 	# Add force in opposite direction of steering to simulate drifting
 	if car.current_state == car.State.DRIFT:
-		print('in drift')
 		car.apply_force(steer_direction * -(car.speed * car.accel_input) * car.steer_input, point - car.global_position)
 		# Transition out of drift if drift force is low
-		if abs(lateral_velocity) < 5.0:
-			print('leaving drift')
+		if abs(lateral_velocity) < 4.5:
 			car.current_state = car.State.DRIVE
 
 # Control velocity.z dampening 

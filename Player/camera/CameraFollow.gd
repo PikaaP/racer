@@ -35,10 +35,15 @@ func _physics_process(delta: float) -> void:
 		look_at_target = last_lookat.lerp(follow_target.global_position, look_follow_speed * delta)
 		look_at(look_at_target)
 		last_lookat = look_at_target
+		
+		if follow_target.normalized_speed > 0.75:
+			var rand_y = randf_range(-0.008, 0.008)
+			var rand_x = randf_range(-0.008, 0.008)
+			global_position += Vector3(rand_x, rand_y, 0)
 
 
-#func _process(delta: float) -> void:
-	#speed_kph.text=str(round(follow_this.speed*3.8))+"  KMPH"
+func _process(delta: float) -> void:
+	speed_kph.text=str(round(follow_target.speed*3.8))+"  KMPH"
 
 # Handle race start animation
 func play_start_animation() -> void:

@@ -1,0 +1,49 @@
+[gd_scene load_steps=7 format=3 uid="uid://bsjve54h03vls"]
+
+[ext_resource type="Texture2D" uid="uid://bkugammf0ldly" path="res://assets/vfx/smoke/Smoke_3_512-sheet.png" id="1_tsy3g"]
+
+[sub_resource type="Curve" id="Curve_tsy3g"]
+_limits = [0.0, 2.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.94431, 2), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_vshva"]
+curve = SubResource("Curve_tsy3g")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8niqh"]
+lifetime_randomness = 0.4
+emission_shape = 3
+emission_box_extents = Vector3(0.01, 0.01, 0.15)
+inherit_velocity_ratio = 0.519
+direction = Vector3(0, 0, 1)
+spread = 0.0
+gravity = Vector3(0, 10, 10)
+linear_accel_min = -2.23517e-06
+linear_accel_max = 3.0
+linear_accel_curve = SubResource("CurveTexture_vshva")
+anim_speed_min = 1.0
+anim_speed_max = 1.0
+turbulence_enabled = true
+turbulence_noise_strength = 0.2
+turbulence_noise_scale = 0.1
+collision_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dgoq6"]
+transparency = 1
+cull_mode = 2
+albedo_texture = ExtResource("1_tsy3g")
+billboard_mode = 3
+particles_anim_h_frames = 6
+particles_anim_v_frames = 6
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_f04rr"]
+material = SubResource("StandardMaterial3D_dgoq6")
+
+[node name="DriftSmoke" type="GPUParticles3D"]
+amount = 100
+lifetime = 2.0
+fixed_fps = 36
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_8niqh")
+draw_pass_1 = SubResource("QuadMesh_f04rr")

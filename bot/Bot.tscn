@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://fejr3x25l27m" path="res://bot/bot.gd" id="1_xgyvj"]
 [ext_resource type="Resource" uid="uid://de6fsrjpwnaaq" path="res://resources/cars/car/test_bot/Bot.tres" id="2_ik225"]
+[ext_resource type="PackedScene" uid="uid://bsjve54h03vls" path="res://scenes/smoke_effect/drift_smoke.tscn" id="6_6ipsu"]
 [ext_resource type="Script" uid="uid://djixe7vh7u2sg" path="res://player/test/test_physics/custom_wheel.gd" id="6_mleqh"]
 [ext_resource type="PackedScene" uid="uid://brsi5h2jvsvoo" path="res://scenes/drift_mesh/DriftMesh.tscn" id="7_oik8q"]
 [ext_resource type="Texture2D" uid="uid://cb6dei3c8pcvn" path="res://assets/cars/dodge/Wheel_RIMMUSCLE_01_DIF.png" id="8_np44a"]
@@ -11,7 +12,6 @@
 [ext_resource type="PackedScene" uid="uid://rn2w3fs8e2sq" path="res://cars/dodge/dodge.tscn" id="12_khbf5"]
 [ext_resource type="PackedScene" uid="uid://mbp078t4foy4" path="res://player/effects/light_trail/LightTrailtscn.tscn" id="12_mleqh"]
 [ext_resource type="Texture2D" uid="uid://dml1mbpmfs65y" path="res://addons/albedo.png" id="13_khbf5"]
-[ext_resource type="Script" uid="uid://c68a80vos7yqy" path="res://bot/bot_cam.gd" id="18_7nm2u"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_yf5fj"]
 bounce = 0.1
@@ -123,6 +123,10 @@ mesh = null
 [node name="Wheel" parent="FrontRightWheel" instance=ExtResource("11_mleqh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, -0.25, 0)
 
+[node name="DriftSmoke" parent="FrontRightWheel" instance=ExtResource("6_6ipsu")]
+emitting = false
+lifetime = 1.0
+
 [node name="FrontLeftWheel" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.603637, -1.51321)
 script = ExtResource("6_mleqh")
@@ -139,6 +143,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, -0.25, 0)
 transform = Transform3D(-9.49186e-09, 0.136432, -3.45157e-09, -4.31448e-09, -6.5056e-08, -0.00723849, -0.0072385, -1.78904e-07, 4.31448e-09, -0.00350028, -0.000326019, -9.94704e-05)
 mesh = SubResource("ArrayMesh_kk711")
 skeleton = NodePath("")
+
+[node name="DriftSmoke" parent="FrontLeftWheel" instance=ExtResource("6_6ipsu")]
+emitting = false
+lifetime = 1.0
 
 [node name="BackRightWheel" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.604, 1.26701)
@@ -158,6 +166,10 @@ transform = Transform3D(-9.49186e-09, 0.136432, -3.45157e-09, -4.31448e-09, -6.5
 mesh = SubResource("ArrayMesh_kk711")
 skeleton = NodePath("")
 
+[node name="DriftSmoke" parent="BackRightWheel" instance=ExtResource("6_6ipsu")]
+emitting = false
+lifetime = 1.0
+
 [node name="BackLeftWheel" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.604, 1.26701)
 script = ExtResource("6_mleqh")
@@ -170,6 +182,10 @@ mesh = null
 
 [node name="Wheel" parent="BackLeftWheel" instance=ExtResource("11_mleqh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, -0.25, 0)
+
+[node name="DriftSmoke" parent="BackLeftWheel" instance=ExtResource("6_6ipsu")]
+emitting = false
+lifetime = 1.0
 
 [node name="Dodge" parent="." instance=ExtResource("12_khbf5")]
 transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 0, 0)
@@ -188,10 +204,6 @@ shape = SubResource("CapsuleShape3D_xgyvj")
 
 [node name="RayHolder" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.585478, 0)
-
-[node name="BotCam" type="Camera3D" parent="." node_paths=PackedStringArray("follow_this")]
-script = ExtResource("18_7nm2u")
-follow_this = NodePath("..")
 
 [node name="LightTrailRight" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.673, 2.256)

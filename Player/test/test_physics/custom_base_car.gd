@@ -44,8 +44,7 @@ var max_speed_particles: int = 30
 var can_move: bool = false
 
 enum State {NEUTRAL, DRIVE, DRIFT}
-
-var current_state = State.DRIVE
+var current_state = State.NEUTRAL
 
 @onready var neutral_transition_timer: Timer = $NeutralTransitionTimer
 @onready var speed_lines_shader: ColorRect = $Control/ColorRect
@@ -56,7 +55,6 @@ var current_boost_multiplier: float = 1.0
 var max_boost_multiplier: float = 2.0
 var boost_regen_rate_drive: float = 0.1
 var boost_regen_rate_drift: float = 0.2
-
 var boost_consumption_rate: float = 0.5
 
 func _ready() -> void:
@@ -115,8 +113,6 @@ func _physics_process(delta: float) -> void:
 			if current_boost_reserve < max_boost_reserve:
 				current_boost_reserve = clampf(current_boost_reserve + boost_regen_rate_drift, current_boost_reserve, max_boost_reserve)
 	
-	print(current_boost_reserve, ' current boost reserve')
-
 	# Update current speed variables
 	speed = abs(linear_velocity.dot(transform.basis.z))
 	normalized_speed = clampf(speed/car_stat_resource.max_speed, 0.0, 1.0)
@@ -134,6 +130,20 @@ func _physics_process(delta: float) -> void:
 # Apply traction
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	apply_central_force(-transform.basis.y  * 2000)
+
+# Control steering for front wheels
+func steering(delta: float) -> void: 
+	var steer_rotation = -steer_input * car_stat_resource.steering_angle * car_stat_resource.steer_limit
+	
+	if steer_rotation != 0:
+		var angle = clamp(fl_wheel.rotation.y + steer_rotation, -car_stat_resource.steering_angle, car_stat_resource.steering_angle)
+		var new_rotation = angle * delta
+		fl_wheel.rotation.y = move_toward(fl_wheel.rotation.y, new_rotation, car_stat_resource.steer_speed * delta)
+		fr_wheel.rotation.y = move_toward(fl_wheel.rotation.y, new_rotation, car_stat_resource.steer_speed * delta)
+
+	else:
+		fl_wheel.rotation.y = move_toward(fl_wheel.rotation.y, 0.0, car_stat_resource.steer_speed * delta)
+		fr_wheel.rotation.y = move_toward(fl_wheel.rotation.y, 0.0, car_stat_resource.steer_speed * delta)
 
 # Adjust wheel height and spin based on velocity 
 func wheel_visuals(delta) -> void:
@@ -161,20 +171,6 @@ func wheel_visuals(delta) -> void:
 		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
 		br_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
 		bl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
-
-# Control steering for front wheels
-func steering(delta: float) -> void: 
-	var steer_rotation = -steer_input * car_stat_resource.steering_angle * car_stat_resource.steer_limit
-	
-	if steer_rotation != 0:
-		var angle = clamp(fl_wheel.rotation.y + steer_rotation, -car_stat_resource.steering_angle, car_stat_resource.steering_angle)
-		var new_rotation = angle * delta
-		fl_wheel.rotation.y = move_toward(fl_wheel.rotation.y, new_rotation, car_stat_resource.steer_speed * delta)
-		fr_wheel.rotation.y = move_toward(fl_wheel.rotation.y, new_rotation, car_stat_resource.steer_speed * delta)
-
-	else:
-		fl_wheel.rotation.y = move_toward(fl_wheel.rotation.y, 0.0, car_stat_resource.steer_speed * delta)
-		fr_wheel.rotation.y = move_toward(fl_wheel.rotation.y, 0.0, car_stat_resource.steer_speed * delta)
 
 # Emit speed effects when going x% of max speed
 func speed_visuals() -> void:
@@ -207,6 +203,7 @@ func get_tire_grip(traction: bool = false) -> float:
 	else:
 		return car_stat_resource.rear_grip_curve.sample(normalized_speed)
 
+# Switch current state to State.DRIVE so initial boost fades
 func _on_neutral_drive_timeout() -> void:
 	current_state = State.DRIVE
 

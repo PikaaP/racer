@@ -19,7 +19,8 @@ var is_debug: bool = true
 
 func _ready() -> void:
 	countdown_ui.race_start.connect(_start_race)
-	add_player_to_grid(test_car.instantiate(), 0)
+	add_player_to_grid(test_car.instantiate(), 5)
+	add_bot_to_grid()
 
 # Add player to track TODO, add player type
 func add_player_to_grid(player, index: int) -> void:
@@ -31,6 +32,8 @@ func add_player_to_grid(player, index: int) -> void:
 # Add bot to track
 func add_bot_to_grid() -> void:
 	for i in bot_count:
+		if i >= 5:
+			i += 1
 		var start_marker: Marker3D = start_grid.get_child(i)
 		var bot: Bot = test_bot.instantiate()
 		bot.start_position = start_marker.global_position
