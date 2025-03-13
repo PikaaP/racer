@@ -3,9 +3,9 @@ class_name CustomWheel extends RayCast3D
 @onready var drift_mesh = $DriftMesh
 
 @export var use_as_traction: bool
+
 var drift_mesh_threshold: float = 3.0
 var start_drift: bool = false
-
 var is_drifting: bool = false
 var car: Node
 var grip: float
@@ -70,9 +70,8 @@ func _physics_process(delta: float) -> void:
 				apply_acceleration(delta)
 				apply_x_force(delta)
 
-
 func _process(delta: float) -> void:
-	if abs(lateral_velocity) >= 0.1:
+	if abs(lateral_velocity) >= drift_mesh_threshold:
 		if !is_drifting:
 			start_drift = true
 			is_drifting = true
@@ -104,8 +103,6 @@ func apply_suspension(delta: float) -> void:
 		# Store new spring length value
 		previous_spring_length = current_spring_length
 
-		#DebugDraw3D.draw_arrow_ray(global_position, Vector3(0, suspension_force.y, 0).normalized(), suspension_force.y/100)
-
 		# Apply force to car :D
 		car.apply_force(suspension_force * force_direction, point - car.global_position)
 
@@ -119,13 +116,11 @@ func apply_acceleration(delta) -> void:
 	acceleration_direction = -global_basis.z
 
 	# Accelerate by avalible torque
-	torque = car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque)
+	torque = car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque * car.current_boost_multiplier) if car.current_state != car.State.NEUTRAL else car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque * 2)
 	
 
 	# Apply force to car :D
 	car.apply_force(acceleration_direction * torque, point - car.global_position)
-
-	#DebugDraw3D.draw_arrow_ray(global_position, acceleration_direction, torque/10, Color.DARK_ORCHID)
 
 # Control steering
 func apply_x_force(delta) -> void:
@@ -139,12 +134,12 @@ func apply_x_force(delta) -> void:
 	lateral_velocity = steer_direction.dot(tire_velocity)
 
 	# Scale steering direction velocity grip, (grip value is between [0,1])
+	# Increase desired velocity if car is in neutral state
 	if use_as_traction:
-		desired_velocity_change = -lateral_velocity * car.get_tire_grip(true)
+		desired_velocity_change = -lateral_velocity * car.get_tire_grip(true) if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /2
 	else:
-		desired_velocity_change = -lateral_velocity * car.get_tire_grip()
-	
-	
+		desired_velocity_change = -lateral_velocity * car.get_tire_grip() if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /2
+
 	# Calculate target acceleration
 	desired_acceleration = desired_velocity_change/delta
 
@@ -153,8 +148,15 @@ func apply_x_force(delta) -> void:
 
 	# Apply force to car :D
 	car.apply_force(steer_direction * steer_force, point - car.global_position)
-
-	#DebugDraw3D.draw_arrow_ray(global_position, Vector3(desired_velocity_change * steer_force, 0, 0).normalized(), steer_force/20 , Color.GOLD)
+	
+	# Add force in opposite direction of steering to simulate drifting
+	if car.current_state == car.State.DRIFT:
+		print('in drift')
+		car.apply_force(steer_direction * -(car.speed * car.accel_input) * car.steer_input, point - car.global_position)
+		# Transition out of drift if drift force is low
+		if abs(lateral_velocity) < 5.0:
+			print('leaving drift')
+			car.current_state = car.State.DRIVE
 
 # Control velocity.z dampening 
 func apply_z_force(delta):

@@ -1,4 +1,4 @@
-class_name Bot2 extends RigidBody3D
+class_name Bot extends RigidBody3D
 
 signal win(bot: Bot)
 
@@ -65,7 +65,7 @@ var can_move: bool = true
 var normalized_speed: float = 0.0
 var accel_input: float = 0.0
 var speed: float
-
+var max_speed_particles: int = 30
 var max_turn_angle = 30
 
 func _input(event: InputEvent) -> void:
@@ -102,9 +102,11 @@ func _process(delta: float) -> void:
 		normalized_speed = clampf(speed/car_stat_resource.max_speed, 0.0, 1.0)
 		accel_input = desired_velocity.dot(-transform.basis.z) if desired_velocity.dot(-transform.basis.z)!= 0 else -0.5
 
+	# Update wheel visuals
+	wheel_visuals(delta)
+	# Apply Speed effects, speed particles and light trails
+	speed_visuals()
 
-	$Sprite3D.global_position = next_path_point
-	$Sprite3D2.global_position = global_position + chosen_direction * ray_length
 # Load and apply car stats form car_stat_resource
 func setup_car() -> void:
 	mass = car_stat_resource.mass
@@ -197,7 +199,7 @@ func set_danger() -> void:
 				danger_array[i] = 0.1
 		else:
 			danger_array[i] = 1
-	
+
 # Finalise current direction vector 
 func choose_direction() -> void:
 	# Reset chosen direction
@@ -219,9 +221,54 @@ func choose_direction() -> void:
 
 	chosen_direction = chosen_direction.normalized()
 
+# Handle steering toward chosen direction
 func steering(delta: float) -> void:
 	fl_wheel.look_at(global_position + chosen_direction * global_position.distance_to(next_path_point))
 	fr_wheel.look_at(global_position + chosen_direction * global_position.distance_to(next_path_point))
+
+
+# Adjust wheel height and spin based on velocity 
+func wheel_visuals(delta) -> void:
+	# Move wheel position in accordance to suspension offset
+	fr_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(fr_visual_start_position.y + fr_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
+	fl_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(fl_visual_start_position.y + fl_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
+	br_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(br_visual_start_position.y + br_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
+	bl_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(bl_visual_start_position.y + bl_wheel.offset, -car_stat_resource.wheel_radius, car_stat_resource.wheel_radius) , delta)
+	
+	# Find wheel spin direction [-1 || 1]
+	var rotation_direction: int
+	
+	# Spin rear wheels even if not moving but trying to accelerate
+	if int(linear_velocity.z) == 0 and accel_input != 0:
+		rotation_direction = 1 if accel_input > 0 else -1
+		fr_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+		br_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * delta)
+		bl_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * delta)
+	else:
+		# If moving, spin wheels in direction of forward velocity
+		rotation_direction = 1  if linear_velocity.dot(basis.z) > 0 else -1
+		
+		fr_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+		br_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+		bl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+
+# Emit speed effects when going x% of max speed
+func speed_visuals() -> void:
+	if !normalized_speed >= 0.50:
+		speed_particles.emitting = false
+		# Fade light trail out slowly
+		left_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
+		right_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
+	else:
+		speed_particles.amount = max_speed_particles * normalized_speed
+		speed_particles.emitting = true
+		left_light_trail.emit = true
+		right_light_trail.emit = true
+		# Fade light trail in slowly :D
+		left_light_trail.material_override.albedo_color = Color(car_stat_resource.light_trail_color, lerpf(left_light_trail.material_override.albedo_color.a, 0.01 , normalized_speed/200))
+		right_light_trail.material_override.albedo_color = Color(car_stat_resource.light_trail_color, lerpf(right_light_trail.material_override.albedo_color.a, 0.010,  normalized_speed/200))
 
 # Return torque value from torque graph
 func get_torque(curent_normalized_speed: float) -> float:

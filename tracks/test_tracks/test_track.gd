@@ -14,15 +14,13 @@ var go_confirmation_count: int = 0
 
 var test_car = preload('res://player/test/test_physics/custom_lambo/custom_racer.tscn')
 var test_bot = preload('res://bot/Bot.tscn')
-var is_debug:=true
+
+var is_debug: bool = true
 
 func _ready() -> void:
-	if not is_debug:
-		countdown_ui.race_start.connect(_start_race)
-		add_player_to_grid(test_car.instantiate(), 0)
-	
-	add_bot_to_grid()
-	
+	countdown_ui.race_start.connect(_start_race)
+	add_player_to_grid(test_car.instantiate(), 0)
+
 # Add player to track TODO, add player type
 func add_player_to_grid(player, index: int) -> void:
 	player.start_position = start_grid.get_child(index).global_position
@@ -34,7 +32,7 @@ func add_player_to_grid(player, index: int) -> void:
 func add_bot_to_grid() -> void:
 	for i in bot_count:
 		var start_marker: Marker3D = start_grid.get_child(i)
-		var bot: Bot2 = test_bot.instantiate()
+		var bot: Bot = test_bot.instantiate()
 		bot.start_position = start_marker.global_position
 		bot.path = track_path
 		bot_holder.add_child(bot)

@@ -1,16 +1,17 @@
-[gd_scene load_steps=18 format=4 uid="uid://s3dy7dbjgpte"]
+[gd_scene load_steps=25 format=4 uid="uid://s3dy7dbjgpte"]
 
 [ext_resource type="Script" uid="uid://fejr3x25l27m" path="res://bot/bot.gd" id="1_xgyvj"]
-[ext_resource type="Resource" uid="uid://de6fsrjpwnaaq" path="res://bot/Bot.tres" id="2_ik225"]
+[ext_resource type="Resource" uid="uid://de6fsrjpwnaaq" path="res://resources/cars/car/test_bot/Bot.tres" id="2_ik225"]
 [ext_resource type="Script" uid="uid://djixe7vh7u2sg" path="res://player/test/test_physics/custom_wheel.gd" id="6_mleqh"]
 [ext_resource type="PackedScene" uid="uid://brsi5h2jvsvoo" path="res://scenes/drift_mesh/DriftMesh.tscn" id="7_oik8q"]
 [ext_resource type="Texture2D" uid="uid://cb6dei3c8pcvn" path="res://assets/cars/dodge/Wheel_RIMMUSCLE_01_DIF.png" id="8_np44a"]
 [ext_resource type="Texture2D" uid="uid://dk3d53swnixby" path="res://assets/cars/dodge/Wheel_RIMMUSCLE_01_MET-RIMMUSCLE_01_ROUGH.png" id="9_7nm2u"]
 [ext_resource type="Texture2D" uid="uid://lw2tmk100iud" path="res://assets/cars/dodge/Wheel_RIMMUSCLE_01_NRM.png" id="10_7f1n2"]
 [ext_resource type="PackedScene" uid="uid://wmdcql0a0kto" path="res://cars/dodge/wheels/DodgeWheel.tscn" id="11_mleqh"]
-[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="11_uqa2c"]
 [ext_resource type="PackedScene" uid="uid://rn2w3fs8e2sq" path="res://cars/dodge/dodge.tscn" id="12_khbf5"]
-[ext_resource type="Script" uid="uid://c68a80vos7yqy" path="res://bot/noob_ai/bot_cam.gd" id="18_7nm2u"]
+[ext_resource type="PackedScene" uid="uid://mbp078t4foy4" path="res://player/effects/light_trail/LightTrailtscn.tscn" id="12_mleqh"]
+[ext_resource type="Texture2D" uid="uid://dml1mbpmfs65y" path="res://addons/albedo.png" id="13_khbf5"]
+[ext_resource type="Script" uid="uid://c68a80vos7yqy" path="res://bot/bot_cam.gd" id="18_7nm2u"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_yf5fj"]
 bounce = 0.1
@@ -66,6 +67,39 @@ size = Vector3(1.8, 1, 4)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_xgyvj"]
 radius = 0.25
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oik8q"]
+transparency = 1
+cull_mode = 2
+albedo_color = Color(1, 0, 0, 1)
+albedo_texture = ExtResource("13_khbf5")
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+emission_energy_multiplier = 16.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_tl7yr"]
+
+[sub_resource type="Gradient" id="Gradient_mleqh"]
+offsets = PackedFloat32Array(0, 0.166016, 0.818359, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.899371, 0, 0, 0, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_wy8vy"]
+gradient = SubResource("Gradient_mleqh")
+use_hdr = true
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_khbf5"]
+lifetime_randomness = 0.4
+emission_shape_scale = Vector3(1, 0.5, 2)
+emission_shape = 2
+emission_sphere_radius = 1.25
+gravity = Vector3(0, -0.01, 1)
+color_ramp = SubResource("GradientTexture1D_wy8vy")
+collision_mode = 1
+collision_friction = 0.1
+collision_bounce = 0.3
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_oik8q"]
+size = Vector2(0.05, 0.2)
 
 [node name="Bot" type="RigidBody3D" groups=["bot"]]
 collision_layer = 8
@@ -159,11 +193,54 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.585478, 0)
 script = ExtResource("18_7nm2u")
 follow_this = NodePath("..")
 
-[node name="Sprite3D" type="Sprite3D" parent="."]
-top_level = true
-texture = ExtResource("11_uqa2c")
+[node name="LightTrailRight" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.673, 2.256)
 
-[node name="Sprite3D2" type="Sprite3D" parent="."]
+[node name="LightTrail" parent="LightTrailRight" instance=ExtResource("12_mleqh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.673, 2.256)
 top_level = true
-modulate = Color(0.376466, 0.112617, 0.145728, 1)
-texture = ExtResource("11_uqa2c")
+material_override = SubResource("StandardMaterial3D_oik8q")
+mesh = SubResource("PlaneMesh_tl7yr")
+emit = false
+segments = 100
+base_width = 0.1
+axis = 2
+
+[node name="LightTrailLeft" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.673, 2.256)
+
+[node name="LightTrail" parent="LightTrailLeft" instance=ExtResource("12_mleqh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.673, 2.256)
+top_level = true
+material_override = SubResource("StandardMaterial3D_oik8q")
+mesh = SubResource("PlaneMesh_tl7yr")
+skeleton = NodePath("../../LightTrailRight")
+emit = false
+segments = 100
+base_width = 0.1
+axis = 2
+
+[node name="SpeedParticles" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.58585, 0)
+emitting = false
+amount = 25
+lifetime = 2.0
+randomness = 0.5
+process_material = SubResource("ParticleProcessMaterial_khbf5")
+draw_pass_1 = SubResource("PlaneMesh_oik8q")
+
+[node name="ParticleCollision" type="Node3D" parent="."]
+
+[node name="GPUParticlesCollisionSphere3D" type="GPUParticlesCollisionSphere3D" parent="ParticleCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.190756, -1.12992)
+
+[node name="GPUParticlesCollisionSphere3D4" type="GPUParticlesCollisionSphere3D" parent="ParticleCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.404342, 0.15539)
+
+[node name="GPUParticlesCollisionSphere3D2" type="GPUParticlesCollisionSphere3D" parent="ParticleCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.518098, -1.74615)
+radius = 0.6
+
+[node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="ParticleCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.611971, 1.10209)
+size = Vector3(1.75, 0.5, 2)
