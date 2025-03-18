@@ -13,5 +13,8 @@ mesh = null
 [node name="PastDrifts" type="Node3D" parent="."]
 
 [node name="DriftSmoke" parent="." instance=ExtResource("3_npckj")]
-emitting = false
 lifetime = 1.0
+
+[node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="."]
+visible = false
+size = Vector3(1, 1, 0.5)

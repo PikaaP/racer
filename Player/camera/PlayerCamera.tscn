@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://c0byxb6vlpqvx"]
 
-[ext_resource type="Script" uid="uid://um6dhbbw4y4h" path="res://player/camera/CameraFollow.gd" id="1_j0sl7"]
+[ext_resource type="Script" uid="uid://um6dhbbw4y4h" path="res://player/camera/player_camera.gd" id="1_j0sl7"]
 [ext_resource type="Shader" uid="uid://gvm2qj45g446" path="res://addons/motion_blur/moblur_shader.gdshader" id="3_5sjhg"]
 [ext_resource type="Script" uid="uid://c3bw1jxxuubur" path="res://addons/motion_blur/motion_blur.gd" id="3_ltd8h"]
 

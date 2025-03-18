@@ -1,6 +1,6 @@
-class_name PlayerCar extends VehicleBody3D
+class_name PlayerCarOLD extends VehicleBody3D
 
-signal win(player: PlayerCar)
+signal win(player: PlayerCarOLD)
 
 @onready var ground_ray: RayCast3D = $GroundRay
 @onready var respawn_timer: Timer = $RespawnTimer

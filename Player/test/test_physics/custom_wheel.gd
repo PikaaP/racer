@@ -44,6 +44,8 @@ var steer_force: float
 var z_damp_direction: Vector3
 var z_damp_force: float
 
+# Drift smoke variables
+var max_drift_smoke_amount: int = 500
 
 func _ready() -> void:
 	car = get_parent()
@@ -63,28 +65,37 @@ func _physics_process(delta: float) -> void:
 			# Apply suspension
 			apply_suspension(delta)
 
-			# Slow down car if not actively accelerating
-			if car.accel_input == 0:
-				apply_z_force(delta)
-
 			# Apply movement forces
-			if car.can_move:
-				apply_acceleration(delta)
+			if car.current_race_state == car.RaceState.RACE:
 				apply_x_force(delta)
+				apply_acceleration(delta)
+				# Slow down car if not actively accelerating
+				if car.accel_input == 0:
+					apply_z_force(delta)
 
 func _process(delta: float) -> void:
 	# Check if should draw mesh
-	if is_colliding() and abs(lateral_velocity) >= drift_mesh_threshold:
-		if use_as_traction:
-			drift_smoke.global_position = collision_point
-			drift_smoke.emitting = true
-		if !is_drifting:
-			start_drift = true
-			is_drifting = true
-	else:
-		if use_as_traction:
-			drift_smoke.emitting = false
-		is_drifting = false
+	match car.current_race_state:
+		car.RaceState.START:
+			if car.accel_input != 0:
+				if use_as_traction:
+					drift_smoke.amount = ceil(abs(car.accel_input)) * max_drift_smoke_amount/4
+					drift_smoke.emitting = true
+			else:
+				drift_smoke.emitting = false
+		car.RaceState.RACE:
+			if is_colliding() and abs(lateral_velocity) >= drift_mesh_threshold:
+				if use_as_traction:
+					drift_smoke.global_position = collision_point
+					drift_smoke.emitting = true
+				if !is_drifting:
+					start_drift = true
+					is_drifting = true
+			else:
+				if use_as_traction:
+					drift_smoke.emitting = false
+				is_drifting = false
+
 
 # Control suspension
 func apply_suspension(delta: float) -> void:
@@ -159,7 +170,7 @@ func apply_x_force(delta) -> void:
 
 	# Apply force to car :D
 	car.apply_force(steer_direction * steer_force, point - car.global_position)
-	
+
 	# Add force in opposite direction of steering to simulate drifting
 	if car.current_state == car.State.DRIFT:
 		car.apply_force(steer_direction * -(car.speed * car.accel_input) * car.steer_input, point - car.global_position)
@@ -170,7 +181,7 @@ func apply_x_force(delta) -> void:
 # Control velocity.z dampening 
 func apply_z_force(delta):
 	z_damp_direction = global_basis.z
-	z_damp_force = z_damp_direction.dot(tire_velocity) * car.mass/5
+	z_damp_force = z_damp_direction.dot(tire_velocity) * car.mass/4
 	
 	car.apply_force(-z_damp_direction * z_damp_force, collision_point - car.global_position)
 

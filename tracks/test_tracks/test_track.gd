@@ -15,7 +15,7 @@ var go_confirmation_count: int = 0
 var test_car = preload('res://player/test/test_physics/custom_lambo/custom_racer.tscn')
 var test_bot = preload('res://bot/Bot.tscn')
 
-var is_debug: bool = true
+var is_debug: bool = false
 
 func _ready() -> void:
 	countdown_ui.race_start.connect(_start_race)
@@ -24,9 +24,10 @@ func _ready() -> void:
 
 # Add player to track TODO, add player type
 func add_player_to_grid(player, index: int) -> void:
-	player.start_position = start_grid.get_child(index).global_position
 	player.ready.connect(_race_ready_confirmation)
 	player.race_ready.connect(_start_count_down)
+	player.start_position = start_grid.get_child(index).global_position
+	player.path = track_path
 	player_holder.add_child(player)
 
 # Add bot to track
@@ -46,7 +47,6 @@ func get_ready_showcase() -> void:
 
 # Once all players are set to ready in the tree, start car display openings
 func _race_ready_confirmation() -> void:
-	is_debug  = true
 	if is_debug:
 		_start_race()
 		return
@@ -64,3 +64,4 @@ func _start_count_down() -> void:
 # Allow all player to move :D
 func _start_race() -> void:
 	get_tree().call_group('player', 'start_race')
+	get_tree().call_group('bot', 'start_race')

@@ -1,8 +1,37 @@
-class_name CustomCar extends RigidBody3D
+class_name PlayerCar extends RigidBody3D
 
+# Race ready signal, emited by camera when showcase is over
 signal race_ready()
+# Race over signal, 0 laps remaining
+signal race_over(player: PlayerCar)
 
+# Player instance variables
+# Grid start position (global coordinates)
 @export var start_position: Vector3
+# Input map
+@export var inputs = {}
+# Player index
+@export var player_index: int 
+
+# Player camera (set to current)
+@onready var camera: PlayerCamera = $PlayerCamera
+
+# Checkpoint status and lap tracking
+# Checkpoint refernce for all checkpoints returned by Track class
+@export var checkpoint_array = []
+# Current checkpoint index value
+@export var current_checkpoint: int = 0
+# Next checkpoint
+@export var target_checkpoint: int = 0
+# Current lap
+@export var current_lap: int = 0
+# Max laps in race, passed by Track
+@export var max_lap_count: int
+# Path reference from current Track
+@export var path: Path3D
+# Path points refernce from baked path curve
+var points: PackedVector3Array
+
 # Car stats resource
 @export var car_stat_resource: CarStats
 
@@ -16,8 +45,12 @@ signal race_ready()
 @onready var right_light_trail: Trail3D = $LightTrailRight/LightTrail
 @onready var left_light_trail: Trail3D = $LightTrailLeft/LightTrail
 
+# Speed effects
 # Speed particles
 @onready var speed_particles: GPUParticles3D = $SpeedParticles
+# Speed lines (overlay)
+@onready var speed_lines_shader: ColorRect = $Control/ColorRect
+
 
 # Wheel textures
 @onready var fr_wheel_visual = $FrontRightWheel/Wheel
@@ -25,37 +58,55 @@ signal race_ready()
 @onready var bl_wheel_visual = $BackLeftWheel/Wheel
 @onready var br_wheel_visual = $BackRightWheel/Wheel
 
-# Camera Points
-@onready var camera_points = $CameraShowCase
-
-var accel_input: float
-var steer_input: float
-
 var fr_visual_start_position: Vector3
 var fl_visual_start_position: Vector3
 var br_visual_start_position: Vector3
 var bl_visual_start_position: Vector3
 
-var use_boost: bool =  false
+# Camera Points
+@onready var camera_points = $CameraShowCase
+
+# Car function variables
+var accel_input: float
+var steer_input: float
 var speed: float
 var normalized_speed: float
 var max_speed_particles: int = 30
 
-var can_move: bool = false
+# State machine
+# Track response State machine, controlled by current track
+enum RaceState {START, RACE, FINISH}
+# Car function state
+enum State {NEUTRAL, DRIVE, DRIFT, DISABLED}
 
-enum State {NEUTRAL, DRIVE, DRIFT}
+# Starting states
 var current_state = State.NEUTRAL
+var current_race_state = RaceState.START
 
+# Timers
+# Timer to remove neutral torque boost when moving from State.NEUTRAL to State,DRIVE
 @onready var neutral_transition_timer: Timer = $NeutralTransitionTimer
-@onready var speed_lines_shader: ColorRect = $Control/ColorRect
+# Respawn timer to re-enable PlayerCar and Bot collisions
+@onready var respawn_timer: Timer = $RespawnTimer
 
+
+# BOOST VARIBLES !!!
+# Maximum avalible boost
 var max_boost_reserve: float = 10.0
+# Boost currently availble
 var current_boost_reserve: float
+# BOOST POWER (parsed to wheels to multiply acceleration force)
 var current_boost_multiplier: float = 1.0
+# MAX BOOST POWER (parsed to wheels to multiply acceleration force)
 var max_boost_multiplier: float = 2.0
+# Boost regen rates ><
 var boost_regen_rate_drive: float = 0.1
 var boost_regen_rate_drift: float = 0.2
+# Boost consumption rates :D
 var boost_consumption_rate: float = 0.5
+
+# Constant -y axis force applied to car
+var traction_value: int = 500
 
 func _ready() -> void:
 	mass = car_stat_resource.mass
@@ -73,63 +124,129 @@ func _ready() -> void:
 
 	global_position = start_position
 	
+	# Timer properites
 	neutral_transition_timer.wait_time = 0.5
 	neutral_transition_timer.timeout.connect(_on_neutral_drive_timeout)
 	neutral_transition_timer.one_shot = true
 	
 	current_boost_reserve = max_boost_reserve
+	
+	points = path.curve.get_baked_points()
+	
+	respawn_timer.timeout.connect(_handle_respawn)
 
+# TODO remove ;D
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("reset"):
 		get_tree().reload_current_scene()
 
 func _physics_process(delta: float) -> void:
-	# Get player inputs
-	accel_input = Input.get_action_strength('ui_up') - Input.get_action_strength('ui_down')
-	steer_input = Input.get_action_strength('ui_right') - Input.get_action_strength('ui_left')
-	
-	if accel_input != 0 and current_state == State.NEUTRAL and neutral_transition_timer.is_stopped():
-		neutral_transition_timer.start()
-	
-	if Input.is_action_just_pressed("drift"):
-		current_state = State.DRIFT
+	match current_race_state:
+		# State for pre race camera showroom
+		RaceState.START:
+			# Apply traction
+			apply_traction(traction_value)
 
-	if Input.is_action_pressed("boost") and accel_input != 0:
-		current_boost_reserve -= boost_consumption_rate
-		if current_boost_reserve > 0:
-			current_boost_multiplier = max_boost_multiplier
-		else:
-			current_boost_reserve = 0
-			current_boost_multiplier = 1.0
+			# Keep player in position, allow for y axis_movement
+			global_position.x = start_position.x
+			global_position.z = start_position.z
 
-	if Input.is_action_just_released("boost"):
+			# Get player inputs
+			accel_input = Input.get_action_strength('ui_up') - Input.get_action_strength('ui_down')
+			steer_input = Input.get_action_strength('ui_right') - Input.get_action_strength('ui_left')
+
+			# Apply visual-input response
+			steering(delta)
+			wheel_visuals(delta)
+
+		# State for active race participation, Set by main level
+		RaceState.RACE:
+			# Get player inputs, shared across states
+			# Acceleration
+			accel_input = Input.get_action_strength('ui_up') - Input.get_action_strength('ui_down')
+			# Steering
+			steer_input = Input.get_action_strength('ui_right') - Input.get_action_strength('ui_left')
+			# Boost start input
+			if Input.is_action_pressed("boost") and accel_input != 0:
+				apply_boost()
+
+			# Boost stop input
+			if Input.is_action_just_released("boost"):
+				current_boost_multiplier = 1.0
+
+			# State Machine, car function state
+			match current_state:
+				State.NEUTRAL:
+					# Apply traction
+					apply_traction(traction_value)
+
+					# Exit condition
+					# On receving acceleration input, ensure torque boost timer starts/has started\
+					# neutral_transition_timer.timeout signal response will exit to DRIVE state
+					if accel_input != 0 and neutral_transition_timer.is_stopped():
+						neutral_transition_timer.start()
+
+				State.DRIVE:
+					# Apply traction
+					apply_traction(traction_value)
+
+					#
+					if Input.is_action_just_pressed("drift"):
+						current_state = State.DRIFT
+
+					# If boost bar is not full, restore boost
+					# Restore amount is standard rate
+					if current_boost_reserve < max_boost_reserve:
+						current_boost_reserve = regen_boost(boost_regen_rate_drive)
+	
+					# Exit condition
+					# If not moving (approx.) and there is no acceleration input\
+					# transition to neutral state
+					if speed <= 0.3 and accel_input == 0:
+						current_state = State.NEUTRAL
+
+				State.DRIFT:
+					# Apply traction
+					apply_traction(traction_value)
+					
+					# If boost bar is not full, restore boost
+					# Restore amount is increased when boosting
+					if current_boost_reserve < max_boost_reserve:
+						current_boost_reserve = regen_boost(boost_regen_rate_drift)
+						
+					# TO NOTE, State exit condition is controlled by wheels\
+					# if wheel lateral force is too low, State.DRIFT -> State.DRIVE
+
+				State.DISABLED:
+					pass
+
+			# Update current speed variables
+			speed = abs(linear_velocity.dot(transform.basis.z))
+			normalized_speed = clampf(speed/car_stat_resource.max_speed, 0.0, 1.0)
+
+			# Control steering
+			steering(delta)
+			# Update wheel visuals
+			wheel_visuals(delta)
+			# Apply Speed effects, speed particles and light trails
+			speed_visuals()
+
+# Apply traction force to car center
+func apply_traction(value: int) -> void:
+	apply_central_force(-transform.basis.y  * value)
+
+# Consume boost
+func apply_boost() -> void:
+	current_boost_reserve -= boost_consumption_rate
+	if current_boost_reserve > 0:
+		current_boost_multiplier = max_boost_multiplier
+	else:
+		current_boost_reserve = 0
 		current_boost_multiplier = 1.0
-		
-	match current_state:
-		State.DRIVE:
-			if current_boost_reserve < max_boost_reserve and current_boost_multiplier != max_boost_multiplier:
-				current_boost_reserve = clampf(current_boost_reserve + boost_regen_rate_drive, current_boost_reserve, max_boost_reserve)
-		_:
-			if current_boost_reserve < max_boost_reserve:
-				current_boost_reserve = clampf(current_boost_reserve + boost_regen_rate_drift, current_boost_reserve, max_boost_reserve)
-	
-	# Update current speed variables
-	speed = abs(linear_velocity.dot(transform.basis.z))
-	normalized_speed = clampf(speed/car_stat_resource.max_speed, 0.0, 1.0)
 
-	if speed <= 0.3 and current_state == State.DRIVE and accel_input == 0:
-		current_state = State.NEUTRAL
-
-	# Control steering
-	steering(delta)
-	# Update wheel visuals
-	wheel_visuals(delta)
-	# Apply Speed effects, speed particles and light trails
-	speed_visuals()
-
-# Apply traction
-func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
-	apply_central_force(-transform.basis.y  * 2000)
+# Regenerate boost by given rate per delta
+func regen_boost(regen_rage: float) -> float:
+	return clampf(current_boost_reserve + regen_rage, current_boost_reserve, max_boost_reserve)
 
 # Control steering for front wheels
 func steering(delta: float) -> void: 
@@ -158,23 +275,23 @@ func wheel_visuals(delta) -> void:
 	
 	# Spin rear wheels even if not moving but trying to accelerate
 	if int(linear_velocity.z) == 0 and accel_input != 0:
-		rotation_direction = 1 if accel_input > 0 else -1
-		fr_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
-		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
-		br_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * delta)
-		bl_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * delta)
-	else:
+		rotation_direction = -1 if accel_input > 0 else 1
+		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.z * delta)
+		fr_wheel_visual.rotate_x(rotation_direction * linear_velocity.z * delta)
+		br_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * 100 * delta)
+		bl_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * 100 * delta)
+	elif int(linear_velocity.z) != 0:
 		# If moving, spin wheels in direction of forward velocity
-		rotation_direction = 1  if linear_velocity.dot(basis.z) > 0 else -1
-		
-		fr_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
-		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
-		br_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
-		bl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * delta)
+		rotation_direction = -1  if linear_velocity.dot(basis.z) > 0 else 1
+		# Wheel rotation speeds
+		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * 100 * delta)
+		fr_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * 100 * delta)
+		br_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * 100 * delta)
+		bl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * 100 * delta)
 
 # Emit speed effects when going x% of max speed
 func speed_visuals() -> void:
-	if !normalized_speed >= 0.50:
+	if !normalized_speed >= 0.75:
 		speed_particles.emitting = false
 		# Fade light trail out slowly
 		left_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
@@ -207,6 +324,107 @@ func get_tire_grip(traction: bool = false) -> float:
 func _on_neutral_drive_timeout() -> void:
 	current_state = State.DRIVE
 
+# Respawn player between last checkpoint and next checkpoint
+func respawn() -> void:
+	# Remove player control by setting state to disabled
+	current_state = State.DISABLED
+	# Hide car during respawn transition
+
+	hide()
+	# Remove collisions
+	# Other player collion layer
+	set_collision_mask_value(2, false)
+	# Bot collion layer
+	set_collision_mask_value(4, false)
+	
+	# Find what checkpoint player most recently passed sucessfully
+	# Get all checkpoints in tree
+	var checkpoints  = get_tree().get_nodes_in_group('checkpoint')
+	
+	# Loop to find which checkpoint index == players current checkpoint
+	for checkpoint: CheckPoint in checkpoints:
+		# Checkpoint index == players current checkpoint
+		if checkpoint.checkpoint_index == current_checkpoint:
+			# Find the closest pooint to last known checkpoint
+			var closest_point: Vector3 = path.curve.get_closest_point(path.to_local(checkpoint.global_position))
+			# Find index of closest_point in baked points array
+			var closest_point_index: int = points.find(closest_point)
+
+			# Find the closest point from next checkpoint
+			# Get next checkpoint
+			var next_checkpoint_index =  checkpoint.checkpoint_index + 1
+			# Set index to 0 if at final checkpoint
+			if next_checkpoint_index >= checkpoints.size():
+				next_checkpoint_index = 0
+
+			# Find closest point from next checkpoint
+			var future_point: Vector3 = path.curve.get_closest_point(path.to_local(checkpoints[next_checkpoint_index].global_position))
+			# Find index of future_point in baked points array
+			var future_point_index: int = points.find(future_point)
+
+			# Handle edge cases...
+			# Not found...
+			if closest_point_index == -1:
+				closest_point_index = future_point_index
+
+			# Approaching final checkpoint...
+			if future_point_index == 0:
+				future_point_index = points.size() -1
+
+			# Get mid point between checkpoints
+			# Mid point index
+			var mid_point_index = floor((closest_point_index + future_point_index) / 2)
+			# Mid point global position
+			var mid_point_position = points[mid_point_index] * path.scale
+			
+			# Find direction to face
+			# Get future point from midpoint
+			var future_path_point_index = mid_point_index + 20
+
+			if future_path_point_index >= points.size():
+				future_path_point_index = points.size() - future_path_point_index + 1
+			
+			# Calculate distance future point to face
+			var look_direction = points[mid_point_index + 10].direction_to(points[future_path_point_index]) * path.scale * 400
+			
+			# Rotate to look at future point
+			look_at(look_direction)
+			
+			# Set car back on track, just above wheel contact
+			global_position = mid_point_position + (checkpoint.global_transform.basis.y * car_stat_resource.wheel_radius * 10)
+			break
+	
+	# Show car
+	show()
+	# Regain camera control
+	camera.can_follow = true
+	# Start collision timer
+	respawn_timer.start()
+	# Hand back player control
+	current_state = State.DRIVE
+
+# Enable player/bot collision
+func _handle_respawn() ->void:
+	# TODO
+	# Set bot collision to true
+	set_collision_mask_value(4, true)
+	# Set player collision to true
+	set_collision_mask_value(2, true)
+
+# Update checkpoint count
+func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add_lap: bool = false) -> void:
+	current_checkpoint = new_current_checkpoint
+	target_checkpoint = new_target_checkpoint
+	if add_lap:
+		current_lap += 1
+		if current_lap == max_lap_count +1:
+			print('race over')
+			race_over.emit(self)
+	$Label3D.text = 'Current CHeck %s \n target: %s \n %s' % [str(current_checkpoint), str(target_checkpoint), str(current_lap)]
+
 # Start Race
 func start_race() -> void:
-	can_move = true
+	current_race_state = RaceState.RACE
+
+# TODO
+# add respawn confirmation hit box so cant return collision inside object

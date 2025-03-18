@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://crxj0xrauh818" path="res://addons/free_look_camera.gd" id="2_p5jtm"]
 [ext_resource type="Material" uid="uid://dtq6n1hnyg388" path="res://resources/track/materials/road/Track_3_road.tres" id="3_5wn4e"]
 [ext_resource type="PackedScene" uid="uid://1ytwq2gqpsuc" path="res://player/test/test_physics/custom_lambo/custom_racer.tscn" id="3_qdq2f"]
-[ext_resource type="Script" uid="uid://um6dhbbw4y4h" path="res://player/camera/CameraFollow.gd" id="4_qdq2f"]
+[ext_resource type="Script" uid="uid://um6dhbbw4y4h" path="res://player/camera/player_camera.gd" id="4_qdq2f"]
 
 [node name="Lab" type="Node3D"]
 
@@ -52,4 +52,4 @@ current = true
 script = ExtResource("4_qdq2f")
 target_distance = 10
 target_height = 6
-metadata/_custom_type_script = ExtResource("4_qdq2f")
+metadata/_custom_type_script = "uid://um6dhbbw4y4h"
