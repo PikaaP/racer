@@ -102,8 +102,8 @@ collision_bounce = 0.3
 size = Vector2(0.05, 0.2)
 
 [node name="Bot" type="RigidBody3D" groups=["bot"]]
-collision_layer = 8
-collision_mask = 11
+collision_layer = 24
+collision_mask = 15
 mass = 80.0
 physics_material_override = SubResource("PhysicsMaterial_yf5fj")
 center_of_mass_mode = 1

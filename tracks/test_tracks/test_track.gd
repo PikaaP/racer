@@ -6,29 +6,42 @@ class_name Track extends Node3D
 @onready var track_path: Path3D = $TrackPath
 @onready var start_grid = $StartGrid
 @onready var countdown_ui: CountDown = $UI/CountdownUI
+@onready var leader_board = $UI/LeaderBoard
 
 @export var bot_count: int = 2
+@export var max_lap_count: int = 3
 
 var ready_confirmation_count: int = 0
 var go_confirmation_count: int = 0
 
+var all_racers: Array = []
+var all_checkpoints: Array = []
+
+
 var test_car = preload('res://player/test/test_physics/custom_lambo/custom_racer.tscn')
 var test_bot = preload('res://bot/Bot.tscn')
-
 var is_debug: bool = false
 
 func _ready() -> void:
 	countdown_ui.race_start.connect(_start_race)
+	all_checkpoints = get_tree().get_nodes_in_group('checkpoint')
 	add_player_to_grid(test_car.instantiate(), 5)
 	add_bot_to_grid()
 
+func _process(delta: float) -> void:
+	sort_racer_order()
+
 # Add player to track TODO, add player type
-func add_player_to_grid(player, index: int) -> void:
+func add_player_to_grid(player: PlayerCar, index: int) -> void:
 	player.ready.connect(_race_ready_confirmation)
 	player.race_ready.connect(_start_count_down)
 	player.start_position = start_grid.get_child(index).global_position
 	player.path = track_path
+	player.max_lap_count = max_lap_count
+	player.checkpoint_array = all_checkpoints
 	player_holder.add_child(player)
+	
+	all_racers.append(player)
 
 # Add bot to track
 func add_bot_to_grid() -> void:
@@ -39,11 +52,120 @@ func add_bot_to_grid() -> void:
 		var bot: Bot = test_bot.instantiate()
 		bot.start_position = start_marker.global_position
 		bot.path = track_path
+		bot.max_lap_count = max_lap_count
+		bot.checkpoint_array = all_checkpoints
 		bot_holder.add_child(bot)
+
+		all_racers.append(bot)
 
 # Call all player to start car opening
 func get_ready_showcase() -> void:
 	get_tree().call_group('player_camera', 'play_start_animation')
+
+# Finds and returns (in ascending order) the ranking of each racers progression in the race
+func sort_racer_order() -> void:
+	# All lap data will be appended to answer
+	var answer: Array = []
+	# Duplicate of all racers
+	var leader_board: Array = []
+	# Bucket for the unique set of lapped data
+	var lap_dict: Dictionary = {}
+	
+	# Add all racers to local_leaderboard... TODO might redo later
+	for racer in all_racers:
+		leader_board.append(racer)
+
+	# Bucket all racers by lap and store leaderboard index position in dict of arrays
+	# Store current instance of racer distamce varibles
+	for racer_index in leader_board.size():
+		if !lap_dict.has(leader_board[racer_index].current_lap):
+			lap_dict[leader_board[racer_index].current_lap] = [
+				{
+					'current_lap': leader_board[racer_index].current_lap,
+					'current_checkpoint': leader_board[racer_index].current_checkpoint,
+					'distance_to_checkpoint': leader_board[racer_index].distance_to_checkpoint,
+					'index': racer_index,
+				}
+			]
+		else:
+			lap_dict[leader_board[racer_index].current_lap].append(
+				{
+					'current_lap': leader_board[racer_index].current_lap,
+					'current_checkpoint': leader_board[racer_index].current_checkpoint,
+					'distance_to_checkpoint': leader_board[racer_index].distance_to_checkpoint,
+					'index': racer_index,
+				}
+			)
+	
+	# Assert keys are in descending order
+	# Sort dict so keys start in ascending order
+	lap_dict.sort()
+	# Populate new dict with keys inserted in descending order
+	var sorted_lap_dict: Dictionary = {}
+	# Get keys
+	var keys = lap_dict.keys()
+	
+	# Assert keys are sorted
+	keys.sort()
+	# Reverse order of keys e.g: (key 3 -> key 1) as bigger lap is better
+	keys.reverse()
+
+	# Set correct value to each key in lap_dict
+	for key in keys:
+		sorted_lap_dict[key] = lap_dict[key]
+	
+
+	# For each bucket of laps, find and bucket each checkpoint data groups
+	for lap_sub_array: Array in sorted_lap_dict.values():
+		# Final sorted bucked holder
+		var lap_ans: Array = []
+		# Sort by current_checkpoint per lap_dict array
+		var checkpoint_holder: Array = []
+		# Add racer data to checkpoint holder and sort by checkpoint
+		for car_data in lap_sub_array:
+			checkpoint_holder.append([car_data.current_checkpoint, car_data.distance_to_checkpoint, car_data.index])
+		
+		# Sort data by current_checkpoint
+		# Sort is returned in descending order (checkpoint 15 -> checkpint 2), like lap, big checkpoint is better
+		checkpoint_holder.sort_custom(func(a, b): return a[0] > b[0])
+		
+		# Bucket holder for each checkpoint
+		var checkpoint_dict: Dictionary = {}
+		
+		# Populate checkpoint_dict bucket with unique keys of checkpoint indexes
+		# Parse distance_to_checkpoint [1] and index in leaderboard [2]
+		for car_data in checkpoint_holder:
+			var key = car_data[0]
+			if !checkpoint_dict.has(key):
+				checkpoint_dict[key] = [[car_data[1], car_data[2]]]
+			else:
+				checkpoint_dict[key].append([car_data[1], car_data[2]])
+
+		# For each checkpoint key, append racer index to lap_ans
+		# in ascending order (closest, 0.1 -> furthest, 20)
+		for checkpoint_sub_array: Array in checkpoint_dict.values():
+			# Distance holder for comparison
+			var distance_holder: Array = []
+			
+			# Populate distance_holder with distance_to_checkpoint [0], racer_index [1]
+			for car_data in checkpoint_sub_array:
+				distance_holder.append([car_data[0], car_data[1]])
+
+			# Sort in ascending order (closest, 0.1 -> furthest, 20)
+			distance_holder.sort_custom(func(a, b): return a[0] < b[0])
+			
+			# Append the racer index of the corresponding distance in distance_holder (sorted_ans_data[1] == racer_index)
+			for sorted_ans_data in distance_holder:
+				lap_ans.append(sorted_ans_data[1])
+		
+		# Append array all bucketed lap data into 1 big array :D
+		answer.append_array(lap_ans)
+	
+	# THE sorted leaderboard :D! 
+	# Loop over each element and extract the nessacary data to show on leaderboard
+	var sorted_leader_board = []
+	for racer_index in answer:
+		sorted_leader_board.append([leader_board[racer_index].name, ['lap: ',leader_board[racer_index].current_lap], ['cp: ', leader_board[racer_index].current_checkpoint], ['dis: ',leader_board[racer_index].distance_to_checkpoint] ])
 
 # Once all players are set to ready in the tree, start car display openings
 func _race_ready_confirmation() -> void:
@@ -61,7 +183,7 @@ func _start_count_down() -> void:
 	if go_confirmation_count == player_holder.get_child_count():
 		countdown_ui.start_countdown()
 
-# Allow all player to move :D
+# Allow all players/ bots to move :D
 func _start_race() -> void:
 	get_tree().call_group('player', 'start_race')
 	get_tree().call_group('bot', 'start_race')

@@ -22,7 +22,9 @@ signal race_over(player: PlayerCar)
 # Current checkpoint index value
 @export var current_checkpoint: int = 0
 # Next checkpoint
-@export var target_checkpoint: int = 0
+@export var target_checkpoint: int = 1
+# Distance to checkpoint
+var distance_to_checkpoint: float
 # Current lap
 @export var current_lap: int = 0
 # Max laps in race, passed by Track
@@ -89,7 +91,6 @@ var current_race_state = RaceState.START
 # Respawn timer to re-enable PlayerCar and Bot collisions
 @onready var respawn_timer: Timer = $RespawnTimer
 
-
 # BOOST VARIBLES !!!
 # Maximum avalible boost
 var max_boost_reserve: float = 10.0
@@ -106,9 +107,10 @@ var boost_regen_rate_drift: float = 0.2
 var boost_consumption_rate: float = 0.5
 
 # Constant -y axis force applied to car
-var traction_value: int = 500
+var traction_value: int = 10000
 
 func _ready() -> void:
+	lock_rotation = true
 	mass = car_stat_resource.mass
 
 	# Set tire variables
@@ -140,6 +142,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("reset"):
 		get_tree().reload_current_scene()
 
+func _process(delta: float) -> void:
+	distance_to_checkpoint = global_position.distance_to(checkpoint_array[target_checkpoint].global_position)
+	
 func _physics_process(delta: float) -> void:
 	match current_race_state:
 		# State for pre race camera showroom
@@ -332,6 +337,7 @@ func respawn() -> void:
 
 	hide()
 	# Remove collisions
+	set_collision_layer_value(2, false)
 	# Other player collion layer
 	set_collision_mask_value(2, false)
 	# Bot collion layer
@@ -391,7 +397,7 @@ func respawn() -> void:
 			look_at(look_direction)
 			
 			# Set car back on track, just above wheel contact
-			global_position = mid_point_position + (checkpoint.global_transform.basis.y * car_stat_resource.wheel_radius * 10)
+			global_position = mid_point_position + (checkpoint.global_transform.basis.y * car_stat_resource.wheel_radius * 15)
 			break
 	
 	# Show car
@@ -406,11 +412,14 @@ func respawn() -> void:
 # Enable player/bot collision
 func _handle_respawn() ->void:
 	# TODO
+	# Add collisions
+	set_collision_layer_value(2, true)
 	# Set bot collision to true
 	set_collision_mask_value(4, true)
 	# Set player collision to true
 	set_collision_mask_value(2, true)
 
+	
 # Update checkpoint count
 func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add_lap: bool = false) -> void:
 	current_checkpoint = new_current_checkpoint
@@ -424,6 +433,7 @@ func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add
 
 # Start Race
 func start_race() -> void:
+	lock_rotation = false
 	current_race_state = RaceState.RACE
 
 # TODO

@@ -54,3 +54,4 @@ drift={
 3d_physics/layer_2="Player"
 3d_physics/layer_3="CheckPoint"
 3d_physics/layer_4="Bot"
+3d_physics/layer_5="CheckPointChecker"

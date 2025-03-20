@@ -32,8 +32,8 @@ var bl_visual_start_position: Vector3
 @onready var ray_holder = $RayHolder
 @export var path: Path3D
 
-var num_rays = 16
-var ray_length: float = 10.0
+var num_rays = 12
+var ray_length: float = 50.0
 var sample_rate: int = 4
 var next_path_point: Vector3
 var points: PackedVector3Array
@@ -49,24 +49,25 @@ var max_dist: int = 0
 var min_dist: int = 10
 
 # Danger assessment variables
-@export var bot_avoidance := 0.3
-@export var player_avoidance: float = 0.2
+@export var bot_avoidance := 0.1
+@export var player_avoidance: float = 0.3
 
 # Race variables
-@export var max_lap_count := 2
-@export var current_checkpoint : int
-@export var target_checkpoint: int
+@export var max_lap_count: int
+# Checkpoint refernce for all checkpoints returned by Track class
+@export var checkpoint_array = []
+@export var current_checkpoint : int = 0
+@export var target_checkpoint: int = 1
+var distance_to_checkpoint: float
 @export var current_lap: int
 
 var start_position: Vector3
-var respawning: bool = false
-var is_difting: bool = false
 var normalized_speed: float = 0.0
 var accel_input: float = 0.0
 var speed: float
 var max_speed_particles: int = 30
 var max_turn_angle: int = 30
-var traction_value: int = 500
+var traction_value: int = 10000
 
 var max_boost_reserve: float = 10.0
 var current_boost_reserve: float
@@ -104,6 +105,9 @@ func _ready() -> void:
 	
 	# Timer properites
 	respawn_timer.timeout.connect(_handle_respawn)
+
+func _process(delta: float) -> void:
+	distance_to_checkpoint = global_position.distance_to(checkpoint_array[target_checkpoint].global_position)
 
 func _physics_process(delta: float) -> void:
 	match current_race_state:
@@ -146,6 +150,7 @@ func _physics_process(delta: float) -> void:
 
 # Load and apply car stats form car_stat_resource
 func setup_car() -> void:
+	lock_rotation = true
 	mass = car_stat_resource.mass
 
 	# Set tire variables
@@ -222,7 +227,7 @@ func set_danger() -> void:
 	# For each direction ray, handle ray collision
 	for i in num_rays:
 		# Query danger ray >:D
-		query = PhysicsRayQueryParameters3D.create(ray_holder.global_position, ray_holder.global_position + ray_directions[i] * ray_length, pow(2, 1-1) + pow(2, 4-1), [self])
+		query = PhysicsRayQueryParameters3D.create(ray_holder.global_position, ray_holder.global_position + (ray_directions[i] * ray_length), pow(2, 2-1) + pow(2, 4-1), [self])
 		# Get query result
 		result = space_state.intersect_ray(query)
 		# Handle result, set danger[0,1] (total avoid, ignore)
@@ -232,7 +237,7 @@ func set_danger() -> void:
 			elif result.collider.is_in_group('player'):
 				danger_array[i] = player_avoidance
 			elif result.collider.is_in_group('bot'):
-				danger_array[i] = 0.1
+				danger_array[i] = bot_avoidance
 		else:
 			danger_array[i] = 1
 
@@ -243,15 +248,6 @@ func choose_direction() -> void:
 
 	# Adjust intrest array if danger value exits at index in danger array
 	for i in num_rays:
-		if i == num_rays -1:
-			if danger_array[i-1] != 1 or danger_array[0] != 1:
-				if danger_array[i] != 1:
-					danger_array[i] = (danger_array[i-1] + danger_array[0])/2
-		else:
-			if danger_array[i-1] != 1 or danger_array[i+1] != 1:
-				if danger_array[i] != 1:
-					danger_array[i] = (danger_array[i-1] + danger_array[i+1])/2
-
 		intrest_array[i] *= danger_array[i]
 		chosen_direction += ray_directions[i] * intrest_array[i]
 
@@ -324,6 +320,7 @@ func respawn() -> void:
 	# Hide car during respawn transition
 	hide()
 	# Remove collisions
+	set_collision_layer_value(4, false)
 	# Other player collion layer
 	set_collision_mask_value(2, false)
 	# Bot collion layer
@@ -391,7 +388,7 @@ func respawn() -> void:
 				points_index = new_index
 				
 			# Set car back on track, just above wheel contact
-			global_position = mid_point_position + (checkpoint.global_transform.basis.y * car_stat_resource.wheel_radius * 10)
+			global_position = mid_point_position + (checkpoint.global_transform.basis.y * car_stat_resource.wheel_radius * 15)
 			break
 	
 	# Show car
@@ -403,8 +400,12 @@ func respawn() -> void:
 
 # Enable player/bot collision
 func _handle_respawn() ->void:
-	set_collision_layer_value(2, true)
+	# Bot collider
+	set_collision_layer_value(4, true)
+	# Other Bot collision layer
 	set_collision_mask_value(4, true)
+	# Player collision layer
+	set_collision_mask_value(2, true)
 
 # Tally checkpoint progress
 func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add_lap: bool = false) -> void:
@@ -417,4 +418,5 @@ func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add
 
 # Start Race
 func start_race() -> void:
+	lock_rotation = false
 	current_race_state = RaceState.RACE

@@ -30,7 +30,7 @@ collision_mode = 2
 transparency = 1
 cull_mode = 2
 shading_mode = 0
-albedo_color = Color(1, 1, 1, 0.123)
+albedo_color = Color(1, 1, 1, 0.008)
 albedo_texture = ExtResource("1_tsy3g")
 billboard_mode = 3
 particles_anim_h_frames = 6
@@ -42,7 +42,7 @@ material = SubResource("StandardMaterial3D_dgoq6")
 size = Vector2(3, 3)
 
 [node name="DriftSmoke" type="GPUParticles3D"]
-transparency = 0.6
+transparency = 0.3
 amount = 500
 lifetime = 2.0
 fixed_fps = 36

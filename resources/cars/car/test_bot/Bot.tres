@@ -7,10 +7,10 @@
 
 [resource]
 script = ExtResource("3_w1smj")
-spring_strength = 6000
-max_spring_strength = 6200
+spring_strength = 60000
+max_spring_strength = 62000
 spring_rest_distance = 0.8
-spring_dampener_strength = 1000.0
+spring_dampener_strength = 10000.0
 wheel_radius = 0.9
 front_grip = 1.0
 rear_grip = 1.0
@@ -20,9 +20,9 @@ steering_angle = 30
 steer_speed = 1.5
 steer_limit = 0.8
 drift_speed = 100
-mass = 80.0
+mass = 800.0
 max_speed = 28.0
 torque_curve = ExtResource("4_e4i6x")
-max_torque = 500.0
+max_torque = 9000.0
 light_trail_color = Color(1, 0, 0, 1)
 metadata/_custom_type_script = "uid://b15ay3vef27tn"

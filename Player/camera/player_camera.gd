@@ -1,6 +1,13 @@
 class_name PlayerCamera extends Camera3D
 
-@onready var speed_kph = $Hud/speed
+# HUD
+@onready var speed_kph = $Hud/MarginContainer/Speed
+@onready var leader_board = $Hud/MarginContainer/LeaderBoard
+@onready var race_position = $Hud/MarginContainer/Race_position
+
+@onready var current_lap_time = $Hud/MarginContainer/Player/CurrentLapTime
+@onready var best_lap_time = $Hud/MarginContainer/Player/BestLapTime
+@onready var sector_times = $Hud/MarginContainer/Player/SectorTime
 
 @export var follow_target: PlayerCar
 @export var target_distance = 3.25
@@ -75,8 +82,8 @@ func play_start_animation() -> void:
 	$motion_blur.get_surface_override_material(0).set_shader_parameter('start_radius', 0)
 	var tween_bar = get_tree().create_tween()
 	tween_bar.set_parallel()
-	tween_bar.tween_property($Hud/ColorRectTop, 'custom_minimum_size', Vector2(0, 100), 1 )
-	tween_bar.tween_property($Hud/ColorRectBot, 'custom_minimum_size', Vector2(0, 100), 1 )
+	tween_bar.tween_property($Effects/ColorRectTop, 'custom_minimum_size', Vector2(0, 100), 1 )
+	tween_bar.tween_property($Effects/ColorRectBot, 'custom_minimum_size', Vector2(0, 100), 1 )
 	tween_bar.chain()
 	await get_tree().create_timer(1.0).timeout
 
@@ -88,8 +95,8 @@ func play_start_animation() -> void:
 	$motion_blur.get_surface_override_material(0).set_shader_parameter('start_radius', 0.01)
 	var tween_bar_out = get_tree().create_tween()
 	tween_bar_out.set_parallel()
-	tween_bar_out.tween_property($Hud/ColorRectTop, 'custom_minimum_size', Vector2(0, 0), 1 )
-	tween_bar_out.tween_property($Hud/ColorRectBot, 'custom_minimum_size', Vector2(0, 0), 1 )
+	tween_bar_out.tween_property($Effects/ColorRectTop, 'custom_minimum_size', Vector2(0, 0), 1 )
+	tween_bar_out.tween_property($Effects/ColorRectBot, 'custom_minimum_size', Vector2(0, 0), 1 )
 	tween_bar_out.chain()
 	
 	await get_tree().create_timer(1.0).timeout

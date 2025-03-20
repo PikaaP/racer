@@ -39,6 +39,7 @@ var lateral_velocity: float
 var desired_velocity_change: float
 var desired_acceleration: float
 var steer_force: float
+var minimum_drift_threshold: float = 0.5
 
 ######## Z Damp variables ########
 var z_damp_direction: Vector3
@@ -95,7 +96,6 @@ func _process(delta: float) -> void:
 				if use_as_traction:
 					drift_smoke.emitting = false
 				is_drifting = false
-
 
 # Control suspension
 func apply_suspension(delta: float) -> void:
@@ -160,13 +160,13 @@ func apply_x_force(delta) -> void:
 	if use_as_traction:
 		desired_velocity_change = -lateral_velocity * car.get_tire_grip(true) if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /2
 	else:
-		desired_velocity_change = -lateral_velocity * car.get_tire_grip() if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /2
+		desired_velocity_change = -lateral_velocity * car.get_tire_grip() if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /2.1
 
 	# Calculate target acceleration
 	desired_acceleration = desired_velocity_change/delta
 
 	# Multplily accelration by mass value to get force, TODO
-	steer_force = desired_acceleration
+	steer_force = desired_acceleration * 15
 
 	# Apply force to car :D
 	car.apply_force(steer_direction * steer_force, point - car.global_position)
@@ -175,13 +175,13 @@ func apply_x_force(delta) -> void:
 	if car.current_state == car.State.DRIFT:
 		car.apply_force(steer_direction * -(car.speed * car.accel_input) * car.steer_input, point - car.global_position)
 		# Transition out of drift if drift force is low
-		if abs(lateral_velocity) < 4.5:
+		if abs(lateral_velocity) < minimum_drift_threshold:
 			car.current_state = car.State.DRIVE
 
 # Control velocity.z dampening 
 func apply_z_force(delta):
 	z_damp_direction = global_basis.z
-	z_damp_force = z_damp_direction.dot(tire_velocity) * car.mass/4
+	z_damp_force = z_damp_direction.dot(tire_velocity) * car.mass/8
 	
 	car.apply_force(-z_damp_direction * z_damp_force, collision_point - car.global_position)
 
