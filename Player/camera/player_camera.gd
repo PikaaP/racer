@@ -1,13 +1,8 @@
 class_name PlayerCamera extends Camera3D
 
 # HUD
-@onready var speed_kph = $Hud/MarginContainer/Speed
-@onready var leader_board = $Hud/MarginContainer/LeaderBoard
-@onready var race_position = $Hud/MarginContainer/Race_position
-
-@onready var current_lap_time = $Hud/MarginContainer/Player/CurrentLapTime
-@onready var best_lap_time = $Hud/MarginContainer/Player/BestLapTime
-@onready var sector_times = $Hud/MarginContainer/Player/SectorTime
+@onready var speed_kph = $Hud/UI/Speed
+@onready var leader_board = $Hud/UI/LeaderBoard
 
 @export var follow_target: PlayerCar
 @export var target_distance = 3.25
@@ -19,7 +14,6 @@ class_name PlayerCamera extends Camera3D
 
 @export var max_drift_follow_speed: float = 8.0
 @export var drift_follow_speed: float
-
 
 var last_lookat: Vector3
 var can_follow: bool = true
@@ -71,7 +65,6 @@ func _physics_process(delta: float) -> void:
 			var rand_x = randf_range(-0.008, 0.008)
 			global_position += Vector3(rand_x, rand_y, 0)
 
-
 func _process(delta: float) -> void:
 	# Update HUD
 	# Update speed
@@ -102,8 +95,17 @@ func play_start_animation() -> void:
 	await get_tree().create_timer(1.0).timeout
 	
 	follow_target.race_ready.emit()
+	leader_board.show()
 
 # Reposition camer to set position
 func move_to_position(new_position: Vector3) -> void:
 	global_position = new_position
 	can_follow = false
+
+func update_leader_board(sorted_leader_board: Array) -> void:
+	for child in leader_board.get_children():
+			child.queue_free()
+	for card_info in sorted_leader_board:
+		var lable = Label.new()
+		lable.text = '%s, lap: %s, checkpoint: %s' % [card_info[0].name, card_info[1], card_info[2]]
+		leader_board.add_child(lable)

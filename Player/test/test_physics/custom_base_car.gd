@@ -26,7 +26,7 @@ signal race_over(player: PlayerCar)
 # Distance to checkpoint
 var distance_to_checkpoint: float
 # Current lap
-@export var current_lap: int = 0
+@export var current_lap: int = 1
 # Max laps in race, passed by Track
 @export var max_lap_count: int
 # Path reference from current Track
@@ -223,7 +223,8 @@ func _physics_process(delta: float) -> void:
 					# if wheel lateral force is too low, State.DRIFT -> State.DRIVE
 
 				State.DISABLED:
-					pass
+					linear_velocity = Vector3.ZERO
+					#gravity_scale
 
 			# Update current speed variables
 			speed = abs(linear_velocity.dot(transform.basis.z))
@@ -351,14 +352,24 @@ func respawn() -> void:
 	for checkpoint: CheckPoint in checkpoints:
 		# Checkpoint index == players current checkpoint
 		if checkpoint.checkpoint_index == current_checkpoint:
+		
+			var closest_point: Vector3
+			if current_checkpoint == 0:
+				# Find the closest pooint to last known checkpoint
+				closest_point  = path.curve.get_closest_point(path.to_local(checkpoints[-1].global_position))
+			else:
+				# Find the closest pooint to last known checkpoint
+				closest_point = path.curve.get_closest_point(path.to_local(checkpoint.global_position))
+
+
 			# Find the closest pooint to last known checkpoint
-			var closest_point: Vector3 = path.curve.get_closest_point(path.to_local(checkpoint.global_position))
+			closest_point = path.curve.get_closest_point(path.to_local(checkpoint.global_position))
 			# Find index of closest_point in baked points array
 			var closest_point_index: int = points.find(closest_point)
 
 			# Find the closest point from next checkpoint
 			# Get next checkpoint
-			var next_checkpoint_index =  checkpoint.checkpoint_index + 1
+			var next_checkpoint_index =  checkpoint.checkpoint_target
 			# Set index to 0 if at final checkpoint
 			if next_checkpoint_index >= checkpoints.size():
 				next_checkpoint_index = 0
@@ -429,6 +440,7 @@ func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add
 		if current_lap == max_lap_count +1:
 			print('race over')
 			race_over.emit(self)
+
 	$Label3D.text = 'Current CHeck %s \n target: %s \n %s' % [str(current_checkpoint), str(target_checkpoint), str(current_lap)]
 
 # Start Race

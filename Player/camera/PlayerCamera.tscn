@@ -50,7 +50,7 @@ color = Color(0, 0, 0, 1)
 
 [node name="Hud" type="CanvasLayer" parent="."]
 
-[node name="MarginContainer" type="MarginContainer" parent="Hud"]
+[node name="UI" type="MarginContainer" parent="Hud"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -61,54 +61,55 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="Speed" type="Label" parent="Hud/MarginContainer"]
+[node name="Speed" type="Label" parent="Hud/UI"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
 theme_override_font_sizes/font_size = 50
 text = "0kph"
 
-[node name="LeaderBoard" type="GridContainer" parent="Hud/MarginContainer"]
+[node name="LeaderBoard" type="GridContainer" parent="Hud/UI"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="Label" type="Label" parent="Hud/MarginContainer/LeaderBoard"]
+[node name="Label" type="Label" parent="Hud/UI/LeaderBoard"]
 layout_mode = 2
 text = "racer x"
 
-[node name="Label2" type="Label" parent="Hud/MarginContainer/LeaderBoard"]
+[node name="Label2" type="Label" parent="Hud/UI/LeaderBoard"]
 layout_mode = 2
 text = "racer x"
 
-[node name="Label3" type="Label" parent="Hud/MarginContainer/LeaderBoard"]
+[node name="Label3" type="Label" parent="Hud/UI/LeaderBoard"]
 layout_mode = 2
 text = "racer x"
 
-[node name="Player" type="VBoxContainer" parent="Hud/MarginContainer/LeaderBoard"]
+[node name="Player" type="VBoxContainer" parent="Hud/UI/LeaderBoard"]
 layout_mode = 2
 
-[node name="CurrentLapTime" type="Label" parent="Hud/MarginContainer/LeaderBoard/Player"]
+[node name="CurrentLapTime" type="Label" parent="Hud/UI/LeaderBoard/Player"]
 layout_mode = 2
 text = "current time = xx.xx.xx"
 
-[node name="BestLapTime" type="Label" parent="Hud/MarginContainer/LeaderBoard/Player"]
+[node name="BestLapTime" type="Label" parent="Hud/UI/LeaderBoard/Player"]
 layout_mode = 2
 text = "best time: xx.xx.xx"
 
-[node name="SectorTime" type="Label" parent="Hud/MarginContainer/LeaderBoard/Player"]
+[node name="SectorTime" type="Label" parent="Hud/UI/LeaderBoard/Player"]
 layout_mode = 2
 text = "~yellow~purple~grey~"
 
-[node name="Label4" type="Label" parent="Hud/MarginContainer/LeaderBoard"]
+[node name="Label4" type="Label" parent="Hud/UI/LeaderBoard"]
 layout_mode = 2
 text = "racer x"
 
-[node name="Label5" type="Label" parent="Hud/MarginContainer/LeaderBoard"]
+[node name="Label5" type="Label" parent="Hud/UI/LeaderBoard"]
 layout_mode = 2
 text = "racer x"
 
-[node name="LapInfo" type="Label" parent="Hud/MarginContainer"]
+[node name="LapInfo" type="Label" parent="Hud/UI"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0

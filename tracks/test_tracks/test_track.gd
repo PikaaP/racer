@@ -22,14 +22,14 @@ var test_car = preload('res://player/test/test_physics/custom_lambo/custom_racer
 var test_bot = preload('res://bot/Bot.tscn')
 var is_debug: bool = false
 
+@onready var leaderboard_timer = $LeaderboardTimer
+
 func _ready() -> void:
 	countdown_ui.race_start.connect(_start_race)
 	all_checkpoints = get_tree().get_nodes_in_group('checkpoint')
 	add_player_to_grid(test_car.instantiate(), 5)
 	add_bot_to_grid()
-
-func _process(delta: float) -> void:
-	sort_racer_order()
+	leaderboard_timer.timeout.connect(_update_leaderboard_ticker)
 
 # Add player to track TODO, add player type
 func add_player_to_grid(player: PlayerCar, index: int) -> void:
@@ -63,7 +63,7 @@ func get_ready_showcase() -> void:
 	get_tree().call_group('player_camera', 'play_start_animation')
 
 # Finds and returns (in ascending order) the ranking of each racers progression in the race
-func sort_racer_order() -> void:
+func sort_racer_order() -> Array:
 	# All lap data will be appended to answer
 	var answer: Array = []
 	# Duplicate of all racers
@@ -163,9 +163,16 @@ func sort_racer_order() -> void:
 	
 	# THE sorted leaderboard :D! 
 	# Loop over each element and extract the nessacary data to show on leaderboard
-	var sorted_leader_board = []
+	var sorted_leader_board: Array = []
 	for racer_index in answer:
-		sorted_leader_board.append([leader_board[racer_index].name, ['lap: ',leader_board[racer_index].current_lap], ['cp: ', leader_board[racer_index].current_checkpoint], ['dis: ',leader_board[racer_index].distance_to_checkpoint] ])
+		sorted_leader_board.append([leader_board[racer_index], [leader_board[racer_index].current_lap], [leader_board[racer_index].current_checkpoint], [leader_board[racer_index].distance_to_checkpoint]])
+
+	return sorted_leader_board
+
+# Update leaderboard in .x seconds intervals
+func _update_leaderboard_ticker() -> void:
+	var sorted_leader_board = sort_racer_order()
+	get_tree().call_group('player_camera', 'update_leader_board', sorted_leader_board)
 
 # Once all players are set to ready in the tree, start car display openings
 func _race_ready_confirmation() -> void:

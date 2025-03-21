@@ -59,7 +59,7 @@ var min_dist: int = 10
 @export var current_checkpoint : int = 0
 @export var target_checkpoint: int = 1
 var distance_to_checkpoint: float
-@export var current_lap: int
+@export var current_lap: int = 1
 
 var start_position: Vector3
 var normalized_speed: float = 0.0
@@ -334,14 +334,24 @@ func respawn() -> void:
 	for checkpoint: CheckPoint in checkpoints:
 		# Checkpoint index == players current checkpoint
 		if checkpoint.checkpoint_index == current_checkpoint:
-			# Find the closest pooint to last known checkpoint
-			var closest_point: Vector3 = path.curve.get_closest_point(path.to_local(checkpoint.global_position))
+			
+			var closest_point: Vector3
+			if current_checkpoint == 0:
+				# Find the closest pooint to last known checkpoint
+				closest_point  = path.curve.get_closest_point(path.to_local(checkpoints[-1].global_position))
+			else:
+				# Find the closest pooint to last known checkpoint
+				closest_point = path.curve.get_closest_point(path.to_local(checkpoint.global_position))
+
+
+
+
 			# Find index of closest_point in baked points array
 			var closest_point_index: int = points.find(closest_point)
 
 			# Find the closest point from next checkpoint
 			# Get next checkpoint
-			var next_checkpoint_index =  checkpoint.checkpoint_index + 1
+			var next_checkpoint_index =  checkpoint.checkpoint_target
 			# Set index to 0 if at final checkpoint
 			if next_checkpoint_index >= checkpoints.size():
 				next_checkpoint_index = 0

@@ -14,6 +14,6 @@ func _on_body_entered(body: Node3D) -> void:
 	if body is PlayerCar or body is Bot:
 		if body.target_checkpoint == checkpoint_index:
 			if is_start_finish:
-				body.add_checkpoint(checkpoint_index, checkpoint_target, true)
+				body.add_checkpoint(0, checkpoint_target, true)
 			else:
 				body.add_checkpoint(checkpoint_index, checkpoint_target)

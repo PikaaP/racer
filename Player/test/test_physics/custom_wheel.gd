@@ -5,7 +5,6 @@ class_name CustomWheel extends RayCast3D
 
 @export var use_as_traction: bool
 
-var drift_mesh_threshold: float = 3.0
 var start_drift: bool = false
 var is_drifting: bool = false
 var car: Node
@@ -39,7 +38,7 @@ var lateral_velocity: float
 var desired_velocity_change: float
 var desired_acceleration: float
 var steer_force: float
-var minimum_drift_threshold: float = 0.5
+var minimum_drift_threshold: float = 3.0
 
 ######## Z Damp variables ########
 var z_damp_direction: Vector3
@@ -81,11 +80,12 @@ func _process(delta: float) -> void:
 			if car.accel_input != 0:
 				if use_as_traction:
 					drift_smoke.amount = ceil(abs(car.accel_input)) * max_drift_smoke_amount/4
+					drift_smoke.lifetime = 2.0
 					drift_smoke.emitting = true
 			else:
 				drift_smoke.emitting = false
 		car.RaceState.RACE:
-			if is_colliding() and abs(lateral_velocity) >= drift_mesh_threshold:
+			if is_colliding() and abs(lateral_velocity) >= minimum_drift_threshold:
 				if use_as_traction:
 					drift_smoke.global_position = collision_point
 					drift_smoke.emitting = true
