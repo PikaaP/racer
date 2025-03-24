@@ -105,4 +105,3 @@ func set_player_choice() -> void:
 		print('player_index in num players', player_index)
 		PlayerManager.players[PlayerManager.players.keys()[player_index]]['selected_car'] = select_car
 		PlayerManager.players[PlayerManager.players.keys()[player_index]]['inputs'] = input_maps[player_index]
-		

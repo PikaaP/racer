@@ -79,7 +79,7 @@ var boost_consumption_rate: float = 0.5
 
 # State machine
 enum RaceState {START, RACE, FINISH}
-enum State {NEUTRAL, DRIVE, DRIFT, RESPAWN}
+enum State {NEUTRAL, DRIVE, DRIFT, DISABLED}
 
 # Starting states 
 var current_state = State.DRIVE
@@ -142,7 +142,8 @@ func _physics_process(delta: float) -> void:
 			
 			normalized_speed = clampf(speed/car_stat_resource.max_speed, 0.0, 1.0)
 			accel_input = desired_velocity.dot(-transform.basis.z) if desired_velocity.dot(-transform.basis.z)!= 0 else -0.5
-
+		RaceState.FINISH:
+			pass
 	# Update wheel visuals
 	wheel_visuals(delta)
 	# Apply Speed effects, speed particles and light trails
@@ -318,6 +319,9 @@ func get_tire_grip(traction: bool = false) -> float:
 # Return bot to checkpoint when out of bounds
 func respawn() -> void:
 	# Hide car during respawn transition
+	current_state = State.DISABLED
+	freeze = true
+	linear_velocity = Vector3.ZERO
 	hide()
 	# Remove collisions
 	set_collision_layer_value(4, false)
@@ -334,7 +338,7 @@ func respawn() -> void:
 	for checkpoint: CheckPoint in checkpoints:
 		# Checkpoint index == players current checkpoint
 		if checkpoint.checkpoint_index == current_checkpoint:
-			
+		
 			var closest_point: Vector3
 			if current_checkpoint == 0:
 				# Find the closest pooint to last known checkpoint
@@ -343,21 +347,24 @@ func respawn() -> void:
 				# Find the closest pooint to last known checkpoint
 				closest_point = path.curve.get_closest_point(path.to_local(checkpoint.global_position))
 
-
-
-
 			# Find index of closest_point in baked points array
 			var closest_point_index: int = points.find(closest_point)
 
 			# Find the closest point from next checkpoint
 			# Get next checkpoint
-			var next_checkpoint_index =  checkpoint.checkpoint_target
+			var next_checkpoint_index: int
+			if current_checkpoint == 0:
+				next_checkpoint_index = 0
+			else:
+				next_checkpoint_index = checkpoint.checkpoint_target
+
 			# Set index to 0 if at final checkpoint
 			if next_checkpoint_index >= checkpoints.size():
 				next_checkpoint_index = 0
 
 			# Find closest point from next checkpoint
 			var future_point: Vector3 = path.curve.get_closest_point(path.to_local(checkpoints[next_checkpoint_index].global_position))
+
 			# Find index of future_point in baked points array
 			var future_point_index: int = points.find(future_point)
 
@@ -389,16 +396,8 @@ func respawn() -> void:
 			# Rotate to look at future point
 			look_at(look_direction)
 			
-			# Find new direction target
-			var new_index: int = mid_point_index + sample_rate
-			# Set new direction target index
-			if new_index >= points.size():
-				points_index = sample_rate * 20
-			else:
-				points_index = new_index
-				
 			# Set car back on track, just above wheel contact
-			global_position = mid_point_position + (checkpoint.global_transform.basis.y * car_stat_resource.wheel_radius * 15)
+			global_position = mid_point_position + (checkpoint.global_transform.basis.y * car_stat_resource.wheel_radius * 2)
 			break
 	
 	# Show car
@@ -406,6 +405,8 @@ func respawn() -> void:
 	# Start collision timer
 	respawn_timer.start()
 	# Hand back player control
+	await get_tree().create_timer(0.25).timeout
+	freeze = false
 	current_state = State.DRIVE
 
 # Enable player/bot collision
@@ -430,3 +431,17 @@ func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add
 func start_race() -> void:
 	lock_rotation = false
 	current_race_state = RaceState.RACE
+
+# Handle  end of race transition
+func finish_race() -> void:
+	current_state = State.DISABLED
+	set_collision_layer_value(4, false)
+	set_collision_layer_value(5, false)
+	set_collision_mask_value(1, false)
+	set_collision_mask_value(2, false)
+	set_collision_mask_value(3, false)
+	set_collision_mask_value(4, false)
+	hide()
+	
+	current_race_state = RaceState.FINISH
+	

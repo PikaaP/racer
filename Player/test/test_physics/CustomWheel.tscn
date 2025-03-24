@@ -16,5 +16,4 @@ mesh = null
 lifetime = 1.0
 
 [node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="."]
-visible = false
 size = Vector3(1, 1, 0.5)

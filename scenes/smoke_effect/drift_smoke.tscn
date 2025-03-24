@@ -16,11 +16,12 @@ emission_sphere_radius = 0.5
 direction = Vector3(0, 1, 0)
 spread = 11.298
 initial_velocity_max = 2.0
+gravity = Vector3(0, -0.1, 0)
 linear_accel_min = -2.23517e-06
 linear_accel_max = 3.0
 linear_accel_curve = SubResource("CurveTexture_vshva")
 anim_speed_min = 1.0
-anim_speed_max = 1.0
+anim_speed_max = 2.0
 turbulence_enabled = true
 turbulence_noise_strength = 0.2
 turbulence_noise_scale = 0.1
@@ -42,6 +43,7 @@ material = SubResource("StandardMaterial3D_dgoq6")
 size = Vector2(3, 3)
 
 [node name="DriftSmoke" type="GPUParticles3D"]
+layers = 4
 transparency = 0.3
 amount = 500
 lifetime = 2.0

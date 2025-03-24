@@ -5,11 +5,12 @@ class_name Track extends Node3D
 
 @onready var track_path: Path3D = $TrackPath
 @onready var start_grid = $StartGrid
-@onready var countdown_ui: CountDown = $UI/CountdownUI
-@onready var leader_board = $UI/LeaderBoard
 
 @export var bot_count: int = 2
 @export var max_lap_count: int = 3
+
+@onready var countdown_ui: CountDown = $UI/CountdownUI
+@onready var race_result = $UI/Result
 
 var ready_confirmation_count: int = 0
 var go_confirmation_count: int = 0
@@ -23,6 +24,9 @@ var test_bot = preload('res://bot/Bot.tscn')
 var is_debug: bool = false
 
 @onready var leaderboard_timer = $LeaderboardTimer
+var time: float = 0.0
+var start_timer: bool = false
+var results_table: Array = []
 
 func _ready() -> void:
 	countdown_ui.race_start.connect(_start_race)
@@ -30,6 +34,11 @@ func _ready() -> void:
 	add_player_to_grid(test_car.instantiate(), 5)
 	add_bot_to_grid()
 	leaderboard_timer.timeout.connect(_update_leaderboard_ticker)
+
+func _process(delta: float) -> void:
+	# Race timer, to track finish time and lap times
+	if start_timer:
+		time += delta
 
 # Add player to track TODO, add player type
 func add_player_to_grid(player: PlayerCar, index: int) -> void:
@@ -39,8 +48,8 @@ func add_player_to_grid(player: PlayerCar, index: int) -> void:
 	player.path = track_path
 	player.max_lap_count = max_lap_count
 	player.checkpoint_array = all_checkpoints
+	player.race_over.connect(_race_over_player)
 	player_holder.add_child(player)
-	
 	all_racers.append(player)
 
 # Add bot to track
@@ -54,6 +63,7 @@ func add_bot_to_grid() -> void:
 		bot.path = track_path
 		bot.max_lap_count = max_lap_count
 		bot.checkpoint_array = all_checkpoints
+		bot.race_over.connect(_race_over_bot)
 		bot_holder.add_child(bot)
 
 		all_racers.append(bot)
@@ -166,6 +176,18 @@ func sort_racer_order() -> Array:
 	var sorted_leader_board: Array = []
 	for racer_index in answer:
 		sorted_leader_board.append([leader_board[racer_index], [leader_board[racer_index].current_lap], [leader_board[racer_index].current_checkpoint], [leader_board[racer_index].distance_to_checkpoint]])
+	
+	# Check what cars have finished theh race and re-insert them into leaderboard
+	if !results_table.is_empty():
+		for fin_car_index in results_table.size():
+			var car = results_table[fin_car_index][1]
+
+			for data_index in sorted_leader_board.size():
+				if sorted_leader_board[data_index][0] == car:
+					var temp_data = sorted_leader_board.pop_at(data_index)
+					sorted_leader_board.insert(fin_car_index, temp_data)
+					break
+
 
 	return sorted_leader_board
 
@@ -194,3 +216,70 @@ func _start_count_down() -> void:
 func _start_race() -> void:
 	get_tree().call_group('player', 'start_race')
 	get_tree().call_group('bot', 'start_race')
+	#start_time = Time.get_unix_time_from_system()
+	start_timer = true
+
+func _race_over_player(player: PlayerCar) -> void:
+	# Get position
+	player.finish_race()
+	var finish_data = get_finish_position(player)
+	print(player.name, ': ', finish_data)
+	# Play finish animation
+	race_result.show()
+	
+	print('*****\n')
+	for i in results_table:
+		print(i)
+	print('\n*****')
+	
+	# Check if other plays are present and also finished
+	var is_last_player: bool = false
+	for fin_player in get_tree().get_nodes_in_group("player"):
+		for element: Array in results_table:
+			if element[1] == fin_player:
+				is_last_player = true
+				break
+
+	# If all players finished
+	# bring up restart, return home menu
+	if is_last_player:
+		$UI/RaceOverMenu.show()
+	# Else spectator mode
+	# Set other player camera to player
+	else:
+		var should_break: bool =  false
+		for i: PlayerCar in all_racers:
+			for element: Array in results_table:
+				if !element.has(i):
+					player.camera = i.camera
+					player.camera.current = true
+					should_break = true
+					break
+			if should_break:
+				break
+
+func _race_over_bot(bot: Bot) -> void:
+	bot.finish_race()
+	var finish_data = get_finish_position(bot)
+	print(bot.name, ' :',finish_data)
+
+# Returns race finish position by time
+func get_finish_position(car) -> Dictionary:
+	var finish_time_delta: float = time
+	var msec: float = fmod(finish_time_delta, 1) * 1000
+	var sec: float  = fmod(finish_time_delta, 60)
+	var min: float = finish_time_delta /60
+	
+	var formatted_m_s_ms: String = '%02d:%02d:%02d' % [min, sec, msec]
+	var actual_m_s_ms = '%s:%s:%s' % [str(min), str(sec), str(msec)]
+
+	results_table.append([finish_time_delta, car])
+	results_table.sort_custom(func(a, b): return a[0] < b[0])
+
+	var ans: int
+	for i in results_table.size():
+		if results_table[i][0] == finish_time_delta and results_table[i][1] == car:
+			ans = i
+			break
+	
+	return {'completion_time' : actual_m_s_ms, 'race_result': ans + 1, 'format': formatted_m_s_ms }

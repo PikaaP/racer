@@ -82,60 +82,6 @@ size_flags_horizontal = 6
 size_flags_vertical = 8
 text = "Select Track"
 
-[node name="MarginContainer2" type="MarginContainer" parent="PlayerConatiner"]
-layout_mode = 2
-
-[node name="SelectTrack" type="Button" parent="PlayerConatiner/MarginContainer2"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 8
-text = "Select Track"
-
-[node name="MarginContainer3" type="MarginContainer" parent="PlayerConatiner"]
-layout_mode = 2
-
-[node name="SelectTrack" type="Button" parent="PlayerConatiner/MarginContainer3"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 8
-text = "Select Track"
-
-[node name="MarginContainer4" type="MarginContainer" parent="PlayerConatiner"]
-layout_mode = 2
-
-[node name="SelectTrack" type="Button" parent="PlayerConatiner/MarginContainer4"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 8
-text = "Select Track"
-
-[node name="MarginContainer5" type="MarginContainer" parent="PlayerConatiner"]
-layout_mode = 2
-
-[node name="SelectTrack" type="Button" parent="PlayerConatiner/MarginContainer5"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 8
-text = "Select Track"
-
-[node name="MarginContainer6" type="MarginContainer" parent="PlayerConatiner"]
-layout_mode = 2
-
-[node name="SelectTrack" type="Button" parent="PlayerConatiner/MarginContainer6"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 8
-text = "Select Track"
-
-[node name="MarginContainer7" type="MarginContainer" parent="PlayerConatiner"]
-layout_mode = 2
-
-[node name="SelectTrack" type="Button" parent="PlayerConatiner/MarginContainer7"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 8
-text = "Select Track"
-
 [node name="SelectTrack" type="PanelContainer" parent="."]
 visible = false
 layout_mode = 1
@@ -209,10 +155,4 @@ text = "Start Game"
 
 [connection signal="pressed" from="Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="PlayerConatiner/MarginContainer/SelectTrack" to="." method="_on_select_track_pressed"]
-[connection signal="pressed" from="PlayerConatiner/MarginContainer2/SelectTrack" to="." method="_on_select_track_pressed"]
-[connection signal="pressed" from="PlayerConatiner/MarginContainer3/SelectTrack" to="." method="_on_select_track_pressed"]
-[connection signal="pressed" from="PlayerConatiner/MarginContainer4/SelectTrack" to="." method="_on_select_track_pressed"]
-[connection signal="pressed" from="PlayerConatiner/MarginContainer5/SelectTrack" to="." method="_on_select_track_pressed"]
-[connection signal="pressed" from="PlayerConatiner/MarginContainer6/SelectTrack" to="." method="_on_select_track_pressed"]
-[connection signal="pressed" from="PlayerConatiner/MarginContainer7/SelectTrack" to="." method="_on_select_track_pressed"]
 [connection signal="pressed" from="SelectTrack/VBoxContainer/VBoxContainer/MarginContainer/StartGame" to="." method="_on_start_game_pressed"]

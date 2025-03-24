@@ -3,7 +3,7 @@ class_name PlayerCar extends RigidBody3D
 # Race ready signal, emited by camera when showcase is over
 signal race_ready()
 # Race over signal, 0 laps remaining
-signal race_over(player: PlayerCar)
+signal race_over(player: PlayerCar, finish_position: int)
 
 # Player instance variables
 # Grid start position (global coordinates)
@@ -144,7 +144,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	distance_to_checkpoint = global_position.distance_to(checkpoint_array[target_checkpoint].global_position)
-	
+
 func _physics_process(delta: float) -> void:
 	match current_race_state:
 		# State for pre race camera showroom
@@ -223,8 +223,8 @@ func _physics_process(delta: float) -> void:
 					# if wheel lateral force is too low, State.DRIFT -> State.DRIVE
 
 				State.DISABLED:
+					# Stop car
 					linear_velocity = Vector3.ZERO
-					#gravity_scale
 
 			# Update current speed variables
 			speed = abs(linear_velocity.dot(transform.basis.z))
@@ -236,7 +236,10 @@ func _physics_process(delta: float) -> void:
 			wheel_visuals(delta)
 			# Apply Speed effects, speed particles and light trails
 			speed_visuals()
-
+		
+		RaceState.FINISH:
+			pass
+		
 # Apply traction force to car center
 func apply_traction(value: int) -> void:
 	apply_central_force(-transform.basis.y  * value)
@@ -334,6 +337,8 @@ func _on_neutral_drive_timeout() -> void:
 func respawn() -> void:
 	# Remove player control by setting state to disabled
 	current_state = State.DISABLED
+	freeze = true
+	linear_velocity = Vector3.ZERO
 	# Hide car during respawn transition
 
 	hide()
@@ -361,21 +366,24 @@ func respawn() -> void:
 				# Find the closest pooint to last known checkpoint
 				closest_point = path.curve.get_closest_point(path.to_local(checkpoint.global_position))
 
-
-			# Find the closest pooint to last known checkpoint
-			closest_point = path.curve.get_closest_point(path.to_local(checkpoint.global_position))
 			# Find index of closest_point in baked points array
 			var closest_point_index: int = points.find(closest_point)
 
 			# Find the closest point from next checkpoint
 			# Get next checkpoint
-			var next_checkpoint_index =  checkpoint.checkpoint_target
+			var next_checkpoint_index: int
+			if current_checkpoint == 0:
+				next_checkpoint_index = 0
+			else:
+				next_checkpoint_index = checkpoint.checkpoint_target
+
 			# Set index to 0 if at final checkpoint
 			if next_checkpoint_index >= checkpoints.size():
 				next_checkpoint_index = 0
 
 			# Find closest point from next checkpoint
 			var future_point: Vector3 = path.curve.get_closest_point(path.to_local(checkpoints[next_checkpoint_index].global_position))
+
 			# Find index of future_point in baked points array
 			var future_point_index: int = points.find(future_point)
 
@@ -408,7 +416,7 @@ func respawn() -> void:
 			look_at(look_direction)
 			
 			# Set car back on track, just above wheel contact
-			global_position = mid_point_position + (checkpoint.global_transform.basis.y * car_stat_resource.wheel_radius * 15)
+			global_position = mid_point_position + (checkpoint.global_transform.basis.y * car_stat_resource.wheel_radius * 2)
 			break
 	
 	# Show car
@@ -418,6 +426,8 @@ func respawn() -> void:
 	# Start collision timer
 	respawn_timer.start()
 	# Hand back player control
+	await get_tree().create_timer(0.25).timeout
+	freeze = false
 	current_state = State.DRIVE
 
 # Enable player/bot collision
@@ -430,7 +440,6 @@ func _handle_respawn() ->void:
 	# Set player collision to true
 	set_collision_mask_value(2, true)
 
-	
 # Update checkpoint count
 func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add_lap: bool = false) -> void:
 	current_checkpoint = new_current_checkpoint
@@ -438,7 +447,6 @@ func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add
 	if add_lap:
 		current_lap += 1
 		if current_lap == max_lap_count +1:
-			print('race over')
 			race_over.emit(self)
 
 	$Label3D.text = 'Current CHeck %s \n target: %s \n %s' % [str(current_checkpoint), str(target_checkpoint), str(current_lap)]
@@ -448,5 +456,20 @@ func start_race() -> void:
 	lock_rotation = false
 	current_race_state = RaceState.RACE
 
+# Handle  end of race transition
+func finish_race() -> void:
+	camera.can_follow = false
+	current_state = State.DISABLED
+	set_collision_layer_value(2, false)
+	set_collision_layer_value(5, false)
+	set_collision_mask_value(1, false)
+	set_collision_mask_value(2, false)
+	set_collision_mask_value(3, false)
+	set_collision_mask_value(4, false)
+	hide()
+	
+	current_race_state = RaceState.FINISH
+
 # TODO
 # add respawn confirmation hit box so cant return collision inside object
+# fix respawn....
