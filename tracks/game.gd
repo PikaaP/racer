@@ -1,48 +1,40 @@
 class_name Game extends Node
 
 @onready var viewport_holder = $ViewportHolder
-@onready var track_holder: Node = $ViewportHolder/SubViewportContainer/SubViewport/Track
+@onready var track_holder: Node = $ViewportHolder/PlayerViewport/TrackHolder
+
 
 @export var selected_track: Track
-@export var max_laps: int = 2
 
-
-var player_camera = preload('res://player/camera/camera_3d.tscn')
-var player_paths = ["res://cars/lambo/Lambo_v1.tscn", "res://cars/lambo/Lambo_v1.tscn", "res://cars/lambo/Lambo_v1.tscn" ]
-var multiplayer_viewport = preload('res://scenes/multiplayer_viewport/MultiPlayerViewport.tscn')
-
-const track = 'res://tracks/test_tracks/TestTrackOval.tscn'
+const PLAYER_CAMERA = preload("res://player/camera/PlayerCamera.tscn")
+const PLAYER_VIEWPORT = preload('res://scenes/player_viewport/PlayerViewport.tscn')
 
 func _ready() -> void:
-	selected_track = preload(track).instantiate()
+	GameManager.current_game = self
+	var game_data: GameInstance = GameManager.get_game_data()
+	selected_track = load(game_data.selected_track_dict['path']).instantiate()
+	selected_track.max_lap_count = game_data.selected_lap_count
+	selected_track.bot_count = game_data.selected_bot_count
+	selected_track.enable_ai = game_data.selected_bot_binary
+
 	track_holder.add_child(selected_track)
-	for i in PlayerManager.num_players -1:
+	for i in PlayerManager.num_players:
+		var player: PlayerCar = load(PlayerManager.players[i]['selected_car']).instantiate()
 		if i == 0:
-			var player: PlayerCar = load(player_paths[i]).instantiate()
-			player.max_lap_count = max_laps
-			player.inputs = PlayerManager.players[i]['inputs']
-			player.player_index = i
-			selected_track.add_to_grid(player, i)
-			var camera = player_camera.instantiate()
+			selected_track.add_player_to_grid(player, i)
+			var camera: PlayerCamera = PLAYER_CAMERA.instantiate()
+			camera.current = true
 			player.camera = camera
-			camera.follow_this = player
-			var port = get_tree().get_nodes_in_group('viewport')[i]
+			camera.follow_target = player
+			var port = get_tree().get_nodes_in_group('sub_viewport')[i]
 			port.add_child(camera)
 		else:
 			print(' adding in game for: ',  i)
-			var viewport = multiplayer_viewport.instantiate()
+			var viewport = PLAYER_VIEWPORT.instantiate()
 			viewport_holder.add_child(viewport)
-			var player: PlayerCar = load(player_paths[i]).instantiate()
-			player.inputs = PlayerManager.players[i]['inputs']
-			player.player_index = i
-			player.max_lap_count = max_laps
-			selected_track.add_to_grid(player, i)
-			var camera = player_camera.instantiate()
+			var camera: PlayerCamera = PLAYER_CAMERA.instantiate()
+			camera.current = true
 			player.camera = camera
 			camera.follow_this = player
 			var port = get_tree().get_nodes_in_group('viewport')[i]
 			port.add_child(camera)
-			
-
-func _handle_player_win(player: PlayerCar) -> void:
-	print('Player %s has won' % player.name)

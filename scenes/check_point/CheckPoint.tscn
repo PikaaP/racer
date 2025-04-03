@@ -48,4 +48,13 @@ transform = Transform3D(30, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
 modulate = Color(1, 1, 1, 0.2)
 texture = ExtResource("1_2qlag")
 
+[node name="RayCast3D" type="RayCast3D" parent="."]
+visible = false
+target_position = Vector3(0, 10, 0)
+debug_shape_thickness = 5
+
+[node name="RayCast3D3" type="RayCast3D" parent="."]
+target_position = Vector3(0, 0, -30)
+debug_shape_thickness = 5
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

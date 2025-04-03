@@ -1,4 +1,4 @@
 extends Node
 
 var players = {}
-var num_players = 1
+var num_players = 0

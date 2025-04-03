@@ -1,7 +1,7 @@
 class_name CarStats extends Resource
 
 # Suspesion stats
-@export var spring_strength: int = 6000
+@export var spring_strength: int
 @export var max_spring_strength: int = spring_strength + 200
 @export var spring_rest_distance: = 0.8
 @export var spring_dampener_strength: float = 350

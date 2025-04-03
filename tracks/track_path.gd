@@ -1,6 +1,8 @@
 @tool
 extends Path3D
 
+@onready var checkpoint_holder: Node3D = $CheckPoints
+
 @export_range(0, 100) var light_count = 0:
 	set(value):
 		light_count = value
@@ -17,17 +19,20 @@ extends Path3D
 	get():
 		return check_points
 
+
 func _ready() -> void:
 	spawn_light()
 	spawn_checkpoints()
-	spawn_vib_area()
+	#spawn_vib_area()
 
 func spawn_checkpoints() -> void:
 	var offsets := []
 	var points  = curve.get_baked_points() 
 	var up_vectors = curve.get_baked_up_vectors()
+	var tilts = curve.get_baked_tilts()
+	
 	# Clear child nodes
-	for child in $CheckPoints.get_children():
+	for child in checkpoint_holder.get_children():
 		child.free()
 	# Set equal offset for all light nodes added
 	for i in range(check_points):
@@ -38,29 +43,33 @@ func spawn_checkpoints() -> void:
 		var index = clamp(int(points.size()) * offsets[offset_index], 0, points.size() -1)
 		var point = points[index]
 		var up_vector = up_vectors[index]
-		var closest_point = curve.get_closest_point(points[index])
+		var tilt = tilts[index]
+		var future_point = points[index + 1]
 
 		# Add light scene as a child of None3D type
 		var _item_holder = Node3D.new()
 
 		_item_holder.name = 'CheckPointsHolder'
-		$CheckPoints.add_child(_item_holder)
+		checkpoint_holder.add_child(_item_holder)
 		_item_holder.translate(point)
+
 		
 		var item = preload("res://scenes/check_point/CheckPoint.tscn").instantiate()
+		
 		item.name = 'CheckPoint'
 		item.checkpoint_index = offset_index
+
+		var offset = curve.get_closest_offset(point)
+		item.transform.basis = curve.sample_baked_with_rotation(offset, false, true).basis
 
 		if offset_index == offsets.size() -1:
 			item.checkpoint_target = 0
 			item.is_start_finish = true
 		else:
 			item.checkpoint_target = offset_index + 1
+
 		
-		item.scale = Vector3(0.015, 0.015, 0.015)
 		_item_holder.add_child(item)
-		
-		item.look_at(points[index+10].direction_to(closest_point) * 400)
 
 func spawn_light() -> void:
 	var offsets := []
@@ -91,9 +100,9 @@ func spawn_light() -> void:
 		
 		var item = preload("res://scenes/track_light/TrackLight.tscn").instantiate()
 		item.name = 'Light'
-		item.scale = Vector3(0.001, .001, .001)
+		#item.scale = Vector3(0.001, .001, .001)
 
-		_item_holder.translate(Vector3.UP * 0.45) 
+		_item_holder.translate(Vector3.UP * 0.45)
 		_item_holder.add_child(item)
 
 func spawn_vib_area() -> void:
@@ -171,5 +180,5 @@ func spawn_left_vib(offsets, points, up_vectors, mid_point) -> void:
 
 func _handle_player_overlap(body) -> void:
 	if body is PlayerCar:
-		Input.start_joy_vibration(body.player_index, 0.5, 0.5, 0.2)
+		#Input.start_joy_vibration(body.player_index, 0.5, 0.5, 0.2)
 		pass

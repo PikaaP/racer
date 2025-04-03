@@ -6,58 +6,89 @@ class_name Track extends Node3D
 @onready var track_path: Path3D = $TrackPath
 @onready var start_grid = $StartGrid
 
-@export var bot_count: int = 2
+@export var bot_count: int = 0
+@export var enable_ai: bool
+
 @export var max_lap_count: int = 3
 
-@onready var countdown_ui: CountDown = $UI/CountdownUI
-@onready var race_result = $UI/Result
 
 var ready_confirmation_count: int = 0
 var go_confirmation_count: int = 0
 
 var all_racers: Array = []
 var all_checkpoints: Array = []
-
-
-var test_car = preload('res://player/test/test_physics/custom_lambo/custom_racer.tscn')
 var test_bot = preload('res://bot/Bot.tscn')
-var is_debug: bool = false
+
+var avalible_grid_slots: Array = []
+var max_grid_slot_size: int = 7
 
 @onready var leaderboard_timer = $LeaderboardTimer
+@onready var track_timer: Timer = $TrackTimer
+
 var time: float = 0.0
 var start_timer: bool = false
 var results_table: Array = []
 
 func _ready() -> void:
-	countdown_ui.race_start.connect(_start_race)
+
+	# Store all checkpoint data
 	all_checkpoints = get_tree().get_nodes_in_group('checkpoint')
-	add_player_to_grid(test_car.instantiate(), 5)
-	add_bot_to_grid()
+
+	# If bots enabled, add bots to grid (number given by bot count)
+	if enable_ai:
+		# Set grid avaible grid slot size to bot count
+		avalible_grid_slots.resize(bot_count + PlayerManager.num_players)
+	
+		# For each bot, add an slot index to grid slot array ( bot count inclusive with +1)
+		for i in bot_count + PlayerManager.num_players:
+			avalible_grid_slots[i] == i
+
+		# Add all bots to grid
+		add_bot_to_grid()
+	
+	else:
+		avalible_grid_slots.resize(PlayerManager.num_players)
+		for i in PlayerManager.num_players:
+			avalible_grid_slots[i] = i
+
+	# Setup leaderboard tickrate timer
 	leaderboard_timer.timeout.connect(_update_leaderboard_ticker)
+	# Setup Track countdown timer
+	track_timer.timeout.connect(_start_race)
 
 func _process(delta: float) -> void:
-	# Race timer, to track finish time and lap times
+	# Race timer, to trrace_startack finish time and lap times
 	if start_timer:
 		time += delta
 
 # Add player to track TODO, add player type
-func add_player_to_grid(player: PlayerCar, index: int) -> void:
-	player.ready.connect(_race_ready_confirmation)
+func add_player_to_grid(player: PlayerCar, player_index) -> void:
+	# Starting grid position
+	var start_grid_index: int
+	
+	var random_index = randi_range(0, avalible_grid_slots.size() -1)
+	start_grid_index = avalible_grid_slots.pop_at(random_index)
+	
 	player.race_ready.connect(_start_count_down)
-	player.start_position = start_grid.get_child(index).global_position
+	player.race_over.connect(_race_over_player)
+
+	player.player_index = player_index
+	player.start_position = start_grid.get_child(start_grid_index).global_position
 	player.path = track_path
 	player.max_lap_count = max_lap_count
 	player.checkpoint_array = all_checkpoints
-	player.race_over.connect(_race_over_player)
+	player.inputs = PlayerManager.players[player_index]['inputs']
+
 	player_holder.add_child(player)
 	all_racers.append(player)
 
-# Add bot to track
+# Add bots to track
 func add_bot_to_grid() -> void:
 	for i in bot_count:
-		if i >= 5:
-			i += 1
-		var start_marker: Marker3D = start_grid.get_child(i)
+		var random_index = randi_range(0, avalible_grid_slots.size() -1)
+		var grid_position = avalible_grid_slots.pop_at(random_index)
+		print(grid_position)
+		var start_marker: Marker3D = start_grid.get_child(grid_position)
 		var bot: Bot = test_bot.instantiate()
 		bot.start_position = start_marker.global_position
 		bot.path = track_path
@@ -67,10 +98,6 @@ func add_bot_to_grid() -> void:
 		bot_holder.add_child(bot)
 
 		all_racers.append(bot)
-
-# Call all player to start car opening
-func get_ready_showcase() -> void:
-	get_tree().call_group('player_camera', 'play_start_animation')
 
 # Finds and returns (in ascending order) the ranking of each racers progression in the race
 func sort_racer_order() -> Array:
@@ -196,27 +223,17 @@ func _update_leaderboard_ticker() -> void:
 	var sorted_leader_board = sort_racer_order()
 	get_tree().call_group('player_camera', 'update_leader_board', sorted_leader_board)
 
-# Once all players are set to ready in the tree, start car display openings
-func _race_ready_confirmation() -> void:
-	if is_debug:
-		_start_race()
-		return
-	
-	ready_confirmation_count += 1
-	if ready_confirmation_count == player_holder.get_child_count():
-		get_ready_showcase()
-
 # Once all players have finished their car openings start race countdown
 func _start_count_down() -> void:
 	go_confirmation_count += 1
 	if go_confirmation_count == player_holder.get_child_count():
-		countdown_ui.start_countdown()
+		get_tree().call_group('player_viewport', 'start_race_countdown')
+		track_timer.start()
 
 # Allow all players/ bots to move :D
 func _start_race() -> void:
 	get_tree().call_group('player', 'start_race')
 	get_tree().call_group('bot', 'start_race')
-	#start_time = Time.get_unix_time_from_system()
 	start_timer = true
 
 func _race_over_player(player: PlayerCar) -> void:
@@ -225,7 +242,7 @@ func _race_over_player(player: PlayerCar) -> void:
 	var finish_data = get_finish_position(player)
 	print(player.name, ': ', finish_data)
 	# Play finish animation
-	race_result.show()
+	
 	
 	print('*****\n')
 	for i in results_table:
@@ -268,10 +285,10 @@ func get_finish_position(car) -> Dictionary:
 	var finish_time_delta: float = time
 	var msec: float = fmod(finish_time_delta, 1) * 1000
 	var sec: float  = fmod(finish_time_delta, 60)
-	var min: float = finish_time_delta /60
+	var m: float = finish_time_delta /60
 	
-	var formatted_m_s_ms: String = '%02d:%02d:%02d' % [min, sec, msec]
-	var actual_m_s_ms = '%s:%s:%s' % [str(min), str(sec), str(msec)]
+	var formatted_m_s_ms: String = '%02d:%02d:%02d' % [m, sec, msec]
+	var actual_m_s_ms = '%s:%s:%s' % [str(m), str(sec), str(msec)]
 
 	results_table.append([finish_time_delta, car])
 	results_table.sort_custom(func(a, b): return a[0] < b[0])
@@ -283,3 +300,16 @@ func get_finish_position(car) -> Dictionary:
 			break
 	
 	return {'completion_time' : actual_m_s_ms, 'race_result': ans + 1, 'format': formatted_m_s_ms }
+
+# Show pause menu to correct viewport when player presses pause
+func _handle_pause(index: int) -> void:
+	var target_viewport: PlayerViewport
+	if index >= 1:
+		target_viewport = get_tree().get_nodes_in_group('player_viewport')[index]
+	else:
+		target_viewport = get_tree().get_first_node_in_group('player_viewport')
+	
+	target_viewport.toggle_race_options_menu()
+
+func show_race_over_menu() -> void:
+	get_tree().call_group('player_viewport', 'show_race_over_ui')

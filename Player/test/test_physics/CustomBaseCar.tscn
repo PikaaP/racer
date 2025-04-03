@@ -15,22 +15,18 @@ center_of_mass_mode = 1
 center_of_mass = Vector3(0, -0.01, 0)
 script = ExtResource("1_5y6pt")
 
-[node name="FrontRightWheel" parent="." node_paths=PackedStringArray("car") instance=ExtResource("2_yf5fj")]
+[node name="FrontRightWheel" parent="." instance=ExtResource("2_yf5fj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
-car = NodePath("..")
 
-[node name="FrontLeftWheel" parent="." node_paths=PackedStringArray("car") instance=ExtResource("2_yf5fj")]
+[node name="FrontLeftWheel" parent="." instance=ExtResource("2_yf5fj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
-car = NodePath("..")
 
-[node name="Wheel3" parent="." node_paths=PackedStringArray("car") instance=ExtResource("2_yf5fj")]
+[node name="Wheel3" parent="." instance=ExtResource("2_yf5fj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
-car = NodePath("..")
 use_as_traction = true
 
-[node name="Wheel4" parent="." node_paths=PackedStringArray("car") instance=ExtResource("2_yf5fj")]
+[node name="Wheel4" parent="." instance=ExtResource("2_yf5fj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
-car = NodePath("..")
 use_as_traction = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

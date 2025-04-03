@@ -49,8 +49,12 @@ var max_dist: int = 0
 var min_dist: int = 10
 
 # Danger assessment variables
-@export var bot_avoidance := 0.1
-@export var player_avoidance: float = 0.3
+# Avoidance for other bots
+@export var bot_avoidance: float = 0.1
+# Avoidance for players
+@export var player_avoidance: float = 0.0
+# Avoidance for other walls
+@export var obstacle_avoidance: float = 0.15
 
 # Race variables
 @export var max_lap_count: int
@@ -82,7 +86,7 @@ enum RaceState {START, RACE, FINISH}
 enum State {NEUTRAL, DRIVE, DRIFT, DISABLED}
 
 # Starting states 
-var current_state = State.DRIVE
+var current_state = State.NEUTRAL
 var current_race_state = RaceState.START
 
 # Timers
@@ -228,13 +232,13 @@ func set_danger() -> void:
 	# For each direction ray, handle ray collision
 	for i in num_rays:
 		# Query danger ray >:D
-		query = PhysicsRayQueryParameters3D.create(ray_holder.global_position, ray_holder.global_position + (ray_directions[i] * ray_length), pow(2, 2-1) + pow(2, 4-1), [self])
+		query = PhysicsRayQueryParameters3D.create(ray_holder.global_position, ray_holder.global_position + (ray_directions[i] * ray_length), pow(2, 2-1) + pow(2, 6-1) + pow(2, 4-1), [self])
 		# Get query result
 		result = space_state.intersect_ray(query)
 		# Handle result, set danger[0,1] (total avoid, ignore)
 		if !result.is_empty():
 			if result.collider.is_in_group('obstacle'):
-				danger_array[i] = 0.1
+				danger_array[i] = obstacle_avoidance
 			elif result.collider.is_in_group('player'):
 				danger_array[i] = player_avoidance
 			elif result.collider.is_in_group('bot'):
@@ -431,6 +435,7 @@ func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add
 func start_race() -> void:
 	lock_rotation = false
 	current_race_state = RaceState.RACE
+	current_state = State.NEUTRAL
 
 # Handle  end of race transition
 func finish_race() -> void:

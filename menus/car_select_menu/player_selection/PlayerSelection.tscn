@@ -1,0 +1,56 @@
+[gd_scene load_steps=3 format=3 uid="uid://dm0mn4yl3au1m"]
+
+[ext_resource type="Script" uid="uid://s0ipx11owc73" path="res://menus/car_select_menu/player_selection/player_selection.gd" id="1_h637j"]
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="1_m1q4i"]
+
+[node name="Player1Selection" type="PanelContainer" groups=["player_selection"]]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_h637j")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="SelectLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Select Your Car"
+horizontal_alignment = 1
+
+[node name="PlayerLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Player Name"
+horizontal_alignment = 1
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer"]
+layout_mode = 2
+texture = ExtResource("1_m1q4i")
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "The Only Car"
+horizontal_alignment = 1
+
+[node name="FindLeft" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "<"
+
+[node name="FindRight" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+text = ">"
+
+[connection signal="pressed" from="FindLeft" to="." method="_on_find_left_pressed"]
+[connection signal="pressed" from="FindRight" to="." method="_on_find_right_pressed"]

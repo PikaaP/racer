@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=4 uid="uid://s3dy7dbjgpte"]
+[gd_scene load_steps=26 format=4 uid="uid://s3dy7dbjgpte"]
 
 [ext_resource type="Script" uid="uid://fejr3x25l27m" path="res://bot/bot.gd" id="1_xgyvj"]
 [ext_resource type="Resource" uid="uid://de6fsrjpwnaaq" path="res://resources/cars/car/test_bot/Bot.tres" id="2_ik225"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://rn2w3fs8e2sq" path="res://cars/dodge/dodge.tscn" id="12_khbf5"]
 [ext_resource type="PackedScene" uid="uid://mbp078t4foy4" path="res://player/effects/light_trail/LightTrailtscn.tscn" id="12_mleqh"]
 [ext_resource type="Texture2D" uid="uid://dml1mbpmfs65y" path="res://addons/albedo.png" id="13_khbf5"]
+[ext_resource type="PackedScene" uid="uid://c0byxb6vlpqvx" path="res://player/camera/PlayerCamera.tscn" id="13_mleqh"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_yf5fj"]
 bounce = 0.1
@@ -103,7 +104,7 @@ size = Vector2(0.05, 0.2)
 
 [node name="Bot" type="RigidBody3D" groups=["bot"]]
 collision_layer = 24
-collision_mask = 15
+collision_mask = 47
 mass = 80.0
 physics_material_override = SubResource("PhysicsMaterial_yf5fj")
 center_of_mass_mode = 1
@@ -260,3 +261,6 @@ size = Vector3(1.75, 0.5, 2)
 [node name="RespawnTimer" type="Timer" parent="."]
 wait_time = 2.5
 one_shot = true
+
+[node name="PlayerCamera" parent="." node_paths=PackedStringArray("follow_target") instance=ExtResource("13_mleqh")]
+follow_target = NodePath("..")

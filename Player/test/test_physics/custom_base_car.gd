@@ -14,7 +14,7 @@ signal race_over(player: PlayerCar, finish_position: int)
 @export var player_index: int 
 
 # Player camera (set to current)
-@onready var camera: PlayerCamera = $PlayerCamera
+@export var camera: PlayerCamera
 
 # Checkpoint status and lap tracking
 # Checkpoint refernce for all checkpoints returned by Track class
@@ -106,8 +106,6 @@ var boost_regen_rate_drift: float = 0.2
 # Boost consumption rates :D
 var boost_consumption_rate: float = 0.5
 
-# Constant -y axis force applied to car
-var traction_value: int = 10000
 
 func _ready() -> void:
 	lock_rotation = true
@@ -137,10 +135,22 @@ func _ready() -> void:
 	
 	respawn_timer.timeout.connect(_handle_respawn)
 
-# TODO remove ;D
-func _unhandled_input(event: InputEvent) -> void:
+
+func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
+	pass
+
+
+func _input(event: InputEvent) -> void:
+	match current_race_state:
+		RaceState.RACE:
+			if event.is_action_pressed(inputs['buttons']['menu']['control_string']):
+				get_tree().call_group('track', '_handle_pause', player_index)
+		_:
+			pass
+	# TODO REMOVE
 	if event.is_action_pressed("reset"):
 		get_tree().reload_current_scene()
+
 
 func _process(delta: float) -> void:
 	distance_to_checkpoint = global_position.distance_to(checkpoint_array[target_checkpoint].global_position)
@@ -150,40 +160,50 @@ func _physics_process(delta: float) -> void:
 		# State for pre race camera showroom
 		RaceState.START:
 			# Apply traction
-			apply_traction(traction_value)
+			apply_traction()
 
 			# Keep player in position, allow for y axis_movement
 			global_position.x = start_position.x
 			global_position.z = start_position.z
 
 			# Get player inputs
-			accel_input = Input.get_action_strength('ui_up') - Input.get_action_strength('ui_down')
-			steer_input = Input.get_action_strength('ui_right') - Input.get_action_strength('ui_left')
-
+			# Acceleration
+			
+			accel_input = (Input.get_action_strength(inputs['motions']['up']['control_string']) - Input.get_action_strength(inputs['motions']['down']['control_string']))
+			# Steering
+			steer_input = Input.get_action_strength(inputs['motions']['left']['control_string']) - Input.get_action_strength(inputs['motions']['right']['control_string']) * 0.8
+			
 			# Apply visual-input response
 			steering(delta)
 			wheel_visuals(delta)
-
 		# State for active race participation, Set by main level
 		RaceState.RACE:
 			# Get player inputs, shared across states
+			# Get player inputs
 			# Acceleration
-			accel_input = Input.get_action_strength('ui_up') - Input.get_action_strength('ui_down')
+			accel_input = (Input.get_action_strength(inputs['motions']['up']['control_string']) - Input.get_action_strength(inputs['motions']['down']['control_string']))
 			# Steering
-			steer_input = Input.get_action_strength('ui_right') - Input.get_action_strength('ui_left')
+			steer_input = Input.get_action_strength(inputs['motions']['left']['control_string']) - Input.get_action_strength(inputs['motions']['right']['control_string']) * 0.8
+
+			#if accel_input != 0:
+				#linear_damp = 1
+			#else:
+				#linear_damp = lerpf(linear_damp, 50, delta )
+			#
+
 			# Boost start input
-			if Input.is_action_pressed("boost") and accel_input != 0:
+			if Input.is_action_pressed(inputs['buttons']["boost"]['control_string']) and accel_input != 0:
 				apply_boost()
 
 			# Boost stop input
-			if Input.is_action_just_released("boost"):
+			if Input.is_action_just_released(inputs['buttons']["boost"]['control_string']):
 				current_boost_multiplier = 1.0
 
 			# State Machine, car function state
 			match current_state:
 				State.NEUTRAL:
 					# Apply traction
-					apply_traction(traction_value)
+					apply_traction()
 
 					# Exit condition
 					# On receving acceleration input, ensure torque boost timer starts/has started\
@@ -193,10 +213,10 @@ func _physics_process(delta: float) -> void:
 
 				State.DRIVE:
 					# Apply traction
-					apply_traction(traction_value)
+					apply_traction()
 
-					#
-					if Input.is_action_just_pressed("drift"):
+					#Enter drift state
+					if Input.is_action_just_pressed(inputs['buttons']["drift"]['control_string']):
 						current_state = State.DRIFT
 
 					# If boost bar is not full, restore boost
@@ -212,7 +232,7 @@ func _physics_process(delta: float) -> void:
 
 				State.DRIFT:
 					# Apply traction
-					apply_traction(traction_value)
+					apply_traction()
 					
 					# If boost bar is not full, restore boost
 					# Restore amount is increased when boosting
@@ -240,9 +260,10 @@ func _physics_process(delta: float) -> void:
 		RaceState.FINISH:
 			pass
 		
-# Apply traction force to car center
-func apply_traction(value: int) -> void:
-	apply_central_force(-transform.basis.y  * value)
+# Apply traction force to car center of mass
+func apply_traction() -> void:
+	var y_dir = path.curve.sample_baked_up_vector(path.curve.get_closest_offset(path.to_local(global_position)), true)
+	apply_force(-y_dir  * mass * 20 *normalized_speed, $COMMID.position)
 
 # Consume boost
 func apply_boost() -> void:
@@ -468,8 +489,11 @@ func finish_race() -> void:
 	set_collision_mask_value(4, false)
 	hide()
 	
+	get_tree().call_group('track', '_handle_race_over', player_index)
 	current_race_state = RaceState.FINISH
+	
+	# TODO player finish anim
 
 # TODO
 # add respawn confirmation hit box so cant return collision inside object
-# fix respawn....
+# Add wrong way detection

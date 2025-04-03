@@ -4,15 +4,23 @@ class_name PlayerCamera extends Camera3D
 @onready var speed_kph = $Hud/UI/Speed
 @onready var leader_board = $Hud/UI/LeaderBoard
 
-@export var follow_target: PlayerCar
+#@export var follow_target: PlayerCar
+@export var follow_target: Node
+
+
+
 @export var target_distance = 3.25
 @export var target_height = 2.0
 @export var move_transform_speed: float = 8.5
 
+@export var target_drift_distance: float = 2.5
+@export var target_drift_height: float = 1.5
+@export var move_transform_drift_speed: float = 10.0
+
 @export var max_look_follow_speed: float = 16.0
 @export var look_follow_speed: float
 
-@export var max_drift_follow_speed: float = 8.0
+@export var max_drift_follow_speed: float = 18.0
 @export var drift_follow_speed: float
 
 var last_lookat: Vector3
@@ -25,15 +33,26 @@ func _ready():
 	drift_follow_speed = max_drift_follow_speed
 
 	last_lookat = follow_target.global_position
+	
+	play_start_animation()
 
 func _physics_process(delta: float) -> void:
 	if can_follow:
 		# Calculate target location
-		var target_location: Vector3 = follow_target.global_transform.origin + follow_target.transform.basis.y * target_height +  follow_target.transform.basis.z * target_distance
-
+		var target_location: Vector3
+		
+		if follow_target.current_state != follow_target.State.DRIFT:
+			target_location = follow_target.global_transform.origin + follow_target.transform.basis.y * target_height +  follow_target.transform.basis.z * target_distance
+		else:
+			target_location = follow_target.global_transform.origin + follow_target.transform.basis.y * target_drift_height +  follow_target.transform.basis.z * target_drift_distance
+		
 		# Move to target location if car drifts away
 		if global_transform.origin.distance_to(target_location) >= 0.1:
-			global_transform.origin = global_transform.origin.lerp(target_location, move_transform_speed * delta)
+			if follow_target.current_state != follow_target.State.DRIFT:
+				global_transform.origin = global_transform.origin.lerp(target_location, move_transform_speed * delta)
+			else:
+				global_transform.origin = global_transform.origin.lerp(target_location, move_transform_drift_speed * delta)
+				
 		# When close to car, lerp to target position
 		else:
 			global_transform.origin = global_transform.origin.lerp(target_location, delta)
@@ -55,7 +74,7 @@ func _physics_process(delta: float) -> void:
 		# Calculate new location to look at from last_look_at
 		look_at_target = last_lookat.lerp(follow_target.global_position, look_follow_speed * delta)
 		# Face camera to target
-		look_at(look_at_target)
+		look_at(look_at_target, follow_target.transform.basis.y)
 		# Store previous frame orientation 
 		last_lookat = look_at_target
 		
@@ -72,6 +91,7 @@ func _process(delta: float) -> void:
 
 # Handle race start animation
 func play_start_animation() -> void:
+	current = true
 	$motion_blur.get_surface_override_material(0).set_shader_parameter('start_radius', 0)
 	var tween_bar = get_tree().create_tween()
 	tween_bar.set_parallel()
@@ -101,6 +121,10 @@ func play_start_animation() -> void:
 func move_to_position(new_position: Vector3) -> void:
 	global_position = new_position
 	can_follow = false
+
+
+func update_lap_count_ui(new_current_lap: int) -> void:
+	pass
 
 func update_leader_board(sorted_leader_board: Array) -> void:
 	for child in leader_board.get_children():

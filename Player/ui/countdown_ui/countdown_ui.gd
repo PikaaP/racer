@@ -1,7 +1,5 @@
 class_name CountDown extends Control
 
-signal race_start()
-
 @onready var count_down_timer: Timer = $StartTimer
 @onready var main_count: Label = $HBoxContainer/MainCount
 @onready var sub_count: Label = $HBoxContainer/SubCount
@@ -27,7 +25,6 @@ func _on_start_timer_timeout() -> void:
 	start_timer = false
 	main_count.hide()
 	sub_count.hide()
-	race_start.emit()
 	$HBoxContainer/Dot.text = 'GO!'
 	await get_tree().create_timer(0.75).timeout
 	hide()

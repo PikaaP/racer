@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://domtrhyhp37d3"]
+
+[ext_resource type="Script" uid="uid://bjod0hg1f8wb4" path="res://scenes/player_viewport/player_viewport.gd" id="1_s3qcj"]
+[ext_resource type="PackedScene" uid="uid://b25r4pkrsxn8w" path="res://player/ui/countdown_ui/countdown_ui.tscn" id="2_vdamb"]
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="3_g4j34"]
+[ext_resource type="PackedScene" uid="uid://bgvy8eky705m5" path="res://menus/race_over_menu/race_over.tscn" id="4_gnpx6"]
+
+[node name="PlayerViewport" type="SubViewportContainer" groups=["player_viewport"]]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch = true
+script = ExtResource("1_s3qcj")
+
+[node name="SubViewport" type="SubViewport" parent="." groups=["sub_viewport"]]
+handle_input_locally = false
+audio_listener_enable_3d = true
+size = Vector2i(2, 2)
+render_target_update_mode = 4
+
+[node name="UI" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="CountdownUI" parent="UI" instance=ExtResource("2_vdamb")]
+
+[node name="Result" type="Sprite2D" parent="UI"]
+visible = false
+position = Vector2(585, 303)
+texture = ExtResource("3_g4j34")
+
+[node name="OptionsMenu" parent="UI" instance=ExtResource("4_gnpx6")]
+visible = false

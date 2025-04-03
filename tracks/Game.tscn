@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cliupv70pcueq"]
+[gd_scene load_steps=3 format=3 uid="uid://cliupv70pcueq"]
 
 [ext_resource type="Script" uid="uid://irtv8rsye4h2" path="res://tracks/game.gd" id="1_utesd"]
+[ext_resource type="PackedScene" uid="uid://domtrhyhp37d3" path="res://scenes/player_viewport/PlayerViewport.tscn" id="2_vdqrv"]
 
 [node name="Game" type="Node"]
 script = ExtResource("1_utesd")
@@ -12,16 +13,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="ViewportHolder"]
+[node name="PlayerViewport" parent="ViewportHolder" instance=ExtResource("2_vdqrv")]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="ViewportHolder/SubViewportContainer" groups=["viewport"]]
-handle_input_locally = false
-audio_listener_enable_3d = true
+[node name="SubViewport" parent="ViewportHolder/PlayerViewport" index="0"]
 size = Vector2i(1152, 648)
-render_target_update_mode = 4
 
-[node name="Track" type="Node" parent="ViewportHolder/SubViewportContainer/SubViewport"]
+[node name="TrackHolder" type="Node" parent="ViewportHolder/PlayerViewport"]
+
+[editable path="ViewportHolder/PlayerViewport"]

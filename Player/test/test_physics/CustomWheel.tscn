@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bsjve54h03vls" path="res://scenes/smoke_effect/drift_smoke.tscn" id="3_npckj"]
 
 [node name="CustomWheel" type="RayCast3D"]
+collision_mask = 11
 script = ExtResource("1_skdhb")
 
 [node name="DriftMesh" parent="." instance=ExtResource("2_bai6t")]

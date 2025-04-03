@@ -1,4 +1,4 @@
-extends PanelContainer
+class_name RaceOptionsMenu extends PanelContainer
 
 @onready var restart_button: Button = $VBoxContainer/Restart
 @onready var change_car_button: Button = $VBoxContainer/TrackCarSelect
@@ -13,7 +13,7 @@ func _handle_restart() -> void:
 	get_tree().reload_current_scene()
 
 func _handle_select_new_track_car() -> void:
-	get_tree().change_scene_to_file("res://menus/main_menu/main_menu.tscn")
+	get_tree().change_scene_to_file("res://menus/car_select_menu/CarSelectMenu.tscn")
 
 func _handle_quit_button() -> void:
-	get_tree().change_scene_to_file("res://menus/main_menu/main_menu.tscn")
+	get_tree().change_scene_to_file("res://menus/car_select_menu/CarSelectMenu.tscn")

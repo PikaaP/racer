@@ -10,6 +10,7 @@ var is_drifting: bool = false
 var car: Node
 var grip: float
 
+
 ######## Suspension variables ########
 var previous_spring_length: float = 0.0
 var force_direction: Vector3
@@ -39,6 +40,7 @@ var desired_velocity_change: float
 var desired_acceleration: float
 var steer_force: float
 var minimum_drift_threshold: float = 3.0
+var tire_mass: int = 10
 
 ######## Z Damp variables ########
 var z_damp_direction: Vector3
@@ -51,27 +53,29 @@ func _ready() -> void:
 	car = get_parent()
 	target_position = Vector3(0, -car.car_stat_resource.wheel_radius, 0)
 
+
 func _physics_process(delta: float) -> void:
-	if not Engine.is_editor_hint():
-		if is_colliding():
-			collision_point = get_collision_point()
+	# Apply forces if colliding
+	if is_colliding():
+		# Get collision point
+		collision_point = get_collision_point()
 
-			# Find point to aplly spring force to
-			point = Vector3(collision_point.x, collision_point.y + car.car_stat_resource.wheel_radius, collision_point.z)
-			# Get tire velocity
-			tire_velocity = get_point_velocity(global_position)
-			
-			# Always apply suspension and deceleration forces 
-			# Apply suspension
-			apply_suspension(delta)
+		# Find point to aplly spring force to
+		point = Vector3(collision_point.x, collision_point.y + car.car_stat_resource.wheel_radius, collision_point.z)
+		# Get tire velocity
+		tire_velocity = get_point_velocity(global_position)
+		
+		# Always apply suspension and deceleration forces 
+		# Apply suspension
+		apply_suspension(delta)
 
-			# Apply movement forces
-			if car.current_race_state == car.RaceState.RACE:
-				apply_x_force(delta)
-				apply_acceleration(delta)
-				# Slow down car if not actively accelerating
-				if car.accel_input == 0:
-					apply_z_force(delta)
+		# Apply movement forces
+		if car.current_race_state == car.RaceState.RACE:
+			apply_acceleration(delta)
+			apply_x_force(delta)
+			# Slow down car if not actively accelerating
+			#if car.accel_input == 0:
+				#apply_z_force(delta)
 
 func _process(delta: float) -> void:
 	# Check if should draw mesh
@@ -111,13 +115,16 @@ func apply_suspension(delta: float) -> void:
 		spring_velocity = (previous_spring_length - current_spring_length) / delta
 		
 		# Calculate spring force
-		spring_force = offset * car.car_stat_resource.spring_strength
 		
+		var upper = 1
+		var spring_mulit = 1
+		var damp_multi = 0.5
+		
+		spring_force = offset * car.car_stat_resource.spring_strength * spring_mulit
 		# Calculate dampener force
-		dampener_force = spring_velocity * car.car_stat_resource.spring_dampener_strength
-		
+		dampener_force = spring_velocity * car.car_stat_resource.spring_dampener_strength * damp_multi
 		# Calculate total suspension force
-		suspension_force = basis.y * (clamp(spring_force + dampener_force, -car.car_stat_resource.max_spring_strength, car.car_stat_resource.max_spring_strength))
+		suspension_force = basis.y * (clamp(spring_force + dampener_force, -car.car_stat_resource.max_spring_strength * upper, car.car_stat_resource.max_spring_strength * upper))
 
 		# Store new spring length value
 		previous_spring_length = current_spring_length
@@ -136,21 +143,22 @@ func apply_acceleration(delta) -> void:
 
 	# Accelerate by avalible torque
 	torque = car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque) if car.current_state != car.State.NEUTRAL else car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque * 2)
-	
+
 	if car.current_boost_multiplier!= 1.0:
 		torque += car.car_stat_resource.max_torque/2 * car.current_boost_multiplier
 
 
 	# Apply force to car :D
 	car.apply_force(acceleration_direction * torque, point - car.global_position)
+	
 
 # Control steering
 func apply_x_force(delta) -> void:
-	var collision_point = get_collision_point()
-	var point = Vector3(collision_point.x, collision_point.y + car.car_stat_resource.wheel_radius, collision_point.z)
-	
+	#var collision_point = get_collision_point()
+	#var point = Vector3(collision_point.x, collision_point.y + car.car_stat_resource.wheel_radius, collision_point.z)
+
 	# Get horizontal axis
-	steer_direction = global_basis.x
+	steer_direction =  global_basis.x
 
 	# Calculate velocity in the sliding direction (opposite to steering)
 	lateral_velocity = steer_direction.dot(tire_velocity)
@@ -158,15 +166,15 @@ func apply_x_force(delta) -> void:
 	# Scale steering direction velocity grip, (grip value is between [0,1])
 	# Increase desired velocity if car is in neutral state
 	if use_as_traction:
-		desired_velocity_change = -lateral_velocity * car.get_tire_grip(true) if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /2
+		desired_velocity_change = -lateral_velocity * car.get_tire_grip(true) if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /3
 	else:
-		desired_velocity_change = -lateral_velocity * car.get_tire_grip() if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /2.1
+		desired_velocity_change = -lateral_velocity * car.get_tire_grip() if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /3.1
 
 	# Calculate target acceleration
 	desired_acceleration = desired_velocity_change/delta
 
 	# Multplily accelration by mass value to get force, TODO
-	steer_force = desired_acceleration * 15
+	steer_force = desired_acceleration * tire_mass * 3
 
 	# Apply force to car :D
 	car.apply_force(steer_direction * steer_force, point - car.global_position)
@@ -174,6 +182,7 @@ func apply_x_force(delta) -> void:
 	# Add force in opposite direction of steering to simulate drifting
 	if car.current_state == car.State.DRIFT:
 		car.apply_force(steer_direction * -(car.speed * car.accel_input) * car.steer_input, point - car.global_position)
+
 		# Transition out of drift if drift force is low
 		if abs(lateral_velocity) < minimum_drift_threshold:
 			car.current_state = car.State.DRIVE
@@ -182,10 +191,7 @@ func apply_x_force(delta) -> void:
 func apply_z_force(delta):
 	z_damp_direction = global_basis.z
 	z_damp_force = z_damp_direction.dot(tire_velocity) * car.mass/8
-	
 	car.apply_force(-z_damp_direction * z_damp_force, collision_point - car.global_position)
-
-	#DebugDraw3D.draw_arrow_ray(global_position, -z_damp_direction, z_damp_force/10 , Color.CRIMSON)
 
 # Get velocity at a single point in world space
 func get_point_velocity(point: Vector3) -> Vector3:

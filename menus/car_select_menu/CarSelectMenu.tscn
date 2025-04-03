@@ -1,0 +1,225 @@
+[gd_scene load_steps=4 format=3 uid="uid://bkp6jasr0gegw"]
+
+[ext_resource type="Script" uid="uid://bag5bexujp55t" path="res://menus/car_select_menu/car_select_menu.gd" id="1_qoidb"]
+[ext_resource type="Script" uid="uid://c066dimaosfnp" path="res://menus/car_select_menu/select_track.gd" id="3_1sqt2"]
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="3_c2iqj"]
+
+[node name="CarSelectMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qoidb")
+
+[node name="PlayerConatiner" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SelectCar" type="GridContainer" parent="PlayerConatiner"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 3
+
+[node name="Player1Selection" type="PanelContainer" parent="PlayerConatiner/SelectCar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Join" type="Label" parent="PlayerConatiner/SelectCar/Player1Selection"]
+layout_mode = 2
+text = "Press X to Join"
+horizontal_alignment = 1
+
+[node name="Player2Selection" type="PanelContainer" parent="PlayerConatiner/SelectCar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Join" type="Label" parent="PlayerConatiner/SelectCar/Player2Selection"]
+layout_mode = 2
+text = "Press X to Join"
+horizontal_alignment = 1
+
+[node name="Player3Selection" type="PanelContainer" parent="PlayerConatiner/SelectCar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Join" type="Label" parent="PlayerConatiner/SelectCar/Player3Selection"]
+layout_mode = 2
+text = "Press X to Join"
+horizontal_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="PlayerConatiner"]
+layout_mode = 2
+
+[node name="SelectTrack" type="Button" parent="PlayerConatiner/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 8
+disabled = true
+text = "Select Track"
+
+[node name="SelectTrack" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.25
+anchor_right = 0.9
+anchor_bottom = 0.75
+grow_horizontal = 2
+script = ExtResource("3_1sqt2")
+
+[node name="VBoxContainer" type="HBoxContainer" parent="SelectTrack"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Settings" type="VBoxContainer" parent="SelectTrack/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+alignment = 1
+
+[node name="LapSettings" type="HBoxContainer" parent="SelectTrack/VBoxContainer/Settings"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+alignment = 1
+
+[node name="Laps" type="Label" parent="SelectTrack/VBoxContainer/Settings/LapSettings"]
+layout_mode = 2
+text = "Laps: "
+
+[node name="MenuButton" type="MenuButton" parent="SelectTrack/VBoxContainer/Settings/LapSettings"]
+layout_mode = 2
+text = "3"
+item_count = 4
+popup/item_0/text = "1"
+popup/item_0/id = 0
+popup/item_1/text = "3"
+popup/item_1/id = 1
+popup/item_2/text = "5"
+popup/item_2/id = 2
+popup/item_3/text = "7"
+popup/item_3/id = 3
+
+[node name="AISettings" type="VBoxContainer" parent="SelectTrack/VBoxContainer/Settings"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="AIToggle" type="HBoxContainer" parent="SelectTrack/VBoxContainer/Settings/AISettings"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="AI" type="CheckButton" parent="SelectTrack/VBoxContainer/Settings/AISettings/AIToggle"]
+layout_mode = 2
+text = "AI:"
+
+[node name="AISelection" type="Label" parent="SelectTrack/VBoxContainer/Settings/AISettings/AIToggle"]
+layout_mode = 2
+text = "Off"
+
+[node name="NumBots" type="VBoxContainer" parent="SelectTrack/VBoxContainer/Settings/AISettings"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="SelectTrack/VBoxContainer/Settings/AISettings/NumBots"]
+layout_mode = 2
+text = "Number of bots: "
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SelectTrack/VBoxContainer/Settings/AISettings/NumBots"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="LeftArrow" type="Button" parent="SelectTrack/VBoxContainer/Settings/AISettings/NumBots/HBoxContainer"]
+layout_mode = 2
+text = "<"
+
+[node name="Label" type="Label" parent="SelectTrack/VBoxContainer/Settings/AISettings/NumBots/HBoxContainer"]
+layout_mode = 2
+text = "0"
+
+[node name="RightArrow" type="Button" parent="SelectTrack/VBoxContainer/Settings/AISettings/NumBots/HBoxContainer"]
+layout_mode = 2
+text = ">"
+
+[node name="BotDifficulty" type="VBoxContainer" parent="SelectTrack/VBoxContainer/Settings/AISettings"]
+layout_mode = 2
+
+[node name="BotDifficulty" type="Label" parent="SelectTrack/VBoxContainer/Settings/AISettings/BotDifficulty"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Bot Difficulty: "
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="SelectTrack/VBoxContainer/Settings/AISettings/BotDifficulty"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="LeftArrow" type="Button" parent="SelectTrack/VBoxContainer/Settings/AISettings/BotDifficulty/HBoxContainer2"]
+layout_mode = 2
+text = "<"
+
+[node name="Label" type="Label" parent="SelectTrack/VBoxContainer/Settings/AISettings/BotDifficulty/HBoxContainer2"]
+layout_mode = 2
+text = "0"
+
+[node name="RightArrow" type="Button" parent="SelectTrack/VBoxContainer/Settings/AISettings/BotDifficulty/HBoxContainer2"]
+layout_mode = 2
+text = ">"
+
+[node name="MarginContainer" type="MarginContainer" parent="SelectTrack/VBoxContainer/Settings"]
+layout_mode = 2
+size_flags_vertical = 6
+
+[node name="StartGame" type="Button" parent="SelectTrack/VBoxContainer/Settings/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+text = "Start Game"
+
+[node name="Track" type="VBoxContainer" parent="SelectTrack/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TrackThumbnail" type="TextureRect" parent="SelectTrack/VBoxContainer/Track"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("3_c2iqj")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SelectTrack/VBoxContainer/Track"]
+layout_mode = 2
+alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="SelectTrack/VBoxContainer/Track/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_right = 100
+
+[node name="TrackSelectLeft" type="Button" parent="SelectTrack/VBoxContainer/Track/HBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "<"
+
+[node name="TrackName" type="Label" parent="SelectTrack/VBoxContainer/Track/HBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TrackSelectRight" type="Button" parent="SelectTrack/VBoxContainer/Track/HBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = ">"
+
+[connection signal="pressed" from="PlayerConatiner/MarginContainer/SelectTrack" to="." method="_on_select_track_pressed"]
