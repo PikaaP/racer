@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://beduouckbn3l2"
+path="res://.godot/imported/peel1.ogg-1021c98e379ed1a44a3e1bd9687b427a.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/temp/tyre sounds/peel1.ogg"
+dest_files=["res://.godot/imported/peel1.ogg-1021c98e379ed1a44a3e1bd9687b427a.oggvorbisstr"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -30,7 +30,7 @@ var point: Vector3
 
 ######## Acceleration variables ########
 var acceleration_direction: Vector3
-var torque: float
+var acceleration_force: float
 
 ######## Turning variables ########
 var steer_direction: Vector3
@@ -74,8 +74,8 @@ func _physics_process(delta: float) -> void:
 			apply_acceleration(delta)
 			apply_x_force(delta)
 			# Slow down car if not actively accelerating
-			#if car.accel_input == 0:
-				#apply_z_force(delta)
+			if car.accel_input == 0:
+				apply_z_force(delta)
 
 func _process(delta: float) -> void:
 	# Check if should draw mesh
@@ -142,15 +142,15 @@ func apply_acceleration(delta) -> void:
 	acceleration_direction = -global_basis.z
 
 	# Accelerate by avalible torque
-	torque = car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque) if car.current_state != car.State.NEUTRAL else car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque * 2)
-
-	if car.current_boost_multiplier!= 1.0:
-		torque += car.car_stat_resource.max_torque/2 * car.current_boost_multiplier
-
+	#torque = car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque) if car.current_state != car.State.NEUTRAL else car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque * 2)
+	
+	acceleration_force = car.get_engine_power()
+	
+	#if car.current_boost_multiplier!= 1.0:
+		#torque += car.car_stat_resource.max_torque/2 * car.current_boost_multiplier
 
 	# Apply force to car :D
-	car.apply_force(acceleration_direction * torque, point - car.global_position)
-	
+	car.apply_force(acceleration_direction * acceleration_force, point - car.global_position)
 
 # Control steering
 func apply_x_force(delta) -> void:
@@ -174,7 +174,7 @@ func apply_x_force(delta) -> void:
 	desired_acceleration = desired_velocity_change/delta
 
 	# Multplily accelration by mass value to get force, TODO
-	steer_force = desired_acceleration * tire_mass * 3
+	steer_force = desired_acceleration * tire_mass * 2.5
 
 	# Apply force to car :D
 	car.apply_force(steer_direction * steer_force, point - car.global_position)

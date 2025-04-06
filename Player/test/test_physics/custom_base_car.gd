@@ -68,6 +68,9 @@ var bl_visual_start_position: Vector3
 # Camera Points
 @onready var camera_points = $CameraShowCase
 
+@onready var engine: CarEngine = $Engine
+@onready var exhaust = $ExhaustHolder/Exhaust
+
 # Car function variables
 var accel_input: float
 var steer_input: float
@@ -134,6 +137,9 @@ func _ready() -> void:
 	points = path.curve.get_baked_points()
 	
 	respawn_timer.timeout.connect(_handle_respawn)
+	
+	# Setup Engine
+	engine.emit_exaust.connect(_handle_exaust_emmision)
 
 
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
@@ -308,8 +314,8 @@ func wheel_visuals(delta) -> void:
 		rotation_direction = -1 if accel_input > 0 else 1
 		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.z * delta)
 		fr_wheel_visual.rotate_x(rotation_direction * linear_velocity.z * delta)
-		br_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * 100 * delta)
-		bl_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * 100 * delta)
+		br_wheel_visual.rotate_x(rotation_direction * engine.power_output * 100 * delta)
+		bl_wheel_visual.rotate_x(rotation_direction * engine.power_output * 100 * delta)
 	elif int(linear_velocity.z) != 0:
 		# If moving, spin wheels in direction of forward velocity
 		rotation_direction = -1  if linear_velocity.dot(basis.z) > 0 else 1
@@ -340,8 +346,16 @@ func speed_visuals() -> void:
 		speed_lines_shader.visible = true
 
 # Return torque value from torque graph
-func get_torque(curent_normalized_speed: float) -> float:
-	return car_stat_resource.torque_curve.sample(curent_normalized_speed)
+#func get_torque(curent_normalized_speed: float) -> float:
+	#return car_stat_resource.torque_curve.sample(curent_normalized_speed)
+
+# Return current engine power
+func get_engine_power() -> float:
+	return engine.power_output
+
+# Emit exhaust effects when changing gear
+func _handle_exaust_emmision() -> void:
+	exhaust.pop()
 
 # Returns tire grip (between 0,1)
 func get_tire_grip(traction: bool = false) -> float:

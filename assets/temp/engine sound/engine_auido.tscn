@@ -1,0 +1,94 @@
+[gd_scene load_steps=10 format=3 uid="uid://djg4qn8hee0mv"]
+
+[ext_resource type="Script" uid="uid://clr68cb27w72k" path="res://assets/temp/engine sound/crossfade.gd" id="1_7n0vi"]
+[ext_resource type="AudioStream" uid="uid://bkkoot68twjko" path="res://assets/temp/engine sound/1.ogg" id="2_8rh6s"]
+[ext_resource type="AudioStream" uid="uid://d3ewemgj1vg7k" path="res://assets/temp/engine sound/2.ogg" id="3_3eove"]
+[ext_resource type="AudioStream" uid="uid://bhguxlfve8n0x" path="res://assets/temp/engine sound/3.ogg" id="4_m6gip"]
+[ext_resource type="AudioStream" uid="uid://c27gyh8fpf5au" path="res://assets/temp/engine sound/4.ogg" id="5_xap3w"]
+[ext_resource type="AudioStream" uid="uid://blhuk5ogyr0mf" path="res://assets/temp/engine sound/5.ogg" id="6_c5kp2"]
+[ext_resource type="AudioStream" uid="uid://nelworh1b8xh" path="res://assets/temp/engine sound/6.ogg" id="7_f0f8a"]
+[ext_resource type="AudioStream" uid="uid://iabcstljmgk5" path="res://assets/temp/engine sound/7.ogg" id="8_bkxdv"]
+[ext_resource type="AudioStream" uid="uid://cv6unf4l8is7j" path="res://assets/temp/engine sound/8.ogg" id="9_d076n"]
+
+[node name="engine_sound" type="Node3D"]
+script = ExtResource("1_7n0vi")
+
+[node name="450000" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_8rh6s")
+unit_size = 50.0
+max_db = -24.0
+pitch_scale = 0.01
+area_mask = 512
+attenuation_filter_db = 0.0
+
+[node name="100" type="Node" parent="450000"]
+
+[node name="300000" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_3eove")
+unit_size = 50.0
+max_db = -24.0
+pitch_scale = 0.01
+area_mask = 512
+attenuation_filter_db = 0.0
+
+[node name="100" type="Node" parent="300000"]
+
+[node name="225000" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4_m6gip")
+unit_size = 50.0
+max_db = -24.0
+pitch_scale = 0.01
+area_mask = 512
+attenuation_filter_db = 0.0
+
+[node name="100" type="Node" parent="225000"]
+
+[node name="178750" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_xap3w")
+unit_size = 50.0
+max_db = -24.0
+pitch_scale = 0.01
+area_mask = 512
+attenuation_filter_db = 0.0
+
+[node name="100" type="Node" parent="178750"]
+
+[node name="150500" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_c5kp2")
+unit_size = 50.0
+max_db = -24.0
+pitch_scale = 0.01
+area_mask = 512
+attenuation_filter_db = 0.0
+
+[node name="100" type="Node" parent="150500"]
+
+[node name="126500" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("7_f0f8a")
+unit_size = 50.0
+max_db = -24.0
+pitch_scale = 0.01
+area_mask = 512
+attenuation_filter_db = 0.0
+
+[node name="100" type="Node" parent="126500"]
+
+[node name="112750" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("8_bkxdv")
+unit_size = 50.0
+max_db = -24.0
+pitch_scale = 0.01
+area_mask = 512
+attenuation_filter_db = 0.0
+
+[node name="100" type="Node" parent="112750"]
+
+[node name="100500" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("9_d076n")
+unit_size = 50.0
+max_db = -24.0
+pitch_scale = 0.01
+area_mask = 512
+attenuation_filter_db = 0.0
+
+[node name="100" type="Node" parent="100500"]

@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://bofcgv6havugw"
+path="res://.godot/imported/whine_low.ogg-ee5cb0ca001ed754d30ac92045abf8e5.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/temp/mechanical sounds/whine_low.ogg"
+dest_files=["res://.godot/imported/whine_low.ogg-ee5cb0ca001ed754d30ac92045abf8e5.oggvorbisstr"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

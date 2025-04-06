@@ -47,19 +47,15 @@ func _handle_joy_connection(index: int, is_connecting: bool) -> void:
 		PlayerManager.num_players  -= 1
 
 		if PlayerManager.num_players < 1:
-			select_track_button.disabled = false
+			select_track_button.disabled = true
 
 		PlayerManager.players.erase(index)
 		print('removing player: ', index)
 		select_car.get_child(index).get_child(0).queue_free()
-		var container = PanelContainer.new()
-		container.set_h_size_flags(2)
-		container.set_v_size_flags(2)
 		var join_label = Label.new()
 		join_label.text = 'Press "X" to join'
 		join_label.set_horizontal_alignment(1)
-		container.add_child(join_label)
-		select_car.add_child(join_label)
+		select_car.get_child(index).add_child(join_label)
 		input_maps.remove_at(index)
 
 func add_player_controls(player_index: int) -> void:

@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://uaitq1p6frlr"
+path="res://.godot/imported/spool.ogg-cb151646745c15367e5fd2fa9a8ce67d.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/temp/mechanical sounds/spool.ogg"
+dest_files=["res://.godot/imported/spool.ogg-cb151646745c15367e5fd2fa9a8ce67d.oggvorbisstr"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

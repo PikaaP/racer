@@ -260,7 +260,8 @@ func _race_over_player(player: PlayerCar) -> void:
 	# If all players finished
 	# bring up restart, return home menu
 	if is_last_player:
-		$UI/RaceOverMenu.show()
+		#$UI/RaceOverMenu.show()
+		pass
 	# Else spectator mode
 	# Set other player camera to player
 	else:

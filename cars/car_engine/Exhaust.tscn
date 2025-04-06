@@ -1,0 +1,54 @@
+[gd_scene load_steps=9 format=3 uid="uid://p2jkm1bauv8k"]
+
+[ext_resource type="Script" uid="uid://b2jrrsbeoka7y" path="res://cars/car_engine/exhaust.gd" id="1_5nn7l"]
+[ext_resource type="Texture2D" uid="uid://i2nekj5plmr6" path="res://assets/temp/backfire_particles/backfire.png" id="1_r3mut"]
+[ext_resource type="AudioStream" uid="uid://di357id10md3u" path="res://assets/temp/mechanical sounds/backfire.ogg" id="3_qyie4"]
+
+[sub_resource type="Curve" id="Curve_r3mut"]
+_data = [Vector2(0.0377358, 0.209062), 0.0, -0.331453, 0, 0, Vector2(1, 0.0996764), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_5nn7l"]
+curve = SubResource("Curve_r3mut")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ipjf3"]
+lifetime_randomness = 0.39
+emission_shape = 1
+emission_sphere_radius = 0.1
+direction = Vector3(0, 0, -1)
+gravity = Vector3(0, 0, 1)
+linear_accel_min = -28.58
+linear_accel_max = 100.0
+scale_curve = SubResource("CurveTexture_5nn7l")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r3mut"]
+transparency = 1
+albedo_texture = ExtResource("1_r3mut")
+emission_enabled = true
+emission = Color(1, 0.391375, 0.225474, 1)
+emission_energy_multiplier = 12.35
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_5nn7l"]
+material = SubResource("StandardMaterial3D_r3mut")
+
+[node name="Exhaust" type="Node3D"]
+script = ExtResource("1_5nn7l")
+
+[node name="ExhaustEffects" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 100
+lifetime = 0.1
+one_shot = true
+explosiveness = 0.5
+randomness = 0.25
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_ipjf3")
+draw_pass_1 = SubResource("PlaneMesh_5nn7l")
+
+[node name="SoundEffect" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_qyie4")
+unit_size = 50.0
+max_db = -24.0
+pitch_scale = 0.01
+area_mask = 512
+attenuation_filter_db = 0.0
