@@ -6,3 +6,4 @@ extends Node
 # Emit the one time exhaust effects
 func pop() -> void:
 	pop_effect.emitting = true
+	pop_sound.play()

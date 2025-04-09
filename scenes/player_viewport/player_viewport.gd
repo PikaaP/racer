@@ -12,6 +12,7 @@ func start_race_countdown() -> void:
 func toggle_race_options_menu() -> void:
 	options_menu.visible = !options_menu.visible
 
+
 # Show race over screen
 func show_race_over_ui() -> void:
 	options_menu.visible = true

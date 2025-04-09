@@ -311,6 +311,7 @@ func _handle_pause(index: int) -> void:
 		target_viewport = get_tree().get_first_node_in_group('player_viewport')
 	
 	target_viewport.toggle_race_options_menu()
+	get_tree().paused = true
 
 func show_race_over_menu() -> void:
 	get_tree().call_group('player_viewport', 'show_race_over_ui')

@@ -44,7 +44,7 @@ var track_data: Array = [
 	{
 		'track_name': 'Test Track WIP',
 		'thumbnail': "res://icon.svg",
-		'path': "res://WIPTRACK.tscn",
+		'path': "res://tracks/test_tracks/WIPTRACK.tscn",
 	},
 ]
 

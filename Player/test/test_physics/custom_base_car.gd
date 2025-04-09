@@ -5,6 +5,10 @@ signal race_ready()
 # Race over signal, 0 laps remaining
 signal race_over(player: PlayerCar, finish_position: int)
 
+signal start_boost()
+signal stop_boost()
+
+
 # Player instance variables
 # Grid start position (global coordinates)
 @export var start_position: Vector3
@@ -94,21 +98,6 @@ var current_race_state = RaceState.START
 # Respawn timer to re-enable PlayerCar and Bot collisions
 @onready var respawn_timer: Timer = $RespawnTimer
 
-# BOOST VARIBLES !!!
-# Maximum avalible boost
-var max_boost_reserve: float = 10.0
-# Boost currently availble
-var current_boost_reserve: float
-# BOOST POWER (parsed to wheels to multiply acceleration force)
-var current_boost_multiplier: float = 1.0
-# MAX BOOST POWER (parsed to wheels to multiply acceleration force)
-var max_boost_multiplier: float = 2.0
-# Boost regen rates ><
-var boost_regen_rate_drive: float = 0.1
-var boost_regen_rate_drift: float = 0.2
-# Boost consumption rates :D
-var boost_consumption_rate: float = 0.5
-
 
 func _ready() -> void:
 	lock_rotation = true
@@ -132,18 +121,12 @@ func _ready() -> void:
 	neutral_transition_timer.timeout.connect(_on_neutral_drive_timeout)
 	neutral_transition_timer.one_shot = true
 	
-	current_boost_reserve = max_boost_reserve
-	
 	points = path.curve.get_baked_points()
 	
 	respawn_timer.timeout.connect(_handle_respawn)
 	
 	# Setup Engine
 	engine.emit_exaust.connect(_handle_exaust_emmision)
-
-
-func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
-	pass
 
 
 func _input(event: InputEvent) -> void:
@@ -191,11 +174,6 @@ func _physics_process(delta: float) -> void:
 			# Steering
 			steer_input = Input.get_action_strength(inputs['motions']['left']['control_string']) - Input.get_action_strength(inputs['motions']['right']['control_string']) * 0.8
 
-			#if accel_input != 0:
-				#linear_damp = 1
-			#else:
-				#linear_damp = lerpf(linear_damp, 50, delta )
-			#
 
 			# Boost start input
 			if Input.is_action_pressed(inputs['buttons']["boost"]['control_string']) and accel_input != 0:
@@ -203,7 +181,7 @@ func _physics_process(delta: float) -> void:
 
 			# Boost stop input
 			if Input.is_action_just_released(inputs['buttons']["boost"]['control_string']):
-				current_boost_multiplier = 1.0
+				stop_boost.emit()
 
 			# State Machine, car function state
 			match current_state:
@@ -227,9 +205,7 @@ func _physics_process(delta: float) -> void:
 
 					# If boost bar is not full, restore boost
 					# Restore amount is standard rate
-					if current_boost_reserve < max_boost_reserve:
-						current_boost_reserve = regen_boost(boost_regen_rate_drive)
-	
+
 					# Exit condition
 					# If not moving (approx.) and there is no acceleration input\
 					# transition to neutral state
@@ -242,9 +218,7 @@ func _physics_process(delta: float) -> void:
 					
 					# If boost bar is not full, restore boost
 					# Restore amount is increased when boosting
-					if current_boost_reserve < max_boost_reserve:
-						current_boost_reserve = regen_boost(boost_regen_rate_drift)
-						
+
 					# TO NOTE, State exit condition is controlled by wheels\
 					# if wheel lateral force is too low, State.DRIFT -> State.DRIVE
 
@@ -254,7 +228,7 @@ func _physics_process(delta: float) -> void:
 
 			# Update current speed variables
 			speed = abs(linear_velocity.dot(transform.basis.z))
-			normalized_speed = clampf(speed/car_stat_resource.max_speed, 0.0, 1.0)
+			normalized_speed = engine.get_normalized_power_output()
 
 			# Control steering
 			steering(delta)
@@ -269,20 +243,11 @@ func _physics_process(delta: float) -> void:
 # Apply traction force to car center of mass
 func apply_traction() -> void:
 	var y_dir = path.curve.sample_baked_up_vector(path.curve.get_closest_offset(path.to_local(global_position)), true)
-	apply_force(-y_dir  * mass * 20 *normalized_speed, $COMMID.position)
+	apply_force(-y_dir  * mass * 40 *normalized_speed, $COMMID.position)
 
-# Consume boost
+# Signal engine to consume boost
 func apply_boost() -> void:
-	current_boost_reserve -= boost_consumption_rate
-	if current_boost_reserve > 0:
-		current_boost_multiplier = max_boost_multiplier
-	else:
-		current_boost_reserve = 0
-		current_boost_multiplier = 1.0
-
-# Regenerate boost by given rate per delta
-func regen_boost(regen_rage: float) -> float:
-	return clampf(current_boost_reserve + regen_rage, current_boost_reserve, max_boost_reserve)
+	start_boost.emit()
 
 # Control steering for front wheels
 func steering(delta: float) -> void: 
@@ -327,7 +292,7 @@ func wheel_visuals(delta) -> void:
 
 # Emit speed effects when going x% of max speed
 func speed_visuals() -> void:
-	if !normalized_speed >= 0.75:
+	if !normalized_speed >= 0.75 or linear_velocity.dot(-basis.z) <= 0.1:
 		speed_particles.emitting = false
 		# Fade light trail out slowly
 		left_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
@@ -344,10 +309,6 @@ func speed_visuals() -> void:
 		right_light_trail.material_override.albedo_color = Color(car_stat_resource.light_trail_color, lerpf(right_light_trail.material_override.albedo_color.a, 0.010,  normalized_speed/200))
 		# Show speed lines >>>>!
 		speed_lines_shader.visible = true
-
-# Return torque value from torque graph
-#func get_torque(curent_normalized_speed: float) -> float:
-	#return car_stat_resource.torque_curve.sample(curent_normalized_speed)
 
 # Return current engine power
 func get_engine_power() -> float:

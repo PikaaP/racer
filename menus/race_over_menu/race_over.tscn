@@ -17,6 +17,7 @@ script = ExtResource("1_ovhy4")
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+alignment = 1
 
 [node name="Restart" type="Button" parent="VBoxContainer"]
 layout_mode = 2
@@ -29,3 +30,12 @@ text = "Change Track and Car"
 [node name="MainMenu" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "main menu"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 20
+
+[node name="Back" type="Button" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+text = "Back To Race
+"

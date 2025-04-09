@@ -6,11 +6,11 @@
 [sub_resource type="Curve" id="Curve_qfy3u"]
 _limits = [0.0, 45000.0, 0.0, 10000.0]
 bake_resolution = 1000
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(2644.95, 22500), 0.0, 0.0, 0, 0, Vector2(7420.21, 41805), 0.0, 0.0, 0, 0, Vector2(9000, 37215), 0.0, 0.0, 0, 0, Vector2(9000, 37215), 0.0, 0.0, 0, 0]
-point_count = 5
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(2644.95, 22500), 0.0, 0.0, 0, 0, Vector2(7420.21, 41805), 0.0, 0.0, 0, 0, Vector2(10000, 42437.6), 0.753194, 0.0, 0, 0]
+point_count = 4
 
 [sub_resource type="Curve" id="Curve_wd5m2"]
-_limits = [0.0, 25068.2, 0.0, 45000.0]
+_limits = [0.0, 25100.0, 0.0, 45000.0]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1310.68, 25068.2), 0.0, 0.0, 0, 0, Vector2(12160.2, 21954.4), -0.107625, -0.107625, 0, 0, Vector2(45000, 25068.2), 0.0, 0.0, 0, 0]
 point_count = 4
 
@@ -34,17 +34,17 @@ grow_vertical = 2
 
 [node name="Gear" type="Label" parent="Control"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = 86.0
-offset_right = 20.0
-offset_bottom = 109.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -133.0
+offset_top = -377.0
+offset_right = -93.0
+offset_bottom = -354.0
+grow_horizontal = 0
+grow_vertical = 0
 text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -56,31 +56,50 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = 49.0
-offset_right = 20.0
-offset_bottom = 72.0
+offset_left = 313.0
+offset_top = 252.0
+offset_right = 353.0
+offset_bottom = 275.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
 
 [node name="RPM" type="ProgressBar" parent="Control"]
-custom_minimum_size = Vector2(200, 0)
+custom_minimum_size = Vector2(40, 300)
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -2.0
-offset_top = -21.5
-offset_right = 2.0
-offset_bottom = 21.5
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -131.0
+offset_top = -335.0
+offset_right = -91.0
+offset_bottom = -35.0
+grow_horizontal = 0
+grow_vertical = 0
 theme_override_colors/font_outline_color = Color(0.954458, 0, 0.151785, 1)
 theme_override_styles/fill = SubResource("StyleBoxFlat_wd5m2")
 max_value = 9000.0
 step = 10.0
 value = 1000.0
+fill_mode = 3
+
+[node name="Boost" type="ProgressBar" parent="Control"]
+custom_minimum_size = Vector2(40, 300)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -75.0
+offset_top = -336.0
+offset_right = -35.0
+offset_bottom = -36.0
+grow_horizontal = 0
+grow_vertical = 0
+step = 1.0
+rounded = true
+fill_mode = 3

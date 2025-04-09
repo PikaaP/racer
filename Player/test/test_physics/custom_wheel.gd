@@ -142,12 +142,7 @@ func apply_acceleration(delta) -> void:
 	acceleration_direction = -global_basis.z
 
 	# Accelerate by avalible torque
-	#torque = car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque) if car.current_state != car.State.NEUTRAL else car.get_torque(car.normalized_speed) * (car.accel_input * car.car_stat_resource.max_torque * 2)
-	
 	acceleration_force = car.get_engine_power()
-	
-	#if car.current_boost_multiplier!= 1.0:
-		#torque += car.car_stat_resource.max_torque/2 * car.current_boost_multiplier
 
 	# Apply force to car :D
 	car.apply_force(acceleration_direction * acceleration_force, point - car.global_position)
