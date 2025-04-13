@@ -39,8 +39,8 @@ var lateral_velocity: float
 var desired_velocity_change: float
 var desired_acceleration: float
 var steer_force: float
-var minimum_drift_threshold: float = 3.0
-var tire_mass: int = 10
+var minimum_drift_threshold: float = 2.0
+var tire_mass: int = 8
 
 ######## Z Damp variables ########
 var z_damp_direction: Vector3
@@ -149,14 +149,11 @@ func apply_acceleration(delta) -> void:
 
 # Control steering
 func apply_x_force(delta) -> void:
-	#var collision_point = get_collision_point()
-	#var point = Vector3(collision_point.x, collision_point.y + car.car_stat_resource.wheel_radius, collision_point.z)
-
 	# Get horizontal axis
-	steer_direction =  global_basis.x
+	steer_direction = global_basis.x
 
 	# Calculate velocity in the sliding direction (opposite to steering)
-	lateral_velocity = steer_direction.dot(tire_velocity)
+	lateral_velocity = steer_direction.dot(tire_velocity) * 50
 
 	# Scale steering direction velocity grip, (grip value is between [0,1])
 	# Increase desired velocity if car is in neutral state
@@ -169,7 +166,7 @@ func apply_x_force(delta) -> void:
 	desired_acceleration = desired_velocity_change/delta
 
 	# Multplily accelration by mass value to get force, TODO
-	steer_force = desired_acceleration * tire_mass * 2.5
+	steer_force = desired_acceleration * tire_mass
 
 	# Apply force to car :D
 	car.apply_force(steer_direction * steer_force, point - car.global_position)

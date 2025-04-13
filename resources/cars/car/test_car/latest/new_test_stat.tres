@@ -1,7 +1,6 @@
-[gd_resource type="Resource" script_class="CarStats" load_steps=5 format=3 uid="uid://gfmwlrow5o23"]
+[gd_resource type="Resource" script_class="CarStats" load_steps=4 format=3 uid="uid://gfmwlrow5o23"]
 
 [ext_resource type="Curve" uid="uid://ey7rhb0t3wqs" path="res://resources/cars/car/test_car/front_grip_curve.tres" id="1_on8l1"]
-[ext_resource type="Curve" uid="uid://utrqb3c525ad" path="res://resources/cars/car/test_car/rear_grip_curve.tres" id="2_lwr4n"]
 [ext_resource type="Script" uid="uid://b15ay3vef27tn" path="res://resources/cars/car_stats.gd" id="3_7ioni"]
 [ext_resource type="Curve" uid="uid://dxi1bg6r1ia2y" path="res://resources/cars/car/test_car/torque_curve.tres" id="4_qskau"]
 
@@ -15,7 +14,7 @@ wheel_radius = 0.9
 front_grip = 1.0
 rear_grip = 1.0
 front_grip_curve = ExtResource("1_on8l1")
-rear_grip_curve = ExtResource("2_lwr4n")
+rear_grip_curve = ExtResource("1_on8l1")
 steering_angle = 30
 steer_speed = 1.1
 steer_limit = 0.8

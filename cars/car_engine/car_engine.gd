@@ -88,8 +88,9 @@ func _physics_process(delta: float) -> void:
 			current_rpm = max_reverse_rpm * abs(accel_input)
 			power_output = accel_input * reverse_speed
 			$Control/Gear.text = 'current gear: ' + str('R')
-			$Control/SPEED.text ='speed_output: ' + str(power_output)
+			$Control/Speed.text = str(roundi(abs(get_parent().linear_velocity.dot(get_parent().transform.basis.z)*3.8))) +"  KMPH"
 			$Control/RPM.value = current_rpm
+			$Control/Boost.value = current_boost_reserve
 			return
 		# Handle deceleration through braking
 		else:
@@ -104,8 +105,9 @@ func _physics_process(delta: float) -> void:
 			power_output = calculate_power_output()
 
 			$Control/Gear.text = 'current gear: ' + str('R')
-			$Control/SPEED.text ='speed_output: ' + str(power_output)
+			$Control/Speed.text = str(roundi(abs(get_parent().linear_velocity.dot(get_parent().transform.basis.z)*3.8))) +"  KMPH"
 			$Control/RPM.value = current_rpm
+			$Control/Boost.value = current_boost_reserve
 			return
 		# Handle deceleration from any fowrward drive gears
 		current_rpm = max(current_rpm - deceleration_rate, 0)
@@ -136,7 +138,7 @@ func _physics_process(delta: float) -> void:
 
 	# Update Ui in drive
 	$Control/Gear.text = 'current gear: ' + str(current_gear)
-	$Control/SPEED.text ='speed_output: ' + str(power_output)
+	$Control/Speed.text = str(roundi(abs(get_parent().linear_velocity.dot(get_parent().transform.basis.z)*3.8))) +"  KMPH"
 	$Control/RPM.value = current_rpm
 	$Control/Boost.value = current_boost_reserve
 

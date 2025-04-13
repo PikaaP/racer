@@ -100,9 +100,8 @@ func spawn_light() -> void:
 		
 		var item = preload("res://scenes/track_light/TrackLight.tscn").instantiate()
 		item.name = 'Light'
-		#item.scale = Vector3(0.001, .001, .001)
 
-		_item_holder.translate(Vector3.UP * 0.45)
+		_item_holder.translate(Vector3.UP * 10)
 		_item_holder.add_child(item)
 
 func spawn_vib_area() -> void:

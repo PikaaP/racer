@@ -23,17 +23,14 @@ func _ready() -> void:
 		if i == 0:
 			selected_track.add_player_to_grid(player, i)
 			var camera: PlayerCamera = PLAYER_CAMERA.instantiate()
-			camera.current = true
 			player.camera = camera
 			camera.follow_target = player
 			var port = get_tree().get_nodes_in_group('sub_viewport')[i]
 			port.add_child(camera)
 		else:
-			print(' adding in game for: ',  i)
 			var viewport = PLAYER_VIEWPORT.instantiate()
 			viewport_holder.add_child(viewport)
 			var camera: PlayerCamera = PLAYER_CAMERA.instantiate()
-			camera.current = true
 			player.camera = camera
 			camera.follow_this = player
 			var port = get_tree().get_nodes_in_group('viewport')[i]

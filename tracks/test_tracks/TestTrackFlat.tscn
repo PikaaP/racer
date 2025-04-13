@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dn1ndl8pl6vkl"]
 
-[ext_resource type="Script" uid="uid://djrh8c4d1i2mx" path="res://tracks/test_tracks/test_track.gd" id="1_0yqjd"]
+[ext_resource type="Script" uid="uid://djrh8c4d1i2mx" path="res://tracks/track.gd" id="1_0yqjd"]
 [ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="1_1qkmk"]
 [ext_resource type="Texture2D" uid="uid://cpwiyoo7664vj" path="res://assets/testing/texture_10.png" id="2_8eju5"]
 [ext_resource type="PackedScene" uid="uid://b25r4pkrsxn8w" path="res://player/ui/countdown_ui/countdown_ui.tscn" id="5_akr5t"]

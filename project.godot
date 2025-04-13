@@ -33,6 +33,7 @@ player_camera=""
 obstacle="wall collider "
 player_viewport=""
 sub_viewport=""
+track_path=""
 
 [input]
 

@@ -1,0 +1,176 @@
+[gd_scene load_steps=8 format=3 uid="uid://b2gbrhx6sa15d"]
+
+[ext_resource type="Script" uid="uid://djrh8c4d1i2mx" path="res://tracks/track.gd" id="1_ubs63"]
+[ext_resource type="Script" uid="uid://dykyfb2vnm0dg" path="res://tracks/track_path.gd" id="2_lw7sr"]
+[ext_resource type="Material" uid="uid://drbtshamtiyev" path="res://resources/track/materials/curb/red_white_curb.tres" id="3_vyih6"]
+[ext_resource type="Material" uid="uid://dtq6n1hnyg388" path="res://resources/track/materials/road/Track_3_road.tres" id="4_6ys3w"]
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="5_ap4b4"]
+[ext_resource type="PackedScene" uid="uid://umwpvwyej07v" path="res://scenes/respawn_area/RespawnArea.tscn" id="6_i8t4m"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_phjtq"]
+size = Vector3(500, 100, 500)
+
+[node name="Home" type="Node3D"]
+script = ExtResource("1_ubs63")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.781869, 0.623443, 0, -0.623443, 0.781869, 0, 35.7599, 53.1034)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="TrackPath" type="Path3D" parent="."]
+script = ExtResource("2_lw7sr")
+
+[node name="Inner" type="CSGPolygon3D" parent="TrackPath"]
+transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, 0)
+use_collision = true
+collision_mask = 0
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 0.01
+path_simplify_angle = 0.0
+path_rotation = 2
+path_rotation_accurate = false
+path_local = false
+path_continuous_u = true
+path_u_distance = 1.5
+path_joined = true
+material = ExtResource("3_vyih6")
+
+[node name="Vib" type="Node3D" parent="TrackPath/Inner"]
+
+[node name="InnerWall" type="CSGPolygon3D" parent="TrackPath" groups=["obstacle"]]
+transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, 0)
+use_collision = true
+collision_layer = 32
+collision_mask = 0
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 0.01
+path_simplify_angle = 0.0
+path_rotation = 2
+path_rotation_accurate = false
+path_local = false
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
+
+[node name="Outer" type="CSGPolygon3D" parent="TrackPath"]
+transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, 0)
+use_collision = true
+collision_mask = 0
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 0.01
+path_simplify_angle = 0.0
+path_rotation = 2
+path_rotation_accurate = false
+path_local = false
+path_continuous_u = true
+path_u_distance = 1.5
+path_joined = true
+material = ExtResource("3_vyih6")
+
+[node name="OuterWall" type="CSGPolygon3D" parent="TrackPath" groups=["obstacle"]]
+transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, 0)
+use_collision = true
+collision_layer = 32
+collision_mask = 0
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 0.01
+path_simplify_angle = 0.0
+path_rotation = 2
+path_rotation_accurate = false
+path_local = false
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
+
+[node name="Road" type="CSGPolygon3D" parent="TrackPath"]
+transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, 0)
+use_collision = true
+collision_mask = 0
+material = ExtResource("4_6ys3w")
+
+[node name="TrackLights" type="Node3D" parent="TrackPath"]
+
+[node name="CheckPoints" type="Node3D" parent="TrackPath"]
+
+[node name="StartGrid" type="Node3D" parent="."]
+transform = Transform3D(0.999999, 0, 0, 0, 1, 0, 0, 0, 0.999999, 0, 0, 0)
+
+[node name="BotStart" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0541515, 0.270311, 11.887)
+
+[node name="Sprite3D" type="Sprite3D" parent="StartGrid/BotStart"]
+texture = ExtResource("5_ap4b4")
+
+[node name="BotStart1" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.08898, 2.46801, 13.3684)
+
+[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart1"]
+texture = ExtResource("5_ap4b4")
+
+[node name="BotStart2" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.50952, 2.46801, 17.2921)
+
+[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart2"]
+texture = ExtResource("5_ap4b4")
+
+[node name="BotStart3" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.9567, 2.46801, 19.8086)
+
+[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart3"]
+texture = ExtResource("5_ap4b4")
+
+[node name="BotStart4" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.57899, 2.46801, 26.3369)
+
+[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart4"]
+texture = ExtResource("5_ap4b4")
+
+[node name="BotStart5" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8346, 2.46801, 31.3559)
+
+[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart5"]
+texture = ExtResource("5_ap4b4")
+
+[node name="BotStart6" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.1756, 2.46801, 41.3911)
+
+[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart6"]
+texture = ExtResource("5_ap4b4")
+
+[node name="BotStart7" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.8519, 2.46801, 42.7781)
+
+[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart7"]
+texture = ExtResource("5_ap4b4")
+
+[node name="RespawnArea" parent="." instance=ExtResource("6_i8t4m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50, 0)
+
+[node name="CollisionShape3D" parent="RespawnArea" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.2449, -16.2573, -2.74254)
+shape = SubResource("BoxShape3D_phjtq")
+
+[node name="BotHolder" type="Node" parent="."]
+
+[node name="PlayerHolder" type="Node" parent="."]
+
+[node name="LeaderboardTimer" type="Timer" parent="."]
+wait_time = 0.5
+autostart = true
+
+[node name="TrackTimer" type="Timer" parent="."]
+wait_time = 3.0
+
+[node name="TrackCamera" type="Camera3D" parent="."]
+
+[editable path="RespawnArea"]

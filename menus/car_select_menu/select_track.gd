@@ -42,9 +42,9 @@ var track_data: Array = [
 		'path': "res://tracks/test_tracks/BotOvalTester.tscn",
 	},
 	{
-		'track_name': 'Test Track WIP',
+		'track_name': 'Home',
 		'thumbnail': "res://icon.svg",
-		'path': "res://tracks/test_tracks/WIPTRACK.tscn",
+		'path': "res://tracks/track_series_0/Home.tscn",
 	},
 ]
 

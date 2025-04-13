@@ -18,7 +18,6 @@ subsurf_scatter_enabled = true
 subsurf_scatter_texture = ExtResource("3_2rseb")
 refraction_enabled = true
 refraction_texture = ExtResource("3_2rseb")
-uv1_scale = Vector3(2, 2, 2)
 grow_amount = 2.391
 proximity_fade_enabled = true
 proximity_fade_distance = 0.2

@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6cvpfmwjneur"]
+
+[ext_resource type="Script" uid="uid://v8i8082u5qup" path="res://tracks/track_camera/camera_path.gd" id="1_n2voh"]
+
+[node name="CameraPath" type="Path3D" groups=["track_path"]]
+script = ExtResource("1_n2voh")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="."]
+transform = Transform3D(0.999996, 0, 0, 0, 0.999994, 0, 0, 0, 0.999999, 0, 0, 0)
+loop = false
+
+[node name="TrackCamera" type="Camera3D" parent="PathFollow3D"]

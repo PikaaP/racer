@@ -1,13 +1,9 @@
 class_name PlayerCamera extends Camera3D
 
 # HUD
-@onready var speed_kph = $Hud/UI/Speed
 @onready var leader_board = $Hud/UI/LeaderBoard
 
-#@export var follow_target: PlayerCar
 @export var follow_target: Node
-
-
 
 @export var target_distance = 3.25
 @export var target_height = 2.0
@@ -28,13 +24,12 @@ var can_follow: bool = true
 var rng = RandomNumberGenerator
 
 func _ready():
-	global_position= follow_target.get_node('CameraShowCase').get_child(0).global_position
+	global_position = follow_target.get_node('CameraShowCase').get_child(0).global_position
 	look_follow_speed = max_look_follow_speed
 	drift_follow_speed = max_drift_follow_speed
 
 	last_lookat = follow_target.global_position
-	
-	play_start_animation()
+
 
 func _physics_process(delta: float) -> void:
 	if can_follow:
@@ -84,10 +79,6 @@ func _physics_process(delta: float) -> void:
 			var rand_x = randf_range(-0.008, 0.008)
 			global_position += Vector3(rand_x, rand_y, 0)
 
-func _process(delta: float) -> void:
-	# Update HUD
-	# Update speed
-	speed_kph.text=str(round(follow_target.speed*3.8))+"  KMPH"
 
 # Handle race start animation
 func play_start_animation() -> void:
@@ -111,7 +102,6 @@ func play_start_animation() -> void:
 	tween_bar_out.tween_property($Effects/ColorRectTop, 'custom_minimum_size', Vector2(0, 0), 1 )
 	tween_bar_out.tween_property($Effects/ColorRectBot, 'custom_minimum_size', Vector2(0, 0), 1 )
 	tween_bar_out.chain()
-	
 	await get_tree().create_timer(1.0).timeout
 	
 	follow_target.race_ready.emit()

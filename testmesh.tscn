@@ -1,0 +1,45 @@
+[gd_scene load_steps=3 format=4 uid="uid://dc5ej7so44s14"]
+
+[ext_resource type="Script" uid="uid://bnlclg22wtvtp" path="res://testmesh.gd" id="1_ljfsg"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ljfsg"]
+_surfaces = [{
+"aabb": AABB(0, 0, 0, 1, 0.707107, 0.707107),
+"format": 34359738369,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("AAAAAPMENT/zBDU/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAP/MENT/zBDU/AAAAAPMENT/zBDU/AACAPwAAAAAAAAAA")
+}, {
+"aabb": AABB(0, 0, 0, 1, 0.707107, 0.707107),
+"format": 34359738369,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("AAAAAPMENT/zBDU/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAP/MENT/zBDU/AAAAAPMENT/zBDU/AACAPwAAAAAAAAAA")
+}, {
+"aabb": AABB(0, 0, 0, 1, 1, 1e-05),
+"format": 34359738369,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("AAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAAAA")
+}, {
+"aabb": AABB(0, 0, 0, 1, 1, 1e-05),
+"format": 34359738369,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("AAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAAAA")
+}, {
+"aabb": AABB(0, -4.37114e-08, 0, 1, 1e-05, 1),
+"format": 34359738369,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("AAAAAC69O7MAAIA/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPy69O7MAAIA/AAAAAC69O7MAAIA/AACAPwAAAAAAAAAA")
+}]
+
+[node name="Testmesh" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_ljfsg")
+script = ExtResource("1_ljfsg")

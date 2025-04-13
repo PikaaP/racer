@@ -18,7 +18,6 @@ shader_parameter/startRadius = 0.1
 
 [node name="PlayerCamera" type="Camera3D" groups=["player_camera"]]
 top_level = true
-current = true
 script = ExtResource("1_j0sl7")
 metadata/_custom_type_script = "uid://um6dhbbw4y4h"
 
@@ -60,13 +59,6 @@ theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
-
-[node name="Speed" type="Label" parent="Hud/UI"]
-layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 8
-theme_override_font_sizes/font_size = 50
-text = "0kph"
 
 [node name="LeaderBoard" type="GridContainer" parent="Hud/UI"]
 visible = false

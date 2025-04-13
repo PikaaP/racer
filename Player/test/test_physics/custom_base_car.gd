@@ -167,6 +167,7 @@ func _physics_process(delta: float) -> void:
 			wheel_visuals(delta)
 		# State for active race participation, Set by main level
 		RaceState.RACE:
+			
 			# Get player inputs, shared across states
 			# Get player inputs
 			# Acceleration
@@ -243,7 +244,7 @@ func _physics_process(delta: float) -> void:
 # Apply traction force to car center of mass
 func apply_traction() -> void:
 	var y_dir = path.curve.sample_baked_up_vector(path.curve.get_closest_offset(path.to_local(global_position)), true)
-	apply_force(-y_dir  * mass * 40 *normalized_speed, $COMMID.position)
+	apply_force(-y_dir * 10000, $COMMID.position)
 
 # Signal engine to consume boost
 func apply_boost() -> void:
