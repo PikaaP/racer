@@ -1,42 +1,13 @@
-class_name Bot extends RigidBody3D
+class_name Bot extends CustomCar
 
-signal race_over(bot: Bot)
-
-@export var car_stat_resource: CarStats
-# Car function variables
-# Custom wheels
-@onready var fl_wheel = $FrontRightWheel
-@onready var fr_wheel = $FrontLeftWheel
-@onready var bl_wheel = $BackLeftWheel
-@onready var br_wheel = $BackRightWheel
-
-# Light trails
-@onready var right_light_trail: Trail3D = $LightTrailRight/LightTrail
-@onready var left_light_trail: Trail3D = $LightTrailLeft/LightTrail
-
-# Speed particles
-@onready var speed_particles: GPUParticles3D = $SpeedParticles
-
-# Wheel textures
-@onready var fr_wheel_visual = $FrontRightWheel/Wheel
-@onready var fl_wheel_visual = $FrontLeftWheel/Wheel
-@onready var bl_wheel_visual = $BackLeftWheel/Wheel
-@onready var br_wheel_visual = $BackRightWheel/Wheel
-
-var fr_visual_start_position: Vector3
-var fl_visual_start_position: Vector3
-var br_visual_start_position: Vector3
-var bl_visual_start_position: Vector3
+@onready var ray_holder = $RayHolder
 
 # Direction assessment variables
-@onready var ray_holder = $RayHolder
-@export var path: Path3D
-
+# Number of detection rays
 var num_rays = 12
 var ray_length: float = 50.0
 var sample_rate: int = 4
 var next_path_point: Vector3
-var points: PackedVector3Array
 var points_index: int = 0
 
 var chosen_direction: Vector3
@@ -57,22 +28,7 @@ var min_dist: int = 10
 @export var obstacle_avoidance: float = 0.15
 
 # Race variables
-@export var max_lap_count: int
-# Checkpoint refernce for all checkpoints returned by Track class
-@export var checkpoint_array = []
-@export var current_checkpoint : int = 0
-@export var target_checkpoint: int = 1
-var distance_to_checkpoint: float
-@export var current_lap: int = 1
-
-var start_position: Vector3
-var normalized_speed: float = 0.0
-var accel_input: float = 0.0
-var speed: float
-var max_speed_particles: int = 30
-var max_turn_angle: int = 30
 var traction_value: int = 10000
-
 var max_boost_reserve: float = 10.0
 var current_boost_reserve: float
 var current_boost_multiplier: float = 1.0
@@ -80,18 +36,6 @@ var max_boost_multiplier: float = 2.0
 var boost_regen_rate_drive: float = 0.1
 var boost_regen_rate_drift: float = 0.2
 var boost_consumption_rate: float = 0.5
-
-# State machine
-enum RaceState {START, RACE, FINISH}
-enum State {NEUTRAL, DRIVE, DRIFT, DISABLED}
-
-# Starting states 
-var current_state = State.NEUTRAL
-var current_race_state = RaceState.START
-
-# Timers
-@onready var respawn_timer: Timer = $RespawnTimer
-
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("reset"):
@@ -118,14 +62,14 @@ func _physics_process(delta: float) -> void:
 		RaceState.START:
 			global_position.x = start_position.x
 			global_position.z = start_position.z
-			apply_traction(traction_value)
+			apply_traction_bot(traction_value)
 			var rand_input = randi_range(0, 20)
 			if rand_input < 3:
 				accel_input = randf_range(0.5, 1.0)
 			else:
 				accel_input = 0
 		RaceState.RACE:
-			apply_traction(traction_value)
+			apply_traction_bot(traction_value)
 			if global_position.distance_to(next_path_point) <= min_dist or points_index == 0 or global_position.distance_to(next_path_point) > max_dist:
 				set_intrests()
 				set_danger()
@@ -259,66 +203,14 @@ func choose_direction() -> void:
 	chosen_direction = chosen_direction.normalized()
 
 # Apply traction force to car center
-func apply_traction(value: int) -> void:
+func apply_traction_bot(value: int) -> void:
 	apply_central_force(-transform.basis.y  * value)
 
-# Handle steering toward chosen direction
+# Handle steering toward chosen direction, rotate 
+# Rotate wheels to face target point
 func steering(delta: float) -> void:
 	fl_wheel.look_at(global_position + chosen_direction * global_position.distance_to(next_path_point))
 	fr_wheel.look_at(global_position + chosen_direction * global_position.distance_to(next_path_point))
-
-# Adjust wheel height and spin based on velocity 
-func wheel_visuals(delta) -> void:
-	# Move wheel position in accordance to suspension offset
-	fr_wheel_visual.position.y = move_toward(fr_wheel_visual.position.y, clampf(fr_visual_start_position.y + fr_wheel.offset, -car_stat_resource.spring_rest_distance, car_stat_resource.spring_rest_distance) , delta)
-	fl_wheel_visual.position.y = move_toward(fl_wheel_visual.position.y, clampf(fl_visual_start_position.y + fl_wheel.offset, -car_stat_resource.spring_rest_distance, car_stat_resource.spring_rest_distance) , delta)
-	br_wheel_visual.position.y = move_toward(br_wheel_visual.position.y, clampf(br_visual_start_position.y + br_wheel.offset, -car_stat_resource.spring_rest_distance, car_stat_resource.spring_rest_distance) , delta)
-	bl_wheel_visual.position.y = move_toward(bl_wheel_visual.position.y, clampf(bl_visual_start_position.y + bl_wheel.offset, -car_stat_resource.spring_rest_distance, car_stat_resource.spring_rest_distance) , delta)
-	
-	# Find wheel spin direction [-1 || 1]
-	var rotation_direction: int
-	
-	# Spin rear wheels even if not moving but trying to accelerate
-	if int(linear_velocity.z) == 0 and accel_input != 0:
-		rotation_direction = 1 if accel_input > 0 else -1
-		fr_wheel_visual.rotate_x(rotation_direction * linear_velocity.z * 100 * delta)
-		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.z * 100 * delta)
-		br_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * 100 * delta)
-		bl_wheel_visual.rotate_x(rotation_direction * get_torque(normalized_speed) * 100 * delta)
-	else:
-		# If moving, spin wheels in direction of forward velocity
-		rotation_direction = 1  if linear_velocity.dot(basis.z) > 0 else -1
-		fr_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * 100 * delta)
-		fl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * 100 * delta)
-		br_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * 100 * delta)
-		bl_wheel_visual.rotate_x(rotation_direction * linear_velocity.length() * 100 * delta)
-
-# Emit speed effects when going x% of max speed
-func speed_visuals() -> void:
-	if !normalized_speed >= 0.75:
-		speed_particles.emitting = false
-		# Fade light trail out slowly
-		left_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
-		right_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
-	else:
-		speed_particles.amount = max_speed_particles * normalized_speed
-		speed_particles.emitting = true
-		left_light_trail.emit = true
-		right_light_trail.emit = true
-		# Fade light trail in slowly :D
-		left_light_trail.material_override.albedo_color = Color(car_stat_resource.light_trail_color, lerpf(left_light_trail.material_override.albedo_color.a, 0.01 , normalized_speed/200))
-		right_light_trail.material_override.albedo_color = Color(car_stat_resource.light_trail_color, lerpf(right_light_trail.material_override.albedo_color.a, 0.010,  normalized_speed/200))
-
-# Return torque value from torque graph
-func get_torque(curent_normalized_speed: float) -> float:
-	return car_stat_resource.torque_curve.sample(curent_normalized_speed)
-
-# Returns tire grip (between 0,1)
-func get_tire_grip(traction: bool = false) -> float:
-	if traction:
-		return car_stat_resource.front_grip_curve.sample(normalized_speed)
-	else:
-		return car_stat_resource.rear_grip_curve.sample(normalized_speed)
 
 # Return bot to checkpoint when out of bounds
 func respawn() -> void:
@@ -421,32 +313,3 @@ func _handle_respawn() ->void:
 	set_collision_mask_value(4, true)
 	# Player collision layer
 	set_collision_mask_value(2, true)
-
-# Tally checkpoint progress
-func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add_lap: bool = false) -> void:
-	current_checkpoint = new_current_checkpoint
-	target_checkpoint = new_target_checkpoint
-	if add_lap:
-		current_lap += 1
-		if current_lap == max_lap_count +1:
-			race_over.emit(self)
-
-# Start Race
-func start_race() -> void:
-	lock_rotation = false
-	current_race_state = RaceState.RACE
-	current_state = State.NEUTRAL
-
-# Handle  end of race transition
-func finish_race() -> void:
-	current_state = State.DISABLED
-	set_collision_layer_value(4, false)
-	set_collision_layer_value(5, false)
-	set_collision_mask_value(1, false)
-	set_collision_mask_value(2, false)
-	set_collision_mask_value(3, false)
-	set_collision_mask_value(4, false)
-	hide()
-	
-	current_race_state = RaceState.FINISH
-	

@@ -1,0 +1,11 @@
+Model Information:
+* title:	CY1
+* source:	https://sketchfab.com/3d-models/cy1-c98fa42d19e8407c9ebc1bca28fae746
+* author:	alexinsouratselou (https://sketchfab.com/alexinsouratselou)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "CY1" (https://sketchfab.com/3d-models/cy1-c98fa42d19e8407c9ebc1bca28fae746) by alexinsouratselou (https://sketchfab.com/alexinsouratselou) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)

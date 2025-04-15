@@ -1,0 +1,11 @@
+Model Information:
+* title:	AMS S1
+* source:	https://sketchfab.com/3d-models/ams-s1-820b7e36f516422f80771fd5a084c55f
+* author:	alexinsouratselou (https://sketchfab.com/alexinsouratselou)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "AMS S1" (https://sketchfab.com/3d-models/ams-s1-820b7e36f516422f80771fd5a084c55f) by alexinsouratselou (https://sketchfab.com/alexinsouratselou) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

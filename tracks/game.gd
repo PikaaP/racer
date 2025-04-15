@@ -28,9 +28,10 @@ func _ready() -> void:
 			var port = get_tree().get_nodes_in_group('sub_viewport')[i]
 			port.add_child(camera)
 		else:
+			selected_track.add_player_to_grid(player, i)
 			var viewport = PLAYER_VIEWPORT.instantiate()
 			viewport_holder.add_child(viewport)
-			var camera: PlayerCamera = PLAYER_CAMERA.instantiate()
+			var camera:  = PLAYER_CAMERA.instantiate()
 			player.camera = camera
 			camera.follow_this = player
 			var port = get_tree().get_nodes_in_group('viewport')[i]

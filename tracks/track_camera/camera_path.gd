@@ -7,12 +7,13 @@ signal track_showcase_over()
 @onready var path_follow: PathFollow3D = $PathFollow3D
 @onready var camera: Camera3D = $PathFollow3D/TrackCamera
 
+
 func _ready() -> void:
 	var current_track: Track = get_tree().get_first_node_in_group("track")
 	track_showcase_over.connect(current_track._handle_track_showcase_over)
 
 func follow_path() -> void:
-	camera.current = true
+	camera.make_current()
 	var tween = create_tween()
 	tween.tween_property(path_follow, 'progress_ratio', 1, 1)
 	tween.finished.connect(_hanlde_tween_finished)

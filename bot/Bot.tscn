@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://fejr3x25l27m" path="res://bot/bot.gd" id="1_xgyvj"]
 [ext_resource type="Resource" uid="uid://de6fsrjpwnaaq" path="res://resources/cars/car/test_bot/Bot.tres" id="2_ik225"]
 [ext_resource type="PackedScene" uid="uid://bsjve54h03vls" path="res://scenes/smoke_effect/drift_smoke.tscn" id="6_6ipsu"]
-[ext_resource type="Script" uid="uid://djixe7vh7u2sg" path="res://player/test/test_physics/custom_wheel.gd" id="6_mleqh"]
+[ext_resource type="Script" uid="uid://djixe7vh7u2sg" path="res://cars/base_car/base_wheel/custom_wheel.gd" id="6_mleqh"]
 [ext_resource type="PackedScene" uid="uid://brsi5h2jvsvoo" path="res://scenes/drift_mesh/DriftMesh.tscn" id="7_oik8q"]
 [ext_resource type="Texture2D" uid="uid://cb6dei3c8pcvn" path="res://assets/cars/dodge/Wheel_RIMMUSCLE_01_DIF.png" id="8_np44a"]
 [ext_resource type="Texture2D" uid="uid://dk3d53swnixby" path="res://assets/cars/dodge/Wheel_RIMMUSCLE_01_MET-RIMMUSCLE_01_ROUGH.png" id="9_7nm2u"]

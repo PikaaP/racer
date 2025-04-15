@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://bwx5p8x1wy67s"]
+
+[ext_resource type="Script" uid="uid://b1f1670fv608v" path="res://player/test/test_physics/custom_base_car.gd" id="1_5y6pt"]
+[ext_resource type="PackedScene" uid="uid://caqtxdavlkvxw" path="res://cars/base_car/base_wheel/CustomWheel.tscn" id="2_yf5fj"]
+[ext_resource type="PackedScene" uid="uid://btk0gu4qbdfwl" path="res://cars/car_engine/CarEngine.tscn" id="3_djcvc"]
+[ext_resource type="PackedScene" uid="uid://p2jkm1bauv8k" path="res://cars/car_engine/Exhaust.tscn" id="4_e8vny"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_yf5fj"]
+bounce = 0.1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_yf5fj"]
+
+[node name="CustomBaseCar" type="RigidBody3D"]
+mass = 80.0
+physics_material_override = SubResource("PhysicsMaterial_yf5fj")
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, -0.01, 0)
+script = ExtResource("1_5y6pt")
+
+[node name="Engine" parent="." instance=ExtResource("3_djcvc")]
+
+[node name="FrontRightWheel" parent="." instance=ExtResource("2_yf5fj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+
+[node name="FrontLeftWheel" parent="." instance=ExtResource("2_yf5fj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
+
+[node name="Wheel3" parent="." instance=ExtResource("2_yf5fj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
+use_as_traction = true
+
+[node name="Wheel4" parent="." instance=ExtResource("2_yf5fj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+use_as_traction = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_yf5fj")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+
+[node name="ExhaustHolder" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 2.5)
+
+[node name="Exhaust" parent="ExhaustHolder" instance=ExtResource("4_e8vny")]

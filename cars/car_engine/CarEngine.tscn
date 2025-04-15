@@ -1,26 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://btk0gu4qbdfwl"]
+[gd_scene load_steps=5 format=3 uid="uid://btk0gu4qbdfwl"]
 
 [ext_resource type="Script" uid="uid://b8wd5esa4nmmr" path="res://cars/car_engine/car_engine.gd" id="1_qfy3u"]
+[ext_resource type="Resource" uid="uid://bbmjhvl1udkdk" path="res://cars/lambo/TestCarEngine.tres" id="2_2kq0v"]
 [ext_resource type="PackedScene" uid="uid://djg4qn8hee0mv" path="res://assets/temp/engine sound/engine_auido.tscn" id="2_wd5m2"]
-
-[sub_resource type="Curve" id="Curve_qfy3u"]
-_limits = [0.0, 45000.0, 0.0, 10000.0]
-bake_resolution = 1000
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(2644.95, 22500), 0.0, 0.0, 0, 0, Vector2(7420.21, 41805), 0.0, 0.0, 0, 0, Vector2(10000, 42437.6), 0.753194, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="Curve" id="Curve_wd5m2"]
-_limits = [0.0, 25100.0, 0.0, 45000.0]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1310.68, 25068.2), 0.0, 0.0, 0, 0, Vector2(12160.2, 21954.4), -0.107625, -0.107625, 0, 0, Vector2(45000, 25068.2), 0.0, 0.0, 0, 0]
-point_count = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wd5m2"]
 bg_color = Color(1, 0.211645, 0.716868, 1)
 
 [node name="Engine" type="Node"]
 script = ExtResource("1_qfy3u")
-rpm_torque_curve = SubResource("Curve_qfy3u")
-torque_force_curve = SubResource("Curve_wd5m2")
+engine_stat_resource = ExtResource("2_2kq0v")
 
 [node name="engine_sound" parent="." instance=ExtResource("2_wd5m2")]
 

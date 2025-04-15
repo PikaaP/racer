@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://caqtxdavlkvxw"]
+
+[ext_resource type="Script" uid="uid://djixe7vh7u2sg" path="res://cars/base_car/base_wheel/custom_wheel.gd" id="1_skdhb"]
+[ext_resource type="PackedScene" uid="uid://brsi5h2jvsvoo" path="res://scenes/drift_mesh/DriftMesh.tscn" id="2_bai6t"]
+[ext_resource type="PackedScene" uid="uid://bsjve54h03vls" path="res://scenes/smoke_effect/drift_smoke.tscn" id="3_npckj"]
+
+[node name="CustomWheel" type="RayCast3D"]
+collision_mask = 11
+script = ExtResource("1_skdhb")
+
+[node name="DriftMesh" parent="." instance=ExtResource("2_bai6t")]
+mesh = null
+
+[node name="PastDrifts" type="Node3D" parent="."]
+
+[node name="DriftSmoke" parent="." instance=ExtResource("3_npckj")]
+emitting = false
+lifetime = 1.0
+
+[node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="."]
+size = Vector3(1, 1, 0.5)
