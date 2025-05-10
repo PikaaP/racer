@@ -17,11 +17,12 @@ size_flags_vertical = 0
 text = "Select Your Car"
 horizontal_alignment = 1
 
-[node name="PlayerLabel" type="Label" parent="VBoxContainer"]
+[node name="PlayerLabel" type="LineEdit" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 0
+focus_neighbor_bottom = NodePath("../../FindLeft")
 text = "Player Name"
-horizontal_alignment = 1
+alignment = 1
 
 [node name="Panel" type="PanelContainer" parent="."]
 layout_mode = 2
@@ -50,6 +51,7 @@ text = "<"
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
+focus_neighbor_left = NodePath("../FindLeft")
 text = ">"
 
 [connection signal="pressed" from="FindLeft" to="." method="_on_find_left_pressed"]

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Futuristic Room
+* source:	https://sketchfab.com/3d-models/futuristic-room-a60be41028b049b6a488f5c6effcb6f8
+* author:	denis_cliofas (https://sketchfab.com/denis_cliofas)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Futuristic Room" (https://sketchfab.com/3d-models/futuristic-room-a60be41028b049b6a488f5c6effcb6f8) by denis_cliofas (https://sketchfab.com/denis_cliofas) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

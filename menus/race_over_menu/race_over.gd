@@ -17,6 +17,7 @@ func _ready() -> void:
 	
 	back_button.pressed.connect(_handle_back_button_pressed)
 	back_button.process_mode = PROCESS_MODE_ALWAYS
+	back_button.grab_focus()
 
 
 # Restart race instance

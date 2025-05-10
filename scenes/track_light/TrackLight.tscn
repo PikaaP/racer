@@ -4,9 +4,11 @@
 
 [node name="SpotLight3D" type="SpotLight3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
-light_energy = 10.0
-spot_range = 75.546
-spot_angle = 17.0
+light_energy = 20.0
+light_volumetric_fog_energy = 5.06
+shadow_enabled = true
+spot_range = 195.689
+spot_angle = 21.48
 spot_angle_attenuation = 3.4822
 
 [node name="Sprite3D" type="Sprite3D" parent="."]

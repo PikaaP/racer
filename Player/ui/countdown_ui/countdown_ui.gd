@@ -11,6 +11,7 @@ func _ready() -> void:
 	pass
 
 func start_countdown() -> void:
+	print('is here rn')
 	visible = true
 	start_timer = true
 	count_down_timer.start()

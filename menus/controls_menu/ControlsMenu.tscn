@@ -1,0 +1,239 @@
+[gd_scene load_steps=10 format=3 uid="uid://kxlgr7b33pxo"]
+
+[ext_resource type="PackedScene" uid="uid://dedq01yefmnf8" path="res://menus/buttons/HideBackButton.tscn" id="1_1v5hj"]
+[ext_resource type="Script" uid="uid://cm4v7u5ucogyt" path="res://menus/controls_menu/controls_menu.gd" id="1_2eg03"]
+[ext_resource type="Texture2D" uid="uid://by3igcvw7won1" path="res://menus/controls_menu/controller_playstation4.png" id="3_dmmsh"]
+[ext_resource type="Texture2D" uid="uid://k3853tet3sb3" path="res://assets/ui/kenney_input-prompts_1.4/PlayStation Series/Double/playstation_stick_l.png" id="4_wiwue"]
+[ext_resource type="Texture2D" uid="uid://xhlvotgnq0aq" path="res://assets/ui/kenney_input-prompts_1.4/PlayStation Series/Default/playstation_trigger_l2.png" id="7_2f7je"]
+[ext_resource type="Texture2D" uid="uid://dda040veq6ir6" path="res://assets/ui/kenney_input-prompts_1.4/PlayStation Series/Default/playstation_trigger_r2.png" id="7_shm63"]
+[ext_resource type="Texture2D" uid="uid://bhdcdvof0me1w" path="res://assets/ui/kenney_input-prompts_1.4/PlayStation Series/Default/playstation_button_cross.png" id="8_4fjr8"]
+[ext_resource type="Texture2D" uid="uid://ceckrvkpardru" path="res://assets/ui/kenney_input-prompts_1.4/PlayStation Series/Default/playstation_button_square.png" id="10_yaccx"]
+[ext_resource type="Texture2D" uid="uid://bx116pv4bmkhy" path="res://assets/ui/kenney_input-prompts_1.4/PlayStation Series/Default/playstation3_button_start.png" id="11_dudyj"]
+
+[node name="ControlsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_2eg03")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 100
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 100
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="ControllerHolder" type="MarginContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.25
+
+[node name="GridContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/ControllerHolder"]
+layout_mode = 2
+
+[node name="PlayStation" type="TextureRect" parent="MarginContainer/HBoxContainer/ControllerHolder/GridContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("3_dmmsh")
+
+[node name="TextureRect2" type="TextureRect" parent="MarginContainer/HBoxContainer/ControllerHolder/GridContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("3_dmmsh")
+
+[node name="TextureRect3" type="TextureRect" parent="MarginContainer/HBoxContainer/ControllerHolder/GridContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("3_dmmsh")
+
+[node name="BluePrintHolder" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PS5Blueprint" type="PanelContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="HboxContaier" type="VBoxContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="CarControls" type="VBoxContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="Controls" type="Label" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Car Controls"
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls"]
+layout_mode = 2
+theme_override_constants/margin_left = 80
+theme_override_constants/margin_right = 80
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/h_separation = 25
+theme_override_constants/v_separation = 50
+columns = 3
+
+[node name="Acceleration" type="HBoxContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer/Acceleration"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_font_sizes/font_size = 25
+text = "Acceleration:"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer/Acceleration"]
+layout_mode = 2
+size_flags_horizontal = 8
+texture = ExtResource("7_shm63")
+expand_mode = 2
+
+[node name="Breaking" type="HBoxContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer/Breaking"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 25
+text = "Breaking:"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer/Breaking"]
+layout_mode = 2
+texture = ExtResource("7_2f7je")
+expand_mode = 2
+
+[node name="Steering" type="HBoxContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer/Steering"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 25
+text = "Steering:"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer/Steering"]
+layout_mode = 2
+texture = ExtResource("4_wiwue")
+expand_mode = 2
+
+[node name="Drift" type="HBoxContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer/Drift"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 25
+text = "Drift:"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer/Drift"]
+layout_mode = 2
+size_flags_horizontal = 8
+texture = ExtResource("10_yaccx")
+expand_mode = 2
+
+[node name="Boost" type="HBoxContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer/Boost"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 25
+text = "Boost:"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/CarControls/MarginContainer/GridContainer/Boost"]
+layout_mode = 2
+texture = ExtResource("8_4fjr8")
+expand_mode = 2
+
+[node name="MenuControls" type="VBoxContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="Controls" type="Label" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/MenuControls"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Menu Controls"
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/MenuControls"]
+layout_mode = 2
+theme_override_constants/margin_left = 80
+theme_override_constants/margin_right = 80
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/MenuControls/MarginContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 25
+theme_override_constants/v_separation = 50
+columns = 3
+
+[node name="Pause" type="HBoxContainer" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/MenuControls/MarginContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/MenuControls/MarginContainer/GridContainer/Pause"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 25
+text = "Pause:"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/BluePrintHolder/PS5Blueprint/MarginContainer/HboxContaier/MenuControls/MarginContainer/GridContainer/Pause"]
+layout_mode = 2
+texture = ExtResource("11_dudyj")
+expand_mode = 2
+
+[node name="BackButton" parent="." instance=ExtResource("1_1v5hj")]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = -69.0
+offset_right = 100.0
+offset_bottom = -38.0
+grow_vertical = 0
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+offset_left = 543.0
+offset_top = 37.0
+offset_right = 609.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Controls"
+horizontal_alignment = 1

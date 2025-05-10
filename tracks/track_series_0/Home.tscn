@@ -1,11 +1,11 @@
-[gd_scene load_steps=22 format=3 uid="uid://dij64epyfs1kf"]
+[gd_scene load_steps=24 format=3 uid="uid://dij64epyfs1kf"]
 
 [ext_resource type="Script" uid="uid://djrh8c4d1i2mx" path="res://tracks/track.gd" id="1_vovm5"]
 [ext_resource type="Script" uid="uid://dykyfb2vnm0dg" path="res://tracks/track_path.gd" id="2_c4epv"]
+[ext_resource type="Texture2D" uid="uid://cje1r2mfuw80p" path="res://assets/sky/boxes/sky_16_2k.png" id="2_vlqya"]
 [ext_resource type="Material" uid="uid://drbtshamtiyev" path="res://resources/track/materials/curb/red_white_curb.tres" id="3_vjvwx"]
 [ext_resource type="Material" uid="uid://dtq6n1hnyg388" path="res://resources/track/materials/road/Track_3_road.tres" id="4_ros3g"]
-[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="5_epc5t"]
-[ext_resource type="PackedScene" uid="uid://umwpvwyej07v" path="res://scenes/respawn_area/RespawnArea.tscn" id="6_ocuw5"]
+[ext_resource type="Script" uid="uid://b02oevixcpknp" path="res://tracks/start_grid.gd" id="5_vlqya"]
 [ext_resource type="PackedScene" uid="uid://c6cvpfmwjneur" path="res://tracks/track_camera/CameraPath.tscn" id="7_vjvwx"]
 [ext_resource type="PackedScene" uid="uid://dnhffl7ugb5tj" path="res://assets/backgrounds/cyberpunk_style_skyscraper/scene.gltf" id="8_47oae"]
 [ext_resource type="PackedScene" uid="uid://b3b0qti6werp1" path="res://assets/backgrounds/fluxs_pit_stop/scene.gltf" id="9_jw2mc"]
@@ -16,29 +16,37 @@
 [ext_resource type="PackedScene" uid="uid://ddlhvbsq6ntxx" path="res://assets/backgrounds/cybercity_2099_v2/scene.gltf" id="11_phjtq"]
 [ext_resource type="PackedScene" uid="uid://lrm8cf345d8p" path="res://assets/backgrounds/ams_s1/scene.gltf" id="13_vlqya"]
 [ext_resource type="PackedScene" uid="uid://dvf23s44ho14v" path="res://assets/backgrounds/cy1/scene.gltf" id="14_xt734"]
+[ext_resource type="VoxelGIData" uid="uid://cb2kbxvr04gbg" path="res://tracks/track_series_0/Home.VoxelGI_data.res" id="17_xt734"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_xt734"]
+panorama = ExtResource("2_vlqya")
+energy_multiplier = 0.5
+
+[sub_resource type="Sky" id="Sky_m7ysd"]
+sky_material = SubResource("PanoramaSkyMaterial_xt734")
 
 [sub_resource type="Environment" id="Environment_m7ysd"]
-ambient_light_source = 2
+background_mode = 2
+background_energy_multiplier = 2.0
+sky = SubResource("Sky_m7ysd")
+ambient_light_source = 3
 ambient_light_color = Color(0.113441, 0.131239, 0.33896, 1)
+reflected_light_source = 2
 tonemap_mode = 3
-ssr_enabled = true
-ssao_enabled = true
-ssil_enabled = true
 sdfgi_enabled = true
 glow_enabled = true
 volumetric_fog_enabled = true
-volumetric_fog_density = 0.0026
+volumetric_fog_density = 0.0289
+volumetric_fog_albedo = Color(0.147514, 0.108842, 0.455795, 1)
+volumetric_fog_emission = Color(8.7237e-08, 0.0954923, 0.146623, 1)
 
 [sub_resource type="Curve3D" id="Curve3D_ros3g"]
 bake_interval = 0.01
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.00206375, 0, 0.362575, 0, 0, 0, 0, 0, 0, 40.2103, 0, 0.246155, -6.78765, -0.445876, 1.49203, 6.78765, 0.445876, -1.49203, 80.1582, 0, 0.280704, 0, -2.85875, 31.7544, 0, 2.85875, -31.7544, 130.555, 11.7966, -41.4951, 18.1084, 3.67329, -0.331219, -18.1084, -3.67329, 0.331219, 93.7091, 4.07504, -63.9237, -2.48925, 2.59298, -12.1966, 2.48925, -2.59298, 12.1966, 65.3008, -9.55889, -28.9159, -30.8322, 2.26524, -9.50717, 30.8322, -2.26524, 9.50717, 94.6245, -17.075, 8.6002, 3.57436, 6.31479, 27.0447, -3.57436, -6.31479, -27.0447, 136.147, -24.5235, -24.0392, 36.6096, 6.35078, -0.558823, -36.6096, -6.35078, 0.558823, 100.673, -34.4732, -60.9666, 26.7292, 16.4067, 18.8143, -26.7292, -16.4067, -18.8143, -32.7173, -57.9531, -90.0085, 0.775314, 15.1735, 24.942, -0.775314, -15.1735, -24.942, -171.591, -68.4906, -109.814, -14.6783, 11.4516, 13.9696, 14.6783, -11.4516, -13.9696, -176.709, -90.8018, -192.331, -38.3617, -6.3064, 1.38058, 38.3617, 6.3064, -1.38058, -104.524, -96.8913, -233.04, -10.4964, -6.94138, -16.8421, 10.4964, 6.94138, 16.8421, 46.4411, -64.1764, -174.04, 2.31954, 0.317734, -21.5596, -2.31954, -0.317734, 21.5596, 36.0423, -32.4619, -44.36, 14.8361, -0.103031, -29.9923, -14.8361, 0.103031, 29.9923, 90.7371, -41.4654, 129.557, -2.15633, 14.6651, -56.6768, 2.15633, -14.6651, 56.6768, -63.5809, -41.9659, 172.419, -16.6441, 8.5789, -6.15961, 16.6441, -8.5789, 6.15961, -22.2991, -71.6856, 269.876, 9.0409, 6.89338, -32.1765, -9.0409, -6.89338, 32.1765, 104.693, -79.7605, 384.707, 69.4781, 7.83259, 77.0692, -69.4781, -7.83259, -77.0692, -29.0991, -71.4277, 411.932, -5.4896, -0.751381, 67.0189, 5.4896, 0.751381, -67.0189, 56.3091, -65.673, 198.021, 11.5127, -7.23357, 37.5947, -11.5127, 7.23357, -37.5947, -179.226, -50.4332, 75.8972, -37.8848, 13.6376, 56.1725, 37.8848, -13.6376, -56.1725, -92.1056, -71.4279, -54.783, 71.4909, 3.27209, 13.8564, -71.4909, -3.27209, -13.8564, -109.218, -71.4279, -152.793, 11.2639, 8.50475, -39.0155, -11.2639, -8.50475, 39.0155, -243.072, -70.7469, -131.382, -17.0627, -13.1987, -28.5061, 17.0627, 13.1987, 28.5061, -224.096, -63.2164, -8.91938, -51.8281, -29.3128, -21.2044, 51.8281, 29.3128, 21.2044, -134.478, -34.1387, -15.4064, -3.92502, -0.767119, -1.91236, 3.92502, 0.767119, 1.91236, 0.0417137, 0.0606279, -0.0753883),
-"tilts": PackedFloat32Array(0, 0, 0, 0.0266025, -0.276389, -0.223766, -0.698116, -1.07738, -1.34776, -1.19432, -0.202887, 0, 0, -0.410215, -1.1017, -0.543842, -1.5235, -1.48036, -1.12668, -1.00511, -1.78781, -1.18848, -2.3238, -2.47501, -2.04576, -1.81567, -1.36323, -1.48)
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.00206375, 0, 0.362575, 0, 0, 0, 0, 0, 0, 40.2103, 0, 0.246155, -6.78765, -0.445876, 1.49203, 6.78765, 0.445876, -1.49203, 80.1582, 0, 0.280704, 0, -2.85875, 31.7544, 0, 2.85875, -31.7544, 130.555, 11.7966, -41.4951, 18.1084, 3.67329, -0.331219, -18.1084, -3.67329, 0.331219, 93.7091, 4.07504, -63.9237, -2.48925, 2.59298, -12.1966, 2.48925, -2.59298, 12.1966, 65.3008, -9.55889, -28.9159, -30.8322, 2.26524, -9.50717, 30.8322, -2.26524, 9.50717, 94.6245, -17.075, 8.6002, 3.57436, 6.31479, 27.0447, -3.57436, -6.31479, -27.0447, 136.147, -24.5235, -24.0392, 36.6096, 6.35078, -0.558823, -36.6096, -6.35078, 0.558823, 100.673, -38.2738, -60.9666, 30.0616, 2.50632, 3.42877, -30.0616, -2.50632, -3.42877, 46.2642, -58.037, 23.9194, 0.514778, 9.58779, 25.6616, -0.514778, -9.58779, -25.6616, -67.4217, -85.0053, -22.9937, -6.67351, -0.589554, 34.2868, 6.67351, 0.589554, -34.2868, -19.0921, -91.0043, -57.1132, -8.1752, 0.248047, 32.99, 8.1752, -0.248047, -32.99, -103.848, -94.0984, -146.245, -10.1755, -6.52847, -19.6077, 10.1755, 6.52847, 19.6077, 46.4411, -64.1764, -174.04, 9.74498, -7.0906, -61.2169, -9.74498, 7.0906, 61.2169, -21.756, -46.187, -43.9101, 14.8361, -0.103031, -29.9923, -14.8361, 0.103031, 29.9923, 90.7371, -41.4654, 129.557, 14.9372, 8.57701, -53.2305, -14.9372, -8.57701, 53.2305, -63.5809, -41.9659, 172.419, -45.8715, 10.4271, -24.5842, 45.8715, -10.4271, 24.5842, -74.6966, -72.8469, 269.876, 8.95805, 4.54545, -32.3719, -8.95805, -4.54545, 32.3719, 104.693, -79.7605, 384.707, 69.4781, 7.83259, 77.0692, -69.4781, -7.83259, -77.0692, -29.0991, -71.4277, 411.932, -5.4896, -0.751381, 67.0189, 5.4896, 0.751381, -67.0189, 56.3091, -65.673, 198.021, 11.5127, -7.23357, 37.5947, -11.5127, 7.23357, -37.5947, -179.226, -67.9992, 75.8972, 3.45326, -0.61364, 27.5905, -3.45326, 0.61364, -27.5905, -164.605, -69.4308, -54.2193, 22.7741, 2.70439, 1.16872, -22.7741, -2.70439, -1.16872, -216.718, -66.9079, -69.5207, -39.8583, -4.92661, 14.5925, 39.8583, 4.92661, -14.5925, -243.072, -70.7469, -131.382, -30.4401, -22.0006, -34.8983, 30.4401, 22.0006, 34.8983, -224.096, -63.5084, -8.91938, -43.7251, -4.53048, -0.823821, 43.7251, 4.53048, 0.823821, -1.80187, -0.155281, 0.395469),
+"tilts": PackedFloat32Array(0, 0, 0, 0.0266025, -0.276389, -0.223766, -0.698116, -1.07738, -1.34776, -1.08549, -0.508775, -0.424882, -0.0778945, -0.410215, -1.1017, -0.543842, -0.969635, -1.67558, -1.12668, -1.00511, -1.78781, -1.18848, -1.56593, -1.43398, -1.22553, -1.20618, -0.888949)
 }
-point_count = 28
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_phjtq"]
-size = Vector3(500, 100, 500)
+point_count = 27
 
 [sub_resource type="Curve3D" id="Curve3D_vjvwx"]
 _data = {
@@ -58,20 +66,21 @@ point_count = 2
 script = ExtResource("1_vovm5")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 138.658, 0)
-light_color = Color(0.100121, 0, 0.607653, 1)
-light_energy = 7.159
+transform = Transform3D(1, 0, 0, 0, -0.371173, 0.928564, 0, -0.928564, -0.371173, 0, 133.518, 0)
+light_color = Color(0.169219, 0.0600463, 0.375228, 1)
+light_energy = 2.284
+light_indirect_energy = 3.527
+light_volumetric_fog_energy = 0.446
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_m7ysd")
 
 [node name="TrackPath" type="Path3D" parent="."]
-transform = Transform3D(0.99997, 0, -0.00778409, 0, 1, 0, 0.00778409, 0, 0.99997, 0, 0, 0)
 curve = SubResource("Curve3D_ros3g")
 script = ExtResource("2_c4epv")
-light_count = 100
-check_points = 100
+light_count = 98
+check_points = 98
 
 [node name="TrackLights" type="Node3D" parent="TrackPath"]
 
@@ -79,7 +88,7 @@ check_points = 100
 visible = false
 
 [node name="PathFollow3D" type="PathFollow3D" parent="TrackPath"]
-transform = Transform3D(0.0028953, 0, -1.00002, 0, 0.999998, 0, 0.999994, 0, 0.00289536, 0.00206375, 0, 0.362575)
+transform = Transform3D(0.0028953, 0, -1.00002, 0, 0.999997, 0, 0.999993, 0, 0.00289538, 0.00206375, 0, 0.362575)
 
 [node name="Camera3D" type="Camera3D" parent="TrackPath/PathFollow3D"]
 transform = Transform3D(0.999976, 0.00169056, -0.00671367, -0.00169244, 1, -0.00027433, 0.00671309, 0.000285789, 0.999963, 0, 1, 0)
@@ -89,15 +98,15 @@ use_collision = true
 polygon = PackedVector2Array(-6, 0, -6, 0.2, 6, 0.2, 6, 0)
 mode = 2
 path_node = NodePath("..")
-path_interval_type = 0
-path_interval = 0.04
+path_interval_type = 1
+path_interval = 0.01
 path_simplify_angle = 0.0
 path_rotation = 2
 path_rotation_accurate = false
 path_local = false
 path_continuous_u = true
 path_u_distance = 10.0
-path_joined = false
+path_joined = true
 material = ExtResource("4_ros3g")
 
 [node name="Inner" type="CSGPolygon3D" parent="TrackPath"]
@@ -106,7 +115,7 @@ polygon = PackedVector2Array(-6, 0, -8, 0, -8, 0.3, -6, 0.2)
 mode = 2
 path_node = NodePath("..")
 path_interval_type = 0
-path_interval = 1.0
+path_interval = 0.1
 path_simplify_angle = 0.0
 path_rotation = 2
 path_rotation_accurate = false
@@ -140,7 +149,7 @@ polygon = PackedVector2Array(6, 0, 8, 0, 8, 0.3, 6, 0.2)
 mode = 2
 path_node = NodePath("..")
 path_interval_type = 0
-path_interval = 1.0
+path_interval = 0.1
 path_simplify_angle = 0.0
 path_rotation = 2
 path_rotation_accurate = false
@@ -168,70 +177,10 @@ path_continuous_u = true
 path_u_distance = 1.0
 path_joined = true
 
-[node name="Block" type="CSGPolygon3D" parent="TrackPath"]
-transform = Transform3D(-0.113315, -0.992888, -0.0365314, 0.0999125, -0.0479694, 0.993839, -0.988523, 0.108966, 0.104637, -0.429792, 0.113845, 0.439998)
-visible = false
-use_collision = true
-polygon = PackedVector2Array(-8, -1, -8, 1, 8, 1, 8, -1)
-depth = 1.62
-
-[node name="StartGrid" type="Node3D" parent="."]
-transform = Transform3D(1.15744e-08, -0.240669, -0.970606, 2.86994e-09, 0.970607, -0.240668, 0.999999, 0, 1.19249e-08, 0, 5.27878, -1.58848)
-
-[node name="BotStart" type="Marker3D" parent="StartGrid"]
-transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -0.0541515, 0.270311, 11.887)
-
-[node name="Sprite3D" type="Sprite3D" parent="StartGrid/BotStart"]
-texture = ExtResource("5_epc5t")
-
-[node name="BotStart1" type="Marker3D" parent="StartGrid"]
-transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, 5.08898, 2.46801, 13.3684)
-
-[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart1"]
-texture = ExtResource("5_epc5t")
-
-[node name="BotStart2" type="Marker3D" parent="StartGrid"]
-transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, 2.50952, 2.46801, 17.2921)
-
-[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart2"]
-texture = ExtResource("5_epc5t")
-
-[node name="BotStart3" type="Marker3D" parent="StartGrid"]
-transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, 7.9567, 2.46801, 19.8086)
-
-[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart3"]
-texture = ExtResource("5_epc5t")
-
-[node name="BotStart4" type="Marker3D" parent="StartGrid"]
-transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, 2.57899, 2.46801, 26.3369)
-
-[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart4"]
-texture = ExtResource("5_epc5t")
-
-[node name="BotStart5" type="Marker3D" parent="StartGrid"]
-transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, 11.8346, 2.46801, 31.3559)
-
-[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart5"]
-texture = ExtResource("5_epc5t")
-
-[node name="BotStart6" type="Marker3D" parent="StartGrid"]
-transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, 7.1756, 2.46801, 41.3911)
-
-[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart6"]
-texture = ExtResource("5_epc5t")
-
-[node name="BotStart7" type="Marker3D" parent="StartGrid"]
-transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, 14.8519, 2.46801, 42.7781)
-
-[node name="Sprite3D2" type="Sprite3D" parent="StartGrid/BotStart7"]
-texture = ExtResource("5_epc5t")
-
-[node name="RespawnArea" parent="." instance=ExtResource("6_ocuw5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -443.408, 0)
-
-[node name="CollisionShape3D" parent="RespawnArea" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.2449, -16.2573, -2.74254)
-shape = SubResource("BoxShape3D_phjtq")
+[node name="StartGrid" type="Node3D" parent="." node_paths=PackedStringArray("path")]
+transform = Transform3D(0.999999, 0, 0, 0, 1, 0, 0, 0, 0.999999, 0, 0, 0)
+script = ExtResource("5_vlqya")
+path = NodePath("../TrackPath")
 
 [node name="BotHolder" type="Node" parent="."]
 
@@ -266,155 +215,158 @@ transform = Transform3D(0.176758, 0, -0.984254, 0, 1, 0, 0.984254, 0, 0.176758, 
 [node name="Sketchfab_Scene4" parent="Background/Buildings" instance=ExtResource("8_47oae")]
 transform = Transform3D(0.176758, 0, -0.984254, 0, 1, 0, 0.984254, 0, 0.176758, 74.1349, -313.054, -266.352)
 
-[node name="PitStopNeon" parent="Background/Buildings" instance=ExtResource("9_jw2mc")]
-transform = Transform3D(36.5677, 0, 34.0999, 0, 50, 0, -34.0999, 0, 36.5677, 21.6633, -96.6361, 367.053)
-script = ExtResource("10_vlqya")
-
 [node name="Billboards" type="Node3D" parent="Background"]
+
+[node name="PitStopNeon" parent="Background/Billboards" instance=ExtResource("9_jw2mc")]
+transform = Transform3D(-49.9925, 0, -0.872658, 0, 50, 0, 0.872658, 0, -49.9925, 21.6633, -96.6361, 367.053)
+script = ExtResource("10_vlqya")
 
 [node name="Stands" type="Node3D" parent="Background"]
 
-[node name="Sketchfab_Scene" parent="." instance=ExtResource("9_uecq4")]
+[node name="Scenery" type="Node3D" parent="Background"]
+
+[node name="Sketchfab_Scene" parent="Background/Scenery" instance=ExtResource("9_uecq4")]
 transform = Transform3D(4.38619, 0, 100.905, 0, 200, 0, -100.905, 0, 4.38619, 165.135, -298.146, -355.637)
 
-[node name="Sketchfab_Scene2" parent="." instance=ExtResource("9_uecq4")]
+[node name="Sketchfab_Scene2" parent="Background/Scenery" instance=ExtResource("9_uecq4")]
 transform = Transform3D(4.38619, 0, 100.905, 0, 200, 0, -100.905, 0, 4.38619, 165.135, -306, 619.991)
 
-[node name="Sketchfab_Scene5" parent="." instance=ExtResource("9_uecq4")]
+[node name="Sketchfab_Scene5" parent="Background/Scenery" instance=ExtResource("9_uecq4")]
 transform = Transform3D(1.20441e-06, 0, -101, 0, 200, 0, 101, 0, 1.20441e-06, -547.239, -298.146, 619.458)
 
-[node name="Sketchfab_Scene6" parent="." instance=ExtResource("9_uecq4")]
+[node name="Sketchfab_Scene6" parent="Background/Scenery" instance=ExtResource("9_uecq4")]
 transform = Transform3D(1.20441e-06, 0, -101, 0, 200, 0, 101, 0, 1.20441e-06, -501.638, -306, -355.104)
 
-[node name="Sketchfab_Scene3" parent="." instance=ExtResource("11_phjtq")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 6.06721, -250.762, 208.165)
+[node name="Sketchfab_Scene3" parent="Background/Scenery" instance=ExtResource("11_phjtq")]
+transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, -1.19681, -250.762, 208.165)
 
-[node name="Sketchfab_Scene4" parent="." instance=ExtResource("11_2drlq")]
-transform = Transform3D(-8.74228e-08, 0, -2, 0, 2, 0, 2, 0, -8.74228e-08, 32.8693, -1.94051, 57.1227)
+[node name="Sketchfab_Scene4" parent="Background/Scenery" instance=ExtResource("11_2drlq")]
+transform = Transform3D(-8.74228e-08, 0, -2, 0, 3, 0, 2, 0, -8.74228e-08, 17.0985, -18.727, 75.5814)
 
-[node name="Sketchfab_Scene7" parent="." instance=ExtResource("13_vlqya")]
+[node name="Sketchfab_Scene7" parent="Background/Scenery" instance=ExtResource("13_vlqya")]
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -197.573, -259.733, -323.756)
 
-[node name="Sketchfab_Scene8" parent="." instance=ExtResource("14_xt734")]
+[node name="Sketchfab_Scene8" parent="Background/Scenery" instance=ExtResource("14_xt734")]
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, -357.806, 619.882)
 
-[node name="Sketchfab_Scene10" parent="." instance=ExtResource("14_xt734")]
+[node name="Sketchfab_Scene10" parent="Background/Scenery" instance=ExtResource("14_xt734")]
 transform = Transform3D(-10, 0, -8.74228e-07, 0, 10, 0, 8.74228e-07, 0, -10, 202.945, -357.806, 619.882)
 
-[node name="Sketchfab_Scene11" parent="." instance=ExtResource("14_xt734")]
+[node name="Sketchfab_Scene11" parent="Background/Scenery" instance=ExtResource("14_xt734")]
 transform = Transform3D(-4.37114e-07, 0, 10, 0, 10, 0, -10, 0, -4.37114e-07, -309.041, -357.806, 619.882)
 
-[node name="Sketchfab_Scene12" parent="." instance=ExtResource("14_xt734")]
+[node name="Sketchfab_Scene12" parent="Background/Scenery" instance=ExtResource("14_xt734")]
 transform = Transform3D(-4.37114e-07, 0, 10, 0, 10, 0, -10, 0, -4.37114e-07, -106.096, -357.806, 619.882)
 
-[node name="Sketchfab_Scene13" parent="." instance=ExtResource("14_xt734")]
+[node name="Sketchfab_Scene13" parent="Background/Scenery" instance=ExtResource("14_xt734")]
 transform = Transform3D(-10, 0, -8.74228e-07, 0, 10, 0, 8.74228e-07, 0, -10, -106.893, -357.806, 829.54)
 
-[node name="Sketchfab_Scene14" parent="." instance=ExtResource("14_xt734")]
+[node name="Sketchfab_Scene14" parent="Background/Scenery" instance=ExtResource("14_xt734")]
 transform = Transform3D(-10, 0, -8.74228e-07, 0, 10, 0, 8.74228e-07, 0, -10, 96.0522, -357.806, 829.54)
 
-[node name="Sketchfab_Scene9" parent="." instance=ExtResource("10_2drlq")]
+[node name="Sketchfab_Scene9" parent="Background/Scenery" instance=ExtResource("10_2drlq")]
 transform = Transform3D(-8.74228e-07, 0, 20, 0, 20, 0, -20, 0, -8.74228e-07, -26.303, -222.247, 545.795)
 
-[connection signal="body_entered" from="TrackPath/CheckPoints/CheckPointsHolder/CheckPoint" to="TrackPath/CheckPoints/CheckPointsHolder/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078878/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078878/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078879/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078879/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078880/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078880/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078881/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078881/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078882/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078882/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078883/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078883/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078884/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078884/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078885/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078885/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078886/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078886/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078887/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078887/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078888/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078888/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078889/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078889/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078890/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078890/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078891/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078891/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078892/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078892/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078893/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078893/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078894/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078894/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078895/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078895/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078896/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078896/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078897/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078897/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078898/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078898/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078899/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078899/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078900/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078900/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078901/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078901/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078902/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078902/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078903/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078903/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078904/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078904/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078905/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078905/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078906/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078906/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078907/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078907/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078908/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078908/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078909/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078909/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078910/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078910/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078911/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078911/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078912/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078912/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078913/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078913/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078914/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078914/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078915/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078915/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078916/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078916/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078917/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078917/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078918/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078918/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078919/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078919/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078920/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078920/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078921/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078921/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078922/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078922/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078923/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078923/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078924/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078924/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078925/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078925/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078926/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078926/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078927/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078927/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078928/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078928/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078929/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078929/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078930/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078930/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078931/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078931/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078932/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078932/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078933/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078933/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078934/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078934/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078935/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078935/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078936/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078936/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078937/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078937/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078938/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078938/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078939/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078939/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078940/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078940/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078941/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078941/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078942/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078942/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078943/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078943/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078944/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078944/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078945/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078945/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078946/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078946/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078947/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078947/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078948/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078948/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078949/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078949/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078950/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078950/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078951/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078951/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078952/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078952/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078953/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078953/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078954/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078954/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078955/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078955/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078956/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078956/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078957/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078957/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078958/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078958/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078959/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078959/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078960/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078960/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078961/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078961/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078962/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078962/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078963/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078963/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078964/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078964/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078965/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078965/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078966/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078966/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078967/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078967/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078968/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078968/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078969/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078969/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078970/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078970/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078971/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078971/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078972/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078972/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078973/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078973/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078974/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078974/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078975/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078975/CheckPoint" method="_on_body_entered"]
-[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@1078976/CheckPoint" to="TrackPath/CheckPoints/@Node3D@1078976/CheckPoint" method="_on_body_entered"]
+[node name="VoxelGI" type="VoxelGI" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 105.173)
+size = Vector3(550, 200, 700)
+data = ExtResource("17_xt734")
 
-[editable path="RespawnArea"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/CheckPointsHolder/CheckPoint" to="TrackPath/CheckPoints/CheckPointsHolder/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626697/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626697/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626698/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626698/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626699/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626699/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626700/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626700/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626701/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626701/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626702/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626702/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626703/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626703/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626704/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626704/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626705/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626705/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626706/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626706/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626707/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626707/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626708/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626708/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626709/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626709/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626710/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626710/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626711/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626711/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626712/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626712/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626713/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626713/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626714/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626714/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626715/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626715/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626716/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626716/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626717/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626717/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626718/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626718/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626719/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626719/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626720/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626720/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626721/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626721/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626722/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626722/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626723/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626723/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626724/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626724/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626725/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626725/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626726/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626726/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626727/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626727/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626728/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626728/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626729/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626729/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626730/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626730/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626731/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626731/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626732/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626732/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626733/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626733/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626734/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626734/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626735/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626735/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626736/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626736/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626737/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626737/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626738/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626738/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626739/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626739/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626740/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626740/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626741/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626741/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626742/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626742/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626743/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626743/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626744/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626744/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626745/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626745/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626746/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626746/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626747/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626747/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626748/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626748/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626749/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626749/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626750/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626750/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626751/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626751/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626752/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626752/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626753/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626753/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626754/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626754/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626755/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626755/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626756/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626756/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626757/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626757/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626758/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626758/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626759/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626759/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626760/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626760/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626761/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626761/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626762/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626762/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626763/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626763/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626764/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626764/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626765/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626765/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626766/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626766/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626767/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626767/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626768/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626768/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626769/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626769/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626770/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626770/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626771/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626771/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626772/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626772/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626773/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626773/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626774/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626774/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626775/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626775/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626776/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626776/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626777/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626777/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626778/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626778/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626779/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626779/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626780/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626780/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626781/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626781/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626782/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626782/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626783/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626783/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626784/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626784/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626785/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626785/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626786/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626786/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626787/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626787/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626788/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626788/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626789/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626789/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626790/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626790/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626791/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626791/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626792/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626792/CheckPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="TrackPath/CheckPoints/@Node3D@626793/CheckPoint" to="TrackPath/CheckPoints/@Node3D@626793/CheckPoint" method="_on_body_entered"]

@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://bkp6jasr0gegw"]
+[gd_scene load_steps=5 format=3 uid="uid://bkp6jasr0gegw"]
 
 [ext_resource type="Script" uid="uid://bag5bexujp55t" path="res://menus/car_select_menu/car_select_menu.gd" id="1_qoidb"]
+[ext_resource type="PackedScene" uid="uid://dedq01yefmnf8" path="res://menus/buttons/HideBackButton.tscn" id="2_1sqt2"]
 [ext_resource type="Script" uid="uid://c066dimaosfnp" path="res://menus/car_select_menu/select_track.gd" id="3_1sqt2"]
 [ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="3_c2iqj"]
 
@@ -59,6 +60,9 @@ text = "Press X to Join"
 horizontal_alignment = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="PlayerConatiner"]
+layout_mode = 2
+
+[node name="BackButton" parent="PlayerConatiner/MarginContainer" instance=ExtResource("2_1sqt2")]
 layout_mode = 2
 
 [node name="SelectTrack" type="Button" parent="PlayerConatiner/MarginContainer"]

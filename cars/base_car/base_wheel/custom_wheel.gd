@@ -53,7 +53,6 @@ func _ready() -> void:
 	car = get_parent()
 	target_position = Vector3(0, -car.car_stat_resource.wheel_radius, 0)
 
-
 func _physics_process(delta: float) -> void:
 	# Apply forces if colliding
 	if is_colliding():
@@ -103,7 +102,7 @@ func _process(delta: float) -> void:
 
 # Control suspension
 func apply_suspension(delta: float) -> void:
-		# Add direction to apply force
+		# Find direction to apply force
 		force_direction = global_basis.y
 		collision_distance = collision_point.distance_to(global_position)
 
@@ -112,20 +111,17 @@ func apply_suspension(delta: float) -> void:
 		current_spring_length = clamp(car.car_stat_resource.spring_rest_distance - offset, 0, car.car_stat_resource.spring_rest_distance)
 		
 		# Find change in spring velocity
-		spring_velocity = (previous_spring_length - current_spring_length) / delta
-		
-		# Calculate spring force
-		
-		var upper = 1
-		var spring_mulit = 1
-		var damp_multi = 0.5
-		
-		spring_force = offset * car.car_stat_resource.spring_strength * spring_mulit
-		# Calculate dampener force
-		dampener_force = spring_velocity * car.car_stat_resource.spring_dampener_strength * damp_multi
-		# Calculate total suspension force
-		suspension_force = basis.y * (clamp(spring_force + dampener_force, -car.car_stat_resource.max_spring_strength * upper, car.car_stat_resource.max_spring_strength * upper))
+		spring_velocity = force_direction.dot(tire_velocity)
 
+		# Calculate spring force
+		spring_force = offset * car.car_stat_resource.spring_strength
+
+		# Calculate dampener force
+		dampener_force = -(spring_velocity * car.car_stat_resource.spring_dampener_strength)
+
+		# Calculate total suspension force
+		suspension_force = basis.y * (spring_force + dampener_force)
+		
 		# Store new spring length value
 		previous_spring_length = current_spring_length
 
@@ -153,31 +149,32 @@ func apply_x_force(delta) -> void:
 	steer_direction = global_basis.x
 
 	# Calculate velocity in the sliding direction (opposite to steering)
-	lateral_velocity = steer_direction.dot(tire_velocity) * 10
+	lateral_velocity = steer_direction.dot(tire_velocity)
+	
+	## Scale steering direction velocity by grip, (grip value is between [0,1])
+	if use_as_traction:
+		desired_velocity_change = -lateral_velocity * car.get_tire_grip(true) if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /5
+	else:
+		desired_velocity_change = -lateral_velocity * car.get_tire_grip() if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /6
 
 	# Scale steering direction velocity by grip, (grip value is between [0,1])
-	if use_as_traction:
-		desired_velocity_change = -lateral_velocity * car.get_tire_grip(true) if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /3
-	else:
-		desired_velocity_change = -lateral_velocity * car.get_tire_grip() if car.current_state != car.State.DRIFT else -lateral_velocity * car.get_tire_grip(true) /3.1
-
 	#if use_as_traction:
-		#desired_velocity_change = -lateral_velocity * 1
+		#desired_velocity_change = -lateral_velocity
 	#else:
-		#desired_velocity_change = -lateral_velocity * 1
+		#desired_velocity_change = -lateral_velocity
 
 	# Calculate target acceleration
-	desired_acceleration = (desired_velocity_change/delta) * 0.5
+	desired_acceleration = desired_velocity_change/delta
 
-	# Multplily accelration by mass value to get force, TODO
-	steer_force = desired_acceleration * 10
+	#steer_force = desired_acceleration * tire_mass
+	steer_force = desired_acceleration * 50
 
 	# Apply force to car :D
 	car.apply_force(steer_direction * steer_force, point - car.global_position)
 
 	# Add force in opposite direction of steering to simulate drifting
 	if car.current_state == car.State.DRIFT:
-		car.apply_force(steer_direction * -(car.speed * car.accel_input) * car.steer_input, point - car.global_position)
+		car.apply_force(steer_direction * -(car.speed * 100 *car.accel_input) * car.steer_input, point - car.global_position)
 
 		# Transition out of drift if drift force is low
 		if abs(lateral_velocity) < minimum_drift_threshold:

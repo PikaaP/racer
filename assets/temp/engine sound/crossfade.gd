@@ -29,63 +29,63 @@ func stop():
 var childcount = 0
 
 func _ready():
-	play()
-	childcount = get_child_count()
-	maxfades = float(childcount-1.0)
+	if !get_parent().mute:
+		play()
+		childcount = get_child_count()
+		maxfades = float(childcount-1.0)
 
 func _physics_process(_delta):
-	pitch = abs(get_parent().current_rpm*pitch_influence)/pitch_calibrate
-	
-	volume = 0.5 +get_parent().valve_influence*0.5
-	fade = (get_node("100500").pitch_scale  -0.22222)*(crossfade_influence +float(get_parent().valve_influence)*crossfade_throttle)
-	#+float(get_parent().vvt)*crossfade_vvt)
+	if !get_parent().mute:
+		pitch = abs(get_parent().current_rpm*pitch_influence)/pitch_calibrate
 		
-	if fade<0.0:
-		fade = 0.0
-	elif fade>childcount-1.0:
-		fade = childcount-1.0
-	
-	vacuum = (get_parent().valve_influence)*4
-
-	if vacuum<0:
-		vacuum = 0
-	elif vacuum>1:
-		vacuum = 1
-
-	var sfk = 1.0-(vacuum*get_parent().valve_influence)
-	
-	if sfk<vacuum_crossfade:
-		sfk = vacuum_crossfade
-	
-	fade *= sfk
-	
-	volume += (1.0-sfk)*vacuum_loudness
-
-	for i: AudioStreamPlayer3D in get_children():
-		var maxvol = float(i.get_child(0).name)/100.0
-		var maxpitch = float(i.name)/100000.0
-		
-		var index = float(i.get_index())
-		var dist = abs(index-fade)
-		
-		dist *= abs(dist)
-		
-		var vol = 1.0-dist
-		if vol<0.0:
-			vol = 0.0
-		elif vol>1.0:
-			vol = 1.0
-		var db = linear_to_db((vol*maxvol)*(volume*(overall_volume)))
-		if db<-60.0:
-			db = -60.0
+		volume = 0.5 +get_parent().valve_influence*0.5
+		fade = (get_node("100500").pitch_scale  -0.22222)*(crossfade_influence +float(get_parent().valve_influence)*crossfade_throttle)
+		#+float(get_parent().vvt)*crossfade_vvt)
 			
-		#i.unit_db = db
-		#i.max_db = i.unit_db
-		var pit = abs(pitch*maxpitch)
-		if pit>5.0:
-			pit = 5.0
-		elif pit<0.01:
-			pit = 0.01
-		i.pitch_scale = pit
-	
+		if fade<0.0:
+			fade = 0.0
+		elif fade>childcount-1.0:
+			fade = childcount-1.0
 		
+		vacuum = (get_parent().valve_influence)*4
+
+		if vacuum<0:
+			vacuum = 0
+		elif vacuum>1:
+			vacuum = 1
+
+		var sfk = 1.0-(vacuum*get_parent().valve_influence)
+		
+		if sfk<vacuum_crossfade:
+			sfk = vacuum_crossfade
+		
+		fade *= sfk
+		
+		volume += (1.0-sfk)*vacuum_loudness
+
+		for i: AudioStreamPlayer3D in get_children():
+			var maxvol = float(i.get_child(0).name)/100.0
+			var maxpitch = float(i.name)/100000.0
+			
+			var index = float(i.get_index())
+			var dist = abs(index-fade)
+			
+			dist *= abs(dist)
+			
+			var vol = 1.0-dist
+			if vol<0.0:
+				vol = 0.0
+			elif vol>1.0:
+				vol = 1.0
+			var db = linear_to_db((vol*maxvol)*(volume*(overall_volume)))
+			if db<-60.0:
+				db = -60.0
+				
+			#i.unit_db = db
+			#i.max_db = i.unit_db
+			var pit = abs(pitch*maxpitch)
+			if pit>5.0:
+				pit = 5.0
+			elif pit<0.01:
+				pit = 0.01
+			i.pitch_scale = pit

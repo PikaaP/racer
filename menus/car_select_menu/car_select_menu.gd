@@ -1,10 +1,15 @@
-class_name MainMenu extends Control
+class_name CarSelectMenu extends Control
+
+signal go_back()
 
 @onready var select_car  = $PlayerConatiner/SelectCar
 @onready var player_container  = $PlayerConatiner
 
 @onready var select_track: SelectTrackMenu = $SelectTrack
 @onready var select_track_button: Button = $PlayerConatiner/MarginContainer/SelectTrack
+@onready var back_button: HideBackButton = $PlayerConatiner/MarginContainer/BackButton
+
+@export var back_button_endpoint: Node
 
 const PLAYER_SELECTION = preload('res://menus/car_select_menu/player_selection/PlayerSelection.tscn')
 
@@ -12,9 +17,14 @@ var input_maps = [
 ]
 
 func _ready() -> void:
+	Input.joy_connection_changed.connect(_handle_joy_connection)
+
+	back_button.back_button_endpoint = back_button_endpoint
+	back_button.back_pressed.connect(_notify_parent_backing)
+	back_button.node_to_hide = self
+
 	for player_key in PlayerManager.players:
 		_handle_joy_connection(player_key, true)
-		#add_player_controls(player_key)
 
 
 func _on_select_track_pressed() -> void:
@@ -40,24 +50,31 @@ func _handle_joy_connection(index: int, is_connecting: bool) -> void:
 		select_car.get_child(index).add_child(player_select)
 		add_player_controls(index)
 
+		# Enable track select button if atleast one track is avalible
 		if select_track_button.disabled:
 			select_track_button.disabled = false
 		
 	else:
+		# Remove count from total player count
 		PlayerManager.num_players  -= 1
 
+		# Disable select track button if there are no connected controllers
 		if PlayerManager.num_players < 1:
 			select_track_button.disabled = true
-
+		
+		# Remove player index from PlayerManager
 		PlayerManager.players.erase(index)
-		print('removing player: ', index)
+		# Remove UI instance and replace with default join panel
 		select_car.get_child(index).get_child(0).queue_free()
 		var join_label = Label.new()
 		join_label.text = 'Press "X" to join'
 		join_label.set_horizontal_alignment(1)
 		select_car.get_child(index).add_child(join_label)
+
+		# Remove input map
 		input_maps.remove_at(index)
 
+# Store new player contorls as Dict and store them in Game
 func add_player_controls(player_index: int) -> void:
 	var input_map = {
 		"motions": {
@@ -75,8 +92,10 @@ func add_player_controls(player_index: int) -> void:
 	}
 	
 	input_maps.append(input_map)
+	# Set contorls in game
 	set_player_controls()
 
+# Set player controls in game
 func set_player_controls():
 	for player_index in input_maps.size():
 		print('addinging controls for: ', player_index)
@@ -104,7 +123,16 @@ func set_player_controls():
 			action_event.button_index = input_maps[player_index]['buttons'][input_maps[player_index]['buttons'].keys()[b]]['button_index']
 			InputMap.action_add_event(action, action_event)
 
+# Store all player variables in global script PlayerManager
 func set_player_choice() -> void:
 	for player_index in PlayerManager.players:
+		# Get chosen car
 		PlayerManager.players[player_index]['selected_car'] = select_car.get_child(player_index).get_child(0).selected_car
+		# Get chosen name
+		PlayerManager.players[player_index]['player_name'] = select_car.get_child(player_index).get_child(0).player_name
+		# Get input map
 		PlayerManager.players[player_index]['inputs'] = input_maps[player_index]
+
+# Emit signal to notify parent back button is pressed
+func _notify_parent_backing() -> void:
+	go_back.emit()

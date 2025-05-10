@@ -1,0 +1,29 @@
+[gd_scene load_steps=7 format=3 uid="uid://bxlxy34vrgg4r"]
+
+[ext_resource type="Script" uid="uid://cnc2ugjoodcvw" path="res://scenes/game_instances/story_game_instance/story_game.gd" id="1_1vytx"]
+[ext_resource type="PackedScene" uid="uid://b25r4pkrsxn8w" path="res://player/ui/countdown_ui/countdown_ui.tscn" id="2_xldat"]
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="3_li7uu"]
+[ext_resource type="PackedScene" uid="uid://dj131u0oa6h2h" path="res://menus/story_pause_menu/StoryPauseMenu.tscn" id="4_1vytx"]
+[ext_resource type="Script" uid="uid://exdyoehmftqx" path="res://menus/story_pause_menu/story_pause_menu.gd" id="5_xldat"]
+[ext_resource type="PackedScene" uid="uid://dxvkn7v4q72p7" path="res://menus/story_race_over/race_over_menu.tscn" id="6_li7uu"]
+
+[node name="StoryGame" type="Node"]
+script = ExtResource("1_1vytx")
+
+[node name="UI" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="CountdownUI" parent="UI" instance=ExtResource("2_xldat")]
+
+[node name="Result" type="Sprite2D" parent="UI"]
+visible = false
+position = Vector2(585, 303)
+texture = ExtResource("3_li7uu")
+
+[node name="RaceOptionsMenu" parent="UI" instance=ExtResource("4_1vytx")]
+script = ExtResource("5_xldat")
+
+[node name="RaceOverMenu" parent="UI" instance=ExtResource("6_li7uu")]
+visible = false
+
+[node name="TrackHolder" type="Node" parent="."]

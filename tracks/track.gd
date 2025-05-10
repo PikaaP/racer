@@ -13,8 +13,6 @@ class_name Track extends Node3D
 
 @export var max_lap_count: int = 3
 
-
-
 var ready_confirmation_count: int = 0
 var go_confirmation_count: int = 0
 
@@ -22,17 +20,29 @@ var all_racers: Array = []
 var all_checkpoints: Array = []
 var test_bot = preload('res://bot/Bot.tscn')
 
+
 var avalible_grid_slots: Array = []
 var max_grid_slot_size: int = 7
 
 @onready var leaderboard_timer = $LeaderboardTimer
 @onready var track_timer: Timer = $TrackTimer
 
+@export var track_data: TrackData
+
 var time: float = 0.0
 var start_timer: bool = false
 var results_table: Array = []
+var save_path: String
+var player_lap_table: Dictionary = {}
+var track_record_data: TrackData
+
 
 func _ready() -> void:
+	save_path = "user://data".path_join(scene_file_path.split('//')[1].split('.tscn')[0] + ".dat")
+	var track_data = load_track_data()
+	if track_data:
+		track_record_data = track_data
+	
 	add_to_group('track')
 	track_cam_path.get_child(0).follow_path()
 
@@ -76,6 +86,7 @@ func add_player_to_grid(player: PlayerCar, player_index) -> void:
 	
 	player.race_ready.connect(_start_count_down)
 	player.race_over.connect(_race_over_player)
+	player.lap_completed.connect(_store_lap)
 
 	player.player_index = player_index
 	player.start_position = start_grid.get_child(start_grid_index).global_position
@@ -83,7 +94,10 @@ func add_player_to_grid(player: PlayerCar, player_index) -> void:
 	player.max_lap_count = max_lap_count
 	player.checkpoint_array = all_checkpoints
 	player.inputs = PlayerManager.players[player_index]['inputs']
-
+	player.player_name = PlayerManager.players[player_index]['player_name']
+	
+	player_lap_table[player_index] = {'name': player.player_name}
+	
 	player_holder.add_child(player)
 	all_racers.append(player)
 
@@ -226,6 +240,29 @@ func _update_leaderboard_ticker() -> void:
 	var sorted_leader_board = sort_racer_order()
 	get_tree().call_group('player_camera', 'update_leader_board', sorted_leader_board)
 
+# Strole lap time for eache player
+#func _store_lap(player: PlayerCar) -> void:
+func _store_lap(player) -> void:
+	var complete_time = time
+	var lap_time_delta: float = complete_time - player.last_lap_time
+
+	var index = player.player_index
+	var info: Dictionary = player_lap_table[index]
+
+	# Check if player has lap submitted
+	# If lap exists, compare lap times and update lap table with best time
+	if !info.has('best_lap_time'):
+		info['best_lap_time'] = lap_time_delta
+	else:
+		if lap_time_delta < info['best_lap_time']:
+			info['best_lap_time'] = lap_time_delta
+
+	# Update player_lap_table best lap time
+	player_lap_table[index] = info
+
+	# Reset lap time counter to end of last lap
+	player.last_lap_time = complete_time
+
 # Once all players have finished their car openings start race countdown
 func _start_count_down() -> void:
 	go_confirmation_count += 1
@@ -239,7 +276,8 @@ func _start_race() -> void:
 	get_tree().call_group('bot', 'start_race')
 	start_timer = true
 
-func _race_over_player(player: PlayerCar) -> void:
+func _race_over_player(player) -> void:
+#func _race_over_player(player: PlayerCar) -> void:
 	# Get position
 	player.finish_race()
 	var finish_data = get_finish_position(player)
@@ -250,6 +288,8 @@ func _race_over_player(player: PlayerCar) -> void:
 	for i in results_table:
 		print(i)
 	print('\n*****')
+	
+	print('best lap time: ', player_lap_table[player.player_index]['best_lap_time'])
 	
 	# Check if other plays are present and also finished
 	var is_last_player: bool = false
@@ -263,6 +303,35 @@ func _race_over_player(player: PlayerCar) -> void:
 	# bring up restart, return home menu
 	if is_last_player:
 		#$UI/RaceOverMenu.show()
+		print('save game data')
+		var temp_lap_time = null
+		var temp_player_name = null
+		for index in player_lap_table:
+			var data = player_lap_table[index]
+			if data['best_lap_time'] < temp_lap_time or temp_lap_time == null:
+				temp_lap_time = data['best_lap_time']
+				temp_player_name = data['player_name']
+		
+		if track_data.fastest_lap != null:
+			if temp_lap_time < track_data.fastest_lap:
+				var new_record: TrackData = TrackData.new()
+				new_record.fastest_lap = temp_lap_time
+				new_record.data_achieved = Time.get_date_string_from_system()
+				new_record.fastest_lap_holder = temp_player_name
+				save_track_data(new_record)
+				
+				print('bet old record')
+			else:
+				print('failed to beat: ', track_data.fastest_lap, ' with: ', temp_lap_time)
+		else:
+			var new_record: TrackData = TrackData.new()
+			new_record.fastest_lap = temp_lap_time
+			new_record.data_achieved = Time.get_date_string_from_system()
+			new_record.fastest_lap_holder = temp_player_name
+			print('set new time, no prev time')
+			save_track_data(new_record)
+
+
 		pass
 	# Else spectator mode
 	# Set other player camera to player
@@ -320,5 +389,12 @@ func show_race_over_menu() -> void:
 
 # After track camera tweens have finished, Start player camera showcase
 func _handle_track_showcase_over() -> void:
-	print('emmit start cont')
 	get_tree().call_group('player_camera', 'play_start_animation')
+
+func load_track_data() -> TrackData:
+	if ResourceLoader.exists(save_path):
+		return load(save_path)
+	return null
+
+func save_track_data(data: TrackData) -> void:
+	ResourceSaver.save(data, save_path)

@@ -1,0 +1,34 @@
+[gd_scene load_steps=4 format=3 uid="uid://bmfga55yna06a"]
+
+[ext_resource type="Shader" uid="uid://fwmm55ops4ok" path="res://player/test/blur_prototype/BlurPrototype.gdshader" id="1_j7o4w"]
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="2_n765w"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b2al7"]
+shader = ExtResource("1_j7o4w")
+shader_parameter/inner_iterations = 12.0
+shader_parameter/center = Vector2(0.5, 0.5)
+shader_parameter/inner_power = 2.0
+shader_parameter/radius = 0.55
+shader_parameter/outer_radius = 0.92
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_b2al7")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+texture = ExtResource("2_n765w")

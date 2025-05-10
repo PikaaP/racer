@@ -16,8 +16,8 @@ class_name CarStats extends Resource
 
 # Steering stats
 @export var steering_angle: int = 30
-@export var steer_speed: float = 1.5
-@export var steer_limit: float = 0.8
+@export var steer_speed: float = 0.5
+@export var steer_limit: float = 0.6
 @export var drift_speed: int = 100
 # Car properties
 @export var mass: float = 80.0

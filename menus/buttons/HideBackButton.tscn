@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dedq01yefmnf8"]
+
+[ext_resource type="Script" uid="uid://bio60bp25iq1b" path="res://menus/buttons/hide_back_button.gd" id="1_rx2ib"]
+
+[node name="BackButton" type="Button"]
+size_flags_horizontal = 0
+text = "<- Back"
+script = ExtResource("1_rx2ib")

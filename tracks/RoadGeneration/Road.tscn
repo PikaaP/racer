@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=4 uid="uid://bdmiqjwmuo7ut"]
 
-[ext_resource type="Script" uid="uid://dt4008gwn7yjs" path="res://tracks/track_series_0/road_gen.gd" id="1_m0487"]
+[ext_resource type="Script" uid="uid://dt4008gwn7yjs" path="res://tracks/test_tracks/road_gen.gd" id="1_m0487"]
 
 [sub_resource type="Curve3D" id="Curve3D_m0487"]
 _data = {

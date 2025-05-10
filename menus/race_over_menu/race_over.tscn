@@ -17,25 +17,35 @@ script = ExtResource("1_ovhy4")
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+focus_mode = 2
 alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Back" type="Button" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../../MainMenu")
+focus_neighbor_bottom = NodePath("../../Restart")
+text = "Back To Race
+"
 
 [node name="Restart" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../MarginContainer/Back")
+focus_neighbor_bottom = NodePath("../TrackCarSelect")
 text = "Restart"
 
 [node name="TrackCarSelect" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Restart")
+focus_neighbor_bottom = NodePath("../MainMenu")
 text = "Change Track and Car"
 
 [node name="MainMenu" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../TrackCarSelect")
+focus_neighbor_bottom = NodePath("../MarginContainer/Back")
 text = "main menu"
-
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
-layout_mode = 2
-theme_override_constants/margin_top = 20
-
-[node name="Back" type="Button" parent="VBoxContainer/MarginContainer"]
-layout_mode = 2
-text = "Back To Race
-"

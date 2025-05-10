@@ -18,7 +18,12 @@ config/icon="res://icon.svg"
 [autoload]
 
 PlayerManager="*res://autoloads/PlayerManager.gd"
-GameManager="*res://autoloads/GameManager.gd"
+GameManager="*res://autoloads/CoopGameManager.gd"
+
+[display]
+
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
 
 [editor_plugins]
 
@@ -72,4 +77,23 @@ menu={
 
 [physics]
 
-3d/physics_engine="GodotPhysics3D"
+3d/physics_engine="Jolt Physics"
+jolt_physics_3d/simulation/velocity_steps=60
+jolt_physics_3d/simulation/position_steps=12
+3d/solver/solver_iterations=128
+jolt_physics_3d/stretch/aspect="expand"
+jolt_physics_3d/stretch/mode="viewport"
+jolt_physics_3d/use_custom_user_dir=false
+jolt_physics_3d/quality/use_debanding=true
+jolt_physics_3d/quality/use_taa=true
+jolt_physics_3d/quality/screen_space_aa=1
+jolt_physics_3d/quality/msaa_3d=3
+jolt_physics_3d/quality/msaa_2d=3
+
+[rendering]
+
+anti_aliasing/quality/msaa_2d=3
+anti_aliasing/quality/msaa_3d=3
+anti_aliasing/quality/screen_space_aa=1
+anti_aliasing/quality/use_taa=true
+anti_aliasing/quality/use_debanding=true

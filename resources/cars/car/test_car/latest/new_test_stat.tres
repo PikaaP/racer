@@ -6,10 +6,10 @@
 
 [resource]
 script = ExtResource("3_7ioni")
-spring_strength = 120000
-max_spring_strength = 140000
+spring_strength = 90000
+max_spring_strength = 2000000
 spring_rest_distance = 0.7
-spring_dampener_strength = 5000.0
+spring_dampener_strength = 8000.0
 wheel_radius = 0.9
 front_grip = 1.0
 rear_grip = 1.0

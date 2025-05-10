@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3 uid="uid://budlcb1fh02s4"]
+
+[ext_resource type="Script" uid="uid://5bdc6gagocrm" path="res://menus/story_menu/series_chapter/series_chapter.gd" id="1_kghtn"]
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="2_e1xad"]
+
+[node name="SeriesChapter" type="PanelContainer"]
+custom_minimum_size = Vector2(150, 250)
+offset_right = 8.0
+offset_bottom = 8.0
+script = ExtResource("1_kghtn")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Thumbnail" type="TextureRect" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("2_e1xad")
+expand_mode = 4
+
+[node name="NameLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Series 0"
+
+[node name="BestTimeLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Best time: --:--:---"
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+visible = false
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="Medal" type="TextureRect" parent="PanelContainer"]
+layout_mode = 2
+texture = ExtResource("2_e1xad")
+expand_mode = 3
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

@@ -13,7 +13,10 @@ engine_stat_resource = ExtResource("2_2kq0v")
 
 [node name="engine_sound" parent="." instance=ExtResource("2_wd5m2")]
 
-[node name="Control" type="Control" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Control" type="Control" parent="CanvasLayer"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,7 +24,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Gear" type="Label" parent="Control"]
+[node name="Gear" type="Label" parent="CanvasLayer/Control"]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -38,7 +41,7 @@ text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Speed" type="Label" parent="Control"]
+[node name="Speed" type="Label" parent="CanvasLayer/Control"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -58,7 +61,7 @@ text = "0 KPH"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RPM" type="ProgressBar" parent="Control"]
+[node name="RPM" type="ProgressBar" parent="CanvasLayer/Control"]
 custom_minimum_size = Vector2(40, 300)
 layout_mode = 1
 anchors_preset = 3
@@ -79,7 +82,7 @@ step = 10.0
 value = 1000.0
 fill_mode = 3
 
-[node name="Boost" type="ProgressBar" parent="Control"]
+[node name="Boost" type="ProgressBar" parent="CanvasLayer/Control"]
 custom_minimum_size = Vector2(40, 300)
 layout_mode = 1
 anchors_preset = 3

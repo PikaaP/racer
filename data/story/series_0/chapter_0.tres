@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="SeriesChapterData" load_steps=5 format=3 uid="uid://d0ovgjr4csrun"]
+
+[ext_resource type="Script" uid="uid://dxgm3qv4fyx52" path="res://resources/game_instance/game_instance.gd" id="1_jo588"]
+[ext_resource type="Script" uid="uid://cj5o33qwedjlu" path="res://resources/story/series_chapter_data/series_chapter_data.gd" id="1_nqcj2"]
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="2_mbegm"]
+
+[sub_resource type="Resource" id="Resource_5ljuv"]
+script = ExtResource("1_jo588")
+selected_lap_count = 1
+selected_bot_count = 10
+selected_bot_difficulty = "Elite"
+selected_bot_binary = true
+selected_track_dict = {
+"path": "res://tracks/track_series_0/Home.tscn",
+"thumbnail": "res://icon.svg",
+"track_name": "Home"
+}
+metadata/_custom_type_script = "uid://dxgm3qv4fyx52"
+
+[resource]
+script = ExtResource("1_nqcj2")
+locked = false
+chapter_name = "Home"
+thumnail = ExtResource("2_mbegm")
+best_time = 0.0
+medal_achived = 0
+track_scene_path = ""
+success_condition = "finish"
+car_path = "res://player/test/test_physics/labracer.tscn"
+start_pos_index = 7
+unlock_series_id = 0
+unlock_chapter_id = Vector3(0, -0.68944, 0)
+completed = false
+series_id = 0
+chapter_id = 0
+game_instance = SubResource("Resource_5ljuv")
+metadata/_custom_type_script = "uid://cj5o33qwedjlu"

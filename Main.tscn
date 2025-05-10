@@ -1,15 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://lfp4q0hibsik"]
 
 [ext_resource type="Script" uid="uid://cwyljoy77f2uo" path="res://main.gd" id="1_4jwvc"]
-[ext_resource type="PackedScene" uid="uid://bkp6jasr0gegw" path="res://menus/car_select_menu/CarSelectMenu.tscn" id="1_hiph2"]
+[ext_resource type="PackedScene" uid="uid://cuedbx2pl0g1s" path="res://menus/main_menu/MainMenu.tscn" id="2_r0du0"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_4jwvc")
 
-[node name="MainMenu" parent="." instance=ExtResource("1_hiph2")]
-
-[node name="SelectTrack" parent="MainMenu/PlayerConatiner/MarginContainer" index="0"]
-size_flags_horizontal = 3
-size_flags_vertical = 1
-
-[editable path="MainMenu"]
+[node name="MainMenu" parent="." instance=ExtResource("2_r0du0")]
