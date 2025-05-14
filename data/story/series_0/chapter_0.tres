@@ -7,7 +7,7 @@
 [sub_resource type="Resource" id="Resource_5ljuv"]
 script = ExtResource("1_jo588")
 selected_lap_count = 1
-selected_bot_count = 10
+selected_bot_count = 20
 selected_bot_difficulty = "Elite"
 selected_bot_binary = true
 selected_track_dict = {
@@ -29,7 +29,7 @@ success_condition = "finish"
 car_path = "res://player/test/test_physics/labracer.tscn"
 start_pos_index = 7
 unlock_series_id = 0
-unlock_chapter_id = Vector3(0, -0.68944, 0)
+unlock_chapter_id = 0
 completed = false
 series_id = 0
 chapter_id = 0

@@ -1,7 +1,7 @@
-[gd_scene load_steps=25 format=4 uid="uid://s3dy7dbjgpte"]
+[gd_scene load_steps=29 format=4 uid="uid://s3dy7dbjgpte"]
 
 [ext_resource type="Script" uid="uid://fejr3x25l27m" path="res://bot/bot.gd" id="1_xgyvj"]
-[ext_resource type="Resource" uid="uid://de6fsrjpwnaaq" path="res://resources/cars/car/test_bot/Bot.tres" id="2_ik225"]
+[ext_resource type="Resource" uid="uid://buw2mwwro2ix6" path="res://bot/difficulties/bot_test.tres" id="2_tl7yr"]
 [ext_resource type="PackedScene" uid="uid://bsjve54h03vls" path="res://scenes/smoke_effect/drift_smoke.tscn" id="6_6ipsu"]
 [ext_resource type="Script" uid="uid://djixe7vh7u2sg" path="res://cars/base_car/base_wheel/custom_wheel.gd" id="6_mleqh"]
 [ext_resource type="PackedScene" uid="uid://brsi5h2jvsvoo" path="res://scenes/drift_mesh/DriftMesh.tscn" id="7_oik8q"]
@@ -12,8 +12,13 @@
 [ext_resource type="PackedScene" uid="uid://rn2w3fs8e2sq" path="res://cars/dodge/dodge.tscn" id="12_khbf5"]
 [ext_resource type="PackedScene" uid="uid://mbp078t4foy4" path="res://player/effects/light_trail/LightTrailtscn.tscn" id="12_mleqh"]
 [ext_resource type="Texture2D" uid="uid://dml1mbpmfs65y" path="res://addons/albedo.png" id="13_khbf5"]
+[ext_resource type="PackedScene" uid="uid://btk0gu4qbdfwl" path="res://cars/car_engine/CarEngine.tscn" id="13_mleqh"]
+[ext_resource type="PackedScene" uid="uid://p2jkm1bauv8k" path="res://cars/car_engine/Exhaust.tscn" id="14_khbf5"]
+[ext_resource type="Resource" uid="uid://dlbv28hfqsypj" path="res://bot/difficulties/bot_engine_test.tres" id="14_np44a"]
+[ext_resource type="Texture2D" uid="uid://q8beu8moq1nt" path="res://icon.svg" id="15_oik8q"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_yf5fj"]
+friction = 0.5
 bounce = 0.1
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4dey1"]
@@ -65,9 +70,6 @@ shadow_mesh = SubResource("ArrayMesh_ww2yh")
 [sub_resource type="BoxShape3D" id="BoxShape3D_kvyhf"]
 size = Vector3(1.8, 1, 4)
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_xgyvj"]
-radius = 0.25
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oik8q"]
 transparency = 1
 cull_mode = 2
@@ -101,7 +103,11 @@ collision_bounce = 0.3
 [sub_resource type="PlaneMesh" id="PlaneMesh_oik8q"]
 size = Vector2(0.05, 0.2)
 
-[node name="Bot" type="RigidBody3D" groups=["bot"]]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tl7yr"]
+cull_mode = 2
+albedo_texture = ExtResource("15_oik8q")
+
+[node name="Bot" type="RigidBody3D" node_paths=PackedStringArray("exhaust_holder") groups=["bot"]]
 collision_layer = 24
 collision_mask = 47
 mass = 80.0
@@ -109,7 +115,9 @@ physics_material_override = SubResource("PhysicsMaterial_yf5fj")
 center_of_mass_mode = 1
 center_of_mass = Vector3(0, -0.01, 0)
 script = ExtResource("1_xgyvj")
-car_stat_resource = ExtResource("2_ik225")
+bot_avoidance = 0.0
+car_stat_resource = ExtResource("2_tl7yr")
+exhaust_holder = [NodePath("ExhaustHolder/Exhaust"), NodePath("ExhaustHolder2/Exhaust")]
 
 [node name="FrontRightWheel" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.603637, -1.51321)
@@ -187,20 +195,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, -0.25, 0)
 emitting = false
 lifetime = 1.0
 
+[node name="fr_marker" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.603637, -1.51321)
+
+[node name="fl_marker" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.603637, -1.51321)
+
 [node name="Dodge" parent="." instance=ExtResource("12_khbf5")]
 transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.758695, 0)
 shape = SubResource("BoxShape3D_kvyhf")
-
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0.582125, -2.1356)
-shape = SubResource("CapsuleShape3D_xgyvj")
-
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0.623235, 2.19884)
-shape = SubResource("CapsuleShape3D_xgyvj")
 
 [node name="RayHolder" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.585478, 0)
@@ -260,3 +266,103 @@ size = Vector3(1.75, 0.5, 2)
 [node name="RespawnTimer" type="Timer" parent="."]
 wait_time = 2.5
 one_shot = true
+
+[node name="Engine" parent="." instance=ExtResource("13_mleqh")]
+engine_stat_resource = ExtResource("14_np44a")
+
+[node name="ExhaustHolder" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.480757, 0.397097, 2.43647)
+
+[node name="Exhaust" parent="ExhaustHolder" instance=ExtResource("14_khbf5")]
+
+[node name="ExhaustHolder2" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.481, 0.397, 2.436)
+
+[node name="Exhaust" parent="ExhaustHolder2" instance=ExtResource("14_khbf5")]
+
+[node name="COMFRONT" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -1.488)
+
+[node name="COMBACK" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 1.488)
+
+[node name="COMMID" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+
+[node name="Sprite3D" type="Sprite3D" parent="COMMID"]
+material_override = SubResource("StandardMaterial3D_tl7yr")
+texture = ExtResource("15_oik8q")
+
+[node name="BreakLightHolder" type="Node3D" parent="."]
+visible = false
+
+[node name="BackLightRightMaker" type="Marker3D" parent="BreakLightHolder"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.421791, 0.70243, 2.44219)
+
+[node name="BackLightRight" type="OmniLight3D" parent="BreakLightHolder/BackLightRightMaker"]
+light_color = Color(0.698039, 0, 0.133333, 1)
+omni_range = 0.91
+omni_shadow_mode = 0
+
+[node name="SpotLight3D" type="SpotLight3D" parent="BreakLightHolder/BackLightRightMaker"]
+transform = Transform3D(1, 0, 0, 0, -0.421732, 0.90672, 0, -0.90672, -0.421732, 0, 0, 0)
+light_color = Color(0.698039, 0, 0.133333, 1)
+shadow_enabled = true
+distance_fade_enabled = true
+spot_range = 1.764
+
+[node name="BackLightLeftMarker" type="Marker3D" parent="BreakLightHolder"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.422, 0.702, 2.442)
+
+[node name="BackLightLeft" type="OmniLight3D" parent="BreakLightHolder/BackLightLeftMarker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00936884, 0.140872)
+light_color = Color(0.698232, 0, 0.133245, 1)
+omni_range = 0.91
+omni_shadow_mode = 0
+
+[node name="SpotLight3D" type="SpotLight3D" parent="BreakLightHolder/BackLightLeftMarker"]
+transform = Transform3D(1, 0, 0, 0, -0.421732, 0.90672, 0, -0.90672, -0.421732, 0, 0, 0.266141)
+light_color = Color(0.698039, 0, 0.133333, 1)
+shadow_enabled = true
+distance_fade_enabled = true
+spot_range = 1.764
+
+[node name="botcam" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.920259, 0.391309, 0, -0.391309, 0.920259, 0, 2.90688, 4.69184)
+current = true
+
+[node name="frt" type="Sprite3D" parent="."]
+top_level = true
+texture = ExtResource("15_oik8q")
+
+[node name="flt" type="Sprite3D" parent="."]
+top_level = true
+texture = ExtResource("15_oik8q")
+
+[node name="ChosenDir" type="Sprite3D" parent="."]
+top_level = true
+modulate = Color(0.934406, 0.664869, 0, 1)
+texture = ExtResource("15_oik8q")
+
+[node name="DecelRayHolder" type="Node3D" parent="."]
+
+[node name="DecelRay" type="RayCast3D" parent="DecelRayHolder"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.934183, 0)
+target_position = Vector3(0, 0, -10)
+collision_mask = 42
+debug_shape_custom_color = Color(1, 1, 1, 1)
+debug_shape_thickness = 5
+
+[node name="DecelRay2" type="RayCast3D" parent="DecelRayHolder"]
+transform = Transform3D(0.980615, 0, 0.195946, 0, 1, 0, -0.195946, 0, 0.980615, 0, 0.934183, 0)
+target_position = Vector3(0, 0, -5)
+collision_mask = 42
+debug_shape_custom_color = Color(1, 1, 1, 1)
+debug_shape_thickness = 5
+
+[node name="DecelRay3" type="RayCast3D" parent="DecelRayHolder"]
+transform = Transform3D(0.980955, 0, -0.194234, 0, 1, 0, 0.194234, 0, 0.980955, 0, 0.934183, 0)
+target_position = Vector3(0, 0, -5)
+collision_mask = 42
+debug_shape_custom_color = Color(1, 1, 1, 1)
+debug_shape_thickness = 5

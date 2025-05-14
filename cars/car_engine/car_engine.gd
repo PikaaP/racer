@@ -26,6 +26,7 @@ var rpm_loss: int
 
 # Realtime varibles
 var current_gear: int = 1
+var current_speed: int
 var valve_influence: float = 0.0
 var current_rpm: int = 0
 var is_boosting: bool = false
@@ -67,7 +68,7 @@ func set_up_engine() -> void:
 func _physics_process(delta: float) -> void:
 	# Get acceleration strength and direction
 	var accel_input = get_parent().accel_input
-	
+
 	if in_countdown:
 		if accel_input > 0:
 			valve_influence = clampf(accel_input, 0, 1)
@@ -78,11 +79,7 @@ func _physics_process(delta: float) -> void:
 				emit_exaust.emit()
 		else:
 			current_rpm = max(current_rpm - deceleration_rate, 0)
-		# Update Ui in drive
-		$CanvasLayer/Control/Gear.text = 'current gear: ' + str(current_gear)
-		$CanvasLayer/Control/Speed.text = str(roundi(abs(get_parent().linear_velocity.dot(get_parent().transform.basis.z)*3.8))) +"  KMPH"
-		$CanvasLayer/Control/RPM.value = current_rpm
-		$CanvasLayer/Control/Boost.value = current_boost_reserve
+
 	else:
 		
 		# Handle moving forward
@@ -107,10 +104,6 @@ func _physics_process(delta: float) -> void:
 				current_gear = -1
 				current_rpm = max_reverse_rpm * abs(accel_input)
 				power_output = accel_input * reverse_speed
-				$CanvasLayer/Control/Gear.text = 'current gear: ' + str('R')
-				$CanvasLayer/Control/Speed.text = str(roundi(abs(get_parent().linear_velocity.dot(get_parent().transform.basis.z)*3.8))) +"  KMPH"
-				$CanvasLayer/Control/RPM.value = current_rpm
-				$CanvasLayer/Control/Boost.value = current_boost_reserve
 				return
 			# Handle deceleration through braking
 			else:
@@ -123,11 +116,6 @@ func _physics_process(delta: float) -> void:
 			if current_gear == -1:
 				current_rpm = max(current_rpm - deceleration_rate, 0)
 				power_output = calculate_power_output()
-
-				$CanvasLayer/Control/Gear.text = 'current gear: ' + str('R')
-				$CanvasLayer/Control/Speed.text = str(roundi(abs(get_parent().linear_velocity.dot(get_parent().transform.basis.z)*3.8))) +"  KMPH"
-				$CanvasLayer/Control/RPM.value = current_rpm
-				$CanvasLayer/Control/Boost.value = current_boost_reserve
 				return
 			# Handle deceleration from any fowrward drive gears
 			current_rpm = max(current_rpm - deceleration_rate, 0)
@@ -155,12 +143,6 @@ func _physics_process(delta: float) -> void:
 				else:
 					
 					current_boost_reserve = regen_boost(boost_regen_rate_drive)
-
-		# Update Ui in drive
-		$CanvasLayer/Control/Gear.text = 'current gear: ' + str(current_gear)
-		$CanvasLayer/Control/Speed.text = str(roundi(abs(get_parent().linear_velocity.dot(get_parent().transform.basis.z)*3.8))) +"  KMPH"
-		$CanvasLayer/Control/RPM.value = current_rpm
-		$CanvasLayer/Control/Boost.value = current_boost_reserve
 
 # Return power output of current torque and gear ratios given current rpm
 func calculate_power_output() -> float:

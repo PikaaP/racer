@@ -229,4 +229,4 @@ func _on_start_game_pressed() -> void:
 	# Store game instance in singleton
 	GameManager.game_instance_data = game_instance
 	# Make Game scene new root instance
-	get_tree().change_scene_to_file('res://tracks/Game.tscn')
+	SceneManager.change_scene_to_file('res://scenes/game_instances/coop_game_instance/CoopGame.tscn')

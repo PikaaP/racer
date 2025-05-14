@@ -1,12 +1,16 @@
 class_name Bot extends CustomCar
 
+
 @onready var ray_holder = $RayHolder
+# Turn on break lights when under breaking :D
+func brake_light_visuals() -> void:
+	break_light_holder.visible = Input.is_action_pressed('ui_down')
 
 # Direction assessment variables
 # Number of detection rays
 var num_rays = 12
 var ray_length: float = 50.0
-var sample_rate: int = 4
+var sample_rate: int = 100
 var next_path_point: Vector3
 var points_index: int = 0
 
@@ -21,14 +25,13 @@ var min_dist: int = 10
 
 # Danger assessment variables
 # Avoidance for other bots
-@export var bot_avoidance: float = 0.1
+@export var bot_avoidance: float = 0.3
 # Avoidance for players
 @export var player_avoidance: float = 0.0
 # Avoidance for other walls
 @export var obstacle_avoidance: float = 0.15
 
 # Race variables
-var traction_value: int = 10000
 var max_boost_reserve: float = 10.0
 var current_boost_reserve: float
 var current_boost_multiplier: float = 1.0
@@ -37,39 +40,45 @@ var boost_regen_rate_drive: float = 0.1
 var boost_regen_rate_drift: float = 0.2
 var boost_consumption_rate: float = 0.5
 
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("reset"):
-		get_tree().reload_current_scene()
+var up_vectors: PackedFloat32Array
+var previous_accel_input: float
 
 func _ready() -> void:
-	# Load car stats form resource
-	setup_car()
+	# Set up car
+	super._ready()
 	# Set varirables for context based steering
 	setup_context_based_steering()
 	# Get and store track path points
 	points = path.curve.get_baked_points()
-	# Set poisition on start grid
-	global_position = start_position
+	up_vectors = path.curve.get_baked_tilts()
 	
-	# Timer properites
-	respawn_timer.timeout.connect(_handle_respawn)
 
 func _process(delta: float) -> void:
 	distance_to_checkpoint = global_position.distance_to(checkpoint_array[target_checkpoint].global_position)
+
+func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
+	match current_race_state:
+		RaceState.START:
+			# Keep player in position, allow for y axis_movement
+			global_position.x = start_position.x
+			global_position.z = start_position.z
+			apply_force((-global_basis.y * 9.8), $COMMID.position)
+		RaceState.RACE:
+			apply_force((-global_basis.y * 4500), $COMMID.position)
+			apply_force((-global_basis.y * abs((state.linear_velocity * state.linear_velocity).dot(-global_basis.z))) * 5, $COMBACK.position)
+			apply_force((-global_basis.y * abs((state.linear_velocity * state.linear_velocity).dot(-global_basis.z))) * 5, $COMFRONT.position)
 
 func _physics_process(delta: float) -> void:
 	match current_race_state:
 		RaceState.START:
 			global_position.x = start_position.x
 			global_position.z = start_position.z
-			apply_traction_bot(traction_value)
-			var rand_input = randi_range(0, 20)
+			var rand_input = randi_range(0, 10)
 			if rand_input < 3:
-				accel_input = randf_range(0.5, 1.0)
-			else:
 				accel_input = 0
+			else:
+				accel_input = 1
 		RaceState.RACE:
-			apply_traction_bot(traction_value)
 			if global_position.distance_to(next_path_point) <= min_dist or points_index == 0 or global_position.distance_to(next_path_point) > max_dist:
 				set_intrests()
 				set_danger()
@@ -83,13 +92,37 @@ func _physics_process(delta: float) -> void:
 						if current_boost_reserve < max_boost_reserve:
 							current_boost_reserve = clampf(current_boost_reserve + boost_regen_rate_drift, current_boost_reserve, max_boost_reserve)
 
-			var desired_velocity: Vector3 = chosen_direction
+			normalized_speed = engine.get_normalized_power_output()
+			var accel_dir = chosen_direction.dot(-global_basis.z)
 
-			steering(delta)
-			speed = linear_velocity.dot(-transform.basis.z)
+			$ChosenDir.global_position = global_position + chosen_direction * global_position.distance_to(next_path_point)
+
+			var check = false
+			var speed = linear_velocity.dot(-global_basis.z)
+
+			if accel_dir > -0.3:
+				var combined_decel: float = 0.0
+				for ray: RayCast3D in $DecelRayHolder.get_children():
+					ray.target_position.z = -25 * abs(normalized_speed)
+					ray.force_raycast_update()
+					if ray.is_colliding() and speed > 10:
+						if ray.get_collider().is_in_group('obstacle') or ray.get_collider().is_in_group('player'):
+							check = true
+							var distance: float = global_position.distance_to(ray.get_collision_point())
+							var obj: Node = ray.get_collider()
+							combined_decel += distance/abs(ray.target_position.z)
+
+				var average_decel = combined_decel/$DecelRayHolder.get_child_count()
+
+				accel_input = maxf(-average_decel, -1.0) if check else 1.0
+				
+			else:
+				accel_input = -1
 			
-			normalized_speed = clampf(speed/car_stat_resource.max_speed, 0.0, 1.0)
-			accel_input = desired_velocity.dot(-transform.basis.z) if desired_velocity.dot(-transform.basis.z)!= 0 else -0.5
+			
+			previous_accel_input = accel_input
+			steering(delta)
+		
 		RaceState.FINISH:
 			pass
 	# Update wheel visuals
@@ -97,23 +130,8 @@ func _physics_process(delta: float) -> void:
 	# Apply Speed effects, speed particles and light trails
 	speed_visuals()
 
-# Load and apply car stats form car_stat_resource
-func setup_car() -> void:
-	lock_rotation = true
-	mass = car_stat_resource.mass
-
-	# Set tire variables
-	fr_wheel.grip = car_stat_resource.front_grip
-	fl_wheel.grip = car_stat_resource.front_grip
-	br_wheel.grip = car_stat_resource.rear_grip
-	bl_wheel.grip = car_stat_resource.rear_grip
-	
-	fr_visual_start_position = fr_wheel_visual.position
-	fl_visual_start_position = fl_wheel_visual.position
-	br_visual_start_position = br_wheel_visual.position
-	bl_visual_start_position = bl_wheel_visual.position
-
-	global_position = start_position
+	# Show break light 
+	break_light_holder.visible = accel_input < 0.3
 
 # Setup Bot variables for context based steering
 func setup_context_based_steering() -> void:
@@ -144,23 +162,34 @@ func setup_context_based_steering() -> void:
 # Set intrest direction based on world direction and target direction
 func set_intrests() -> void:
 	# Use new sample index to find next path point target
-	points_index += sample_rate
-	
-	if global_position.distance_to(next_path_point) <= 5.0:
-		points_index += sample_rate * 20
-		if points_index >= points.size():
-			points_index = sample_rate * 20
-		next_path_point = points[points_index] * path.scale
-	
+	points_index += sample_rate * 1.25
 	if points_index >= points.size():
 		var next_point: float = points.size() - points_index
 		points_index = next_point
 
-	# Set new path point and covert to global coordinates
-	next_path_point = points[points_index] * path.scale
+	var point = points[points_index] * path.scale
+	var offset = path.curve.get_closest_offset(point)
+	var next_path_point_transform = path.curve.sample_baked_with_rotation(offset, false, true)
+	next_path_point = next_path_point_transform.origin
+	
+	var closest_offset_to_car = path.curve.get_closest_offset(path.to_local(global_position))
+	var closest_car_point = path.curve.sample_baked(closest_offset_to_car)
+
+	if closest_car_point.distance_to(next_path_point) <= 5.0:
+		points_index += sample_rate
+		if points_index >= points.size():
+			var next_point: float = points.size() - points_index
+			points_index = next_point
+
+		point = points[points_index]* path.scale
+		offset = path.curve.get_closest_offset(point)
+		next_path_point_transform = path.curve.sample_baked_with_rotation(offset, false, true)
+		next_path_point = next_path_point_transform.origin
+
+	## Set new path point and covert to global coordinates
 
 	# Get direction to closest point
-	var target_direction = global_position.direction_to(next_path_point)
+	var target_direction = global_position.direction_to(next_path_point + next_path_point_transform.basis.y * car_stat_resource.wheel_radius * 2 )
 	max_dist = global_position.distance_to(next_path_point) + 10
 
 	for i in num_rays:
@@ -202,15 +231,57 @@ func choose_direction() -> void:
 
 	chosen_direction = chosen_direction.normalized()
 
-# Apply traction force to car center
-func apply_traction_bot(value: int) -> void:
-	apply_central_force(-transform.basis.y  * value)
-
 # Handle steering toward chosen direction, rotate 
 # Rotate wheels to face target point
 func steering(delta: float) -> void:
-	fl_wheel.look_at(global_position + chosen_direction * global_position.distance_to(next_path_point))
-	fr_wheel.look_at(global_position + chosen_direction * global_position.distance_to(next_path_point))
+	$fr_marker.look_at((global_position + fr_wheel.position.x *  global_basis.x ) + chosen_direction * global_position.distance_to(next_path_point))
+	$fl_marker.look_at((global_position + fl_wheel.position.x * global_basis.x) + chosen_direction * global_position.distance_to(next_path_point))
+		
+	## Debug marker placemetn
+	$frt.global_position = (global_position + fr_wheel.position.x * global_basis.x ) + chosen_direction * global_position.distance_to(next_path_point)
+	$flt.global_position = (global_position + fl_wheel.position.x * global_basis.x ) + chosen_direction * global_position.distance_to(next_path_point)
+	
+	fl_wheel.look_at((global_position + fl_wheel.position.x *  global_basis.x ) + chosen_direction * global_position.distance_to(next_path_point))
+	fr_wheel.rotation_degrees.y = clampf(fr_wheel.rotation_degrees.y, -80, 80)
+	fl_wheel.rotation.x = 0
+	fl_wheel.rotation.z = 0
+
+	#var fr_target_degrees = move_toward(fr_wheel.rotation_degrees.y, $fr_marker.rotation_degrees.y, delta)
+	#fr_wheel.rotation_degrees = Vector3(0, fr_target_degrees, 0)
+	#
+	#var fl_target_degrees = move_toward(fl_wheel.rotation_degrees.y, $fl_marker.rotation_degrees.y, delta)
+	#fl_wheel.rotation_degrees = Vector3(0, fl_target_degrees, 0)
+	#
+	fr_wheel.look_at((global_position + fr_wheel.position.x *  global_basis.x ) + chosen_direction * global_position.distance_to(next_path_point))
+	fr_wheel.rotation_degrees.y = clampf(fr_wheel.rotation_degrees.y, -80, 80)
+	fr_wheel.rotation.x = 0
+	fr_wheel.rotation.z = 0
+	
+	#print(rad_to_deg(fl_wheel.rotation.y), 'l')
+	#print(rad_to_deg(fr_wheel.rotation.y), 'r')
+
+# Emit speed effects when going x% of max speed
+func speed_visuals() -> void:
+	if !normalized_speed >= speed_visual_threshold or linear_velocity.dot(-basis.z) <= 0.3:
+		speed_particles.emitting = false
+		# Fade light trail out slowly
+		#left_light_trail.material_override.emission_energy_multiplier = lerpf(left_light_trail.material_override.emission_energy_multiplier, 16, normalized_speed/20)
+		#right_light_trail.material_override.emission_energy_multiplier = lerpf(right_light_trail.material_override.emission_energy_multiplier, 16, normalized_speed/20)
+
+		left_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
+		right_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
+	else:
+		speed_particles.amount = max_speed_particles * normalized_speed
+		speed_particles.emitting = true
+		left_light_trail.emit = true
+		left_light_trail.material_override.emission_energy_multiplier = 16
+		
+		#left_light_trail.material_override.emission_energy_multiplier = 16 + 20 * (speed_visual_threshold - normalized_speed/1-speed_visual_threshold)
+		right_light_trail.material_override.emission_energy_multiplier = 16 + 20 * (speed_visual_threshold - normalized_speed/1-speed_visual_threshold)
+		right_light_trail.emit = true
+		# Fade light trail in slowly :D
+		left_light_trail.material_override.albedo_color = Color(car_stat_resource.light_trail_color, lerpf(left_light_trail.material_override.albedo_color.a, 0.01 , normalized_speed/200))
+		right_light_trail.material_override.albedo_color = Color(car_stat_resource.light_trail_color, lerpf(right_light_trail.material_override.albedo_color.a, 0.010,  normalized_speed/200))
 
 # Return bot to checkpoint when out of bounds
 func respawn() -> void:

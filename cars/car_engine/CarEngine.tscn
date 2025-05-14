@@ -1,101 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://btk0gu4qbdfwl"]
+[gd_scene load_steps=4 format=3 uid="uid://btk0gu4qbdfwl"]
 
 [ext_resource type="Script" uid="uid://b8wd5esa4nmmr" path="res://cars/car_engine/car_engine.gd" id="1_qfy3u"]
 [ext_resource type="Resource" uid="uid://bbmjhvl1udkdk" path="res://cars/lambo/TestCarEngine.tres" id="2_2kq0v"]
 [ext_resource type="PackedScene" uid="uid://djg4qn8hee0mv" path="res://assets/temp/engine sound/engine_auido.tscn" id="2_wd5m2"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wd5m2"]
-bg_color = Color(1, 0.211645, 0.716868, 1)
 
 [node name="Engine" type="Node"]
 script = ExtResource("1_qfy3u")
 engine_stat_resource = ExtResource("2_2kq0v")
 
 [node name="engine_sound" parent="." instance=ExtResource("2_wd5m2")]
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 10
-
-[node name="Control" type="Control" parent="CanvasLayer"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Gear" type="Label" parent="CanvasLayer/Control"]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -133.0
-offset_top = -377.0
-offset_right = -93.0
-offset_bottom = -354.0
-grow_horizontal = 0
-grow_vertical = 0
-text = "0"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Speed" type="Label" parent="CanvasLayer/Control"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 313.0
-offset_top = 200.0
-offset_right = 403.0
-offset_bottom = 275.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 8
-size_flags_vertical = 8
-theme_override_font_sizes/font_size = 25
-text = "0 KPH"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="RPM" type="ProgressBar" parent="CanvasLayer/Control"]
-custom_minimum_size = Vector2(40, 300)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -131.0
-offset_top = -335.0
-offset_right = -91.0
-offset_bottom = -35.0
-grow_horizontal = 0
-grow_vertical = 0
-theme_override_colors/font_outline_color = Color(0.954458, 0, 0.151785, 1)
-theme_override_styles/fill = SubResource("StyleBoxFlat_wd5m2")
-max_value = 9000.0
-step = 10.0
-value = 1000.0
-fill_mode = 3
-
-[node name="Boost" type="ProgressBar" parent="CanvasLayer/Control"]
-custom_minimum_size = Vector2(40, 300)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -75.0
-offset_top = -336.0
-offset_right = -35.0
-offset_bottom = -36.0
-grow_horizontal = 0
-grow_vertical = 0
-step = 1.0
-rounded = true
-fill_mode = 3

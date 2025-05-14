@@ -54,6 +54,9 @@ func _ready() -> void:
 	target_position = Vector3(0, -car.car_stat_resource.wheel_radius, 0)
 
 func _physics_process(delta: float) -> void:
+	# Manually update raycast detection
+	force_raycast_update()
+
 	# Apply forces if colliding
 	if is_colliding():
 		# Get collision point

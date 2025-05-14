@@ -1,5 +1,7 @@
 class_name StoryTrack extends Track
 
+signal show_post_race_ui()
+
 @export var series_chapter_data: SeriesChapterData
 
 func _ready() -> void:
@@ -16,16 +18,19 @@ func _ready() -> void:
 	
 		# For each bot, add an slot index to grid slot array ( bot count inclusive with +1)
 		for i in bot_count + 1:
-			avalible_grid_slots[i] = i
+			if i >= player_start_position:
+				avalible_grid_slots[i] = i + 1
+			else:
+				avalible_grid_slots[i] = i
 
 		# Add all bots to grid
-		#add_bot_to_grid()
-	
+		add_bot_to_grid()
+
 	else:
 		avalible_grid_slots.resize(1)
 		for i in 1:
 			avalible_grid_slots[i] = i
-	
+
 	# Setup leaderboard tickrate timer
 	leaderboard_timer.timeout.connect(_update_leaderboard_ticker)
 	# Setup Track countdown timer
@@ -56,11 +61,11 @@ func add_story_player_to_grid(player: PlayerCar, player_index, grid_position) ->
 	player_holder.add_child(player)
 	all_racers.append(player)
 
-func add_story_labplayer_to_grid(player, player_index, grid_position) -> void:
+func add_story_labplayer_to_grid(player, player_index) -> void:
 	print(player, ' player, here')
 	# Starting grid position
 	var start_grid_index: int
-	start_grid_index = avalible_grid_slots.pop_at(grid_position -1)
+	start_grid_index = avalible_grid_slots.pop_at(0)
 	
 	player.race_ready.connect(_start_count_down)
 	player.race_over.connect(_race_over_player)
@@ -78,6 +83,24 @@ func add_story_labplayer_to_grid(player, player_index, grid_position) -> void:
 	
 	player_holder.add_child(player)
 	all_racers.append(player)
+
+# Add bots to track
+func add_bot_to_grid() -> void:
+	for i in bot_count:
+		var random_index = randi_range(0, avalible_grid_slots.size() -1)
+		var grid_position = avalible_grid_slots.pop_at(random_index)
+		print(grid_position)
+		var start_marker: Marker3D = start_grid.get_child(grid_position)
+		var bot: Bot = test_bot.instantiate()
+		bot.start_position = start_marker.global_position
+		bot.path = track_path
+		bot.max_lap_count = max_lap_count
+		bot.checkpoint_array = all_checkpoints
+		bot.start_direction = start_grid.get_child(grid_position).global_position + -start_grid.get_child(grid_position).global_basis.z * 10
+		bot.race_over.connect(_race_over_bot)
+		bot_holder.add_child(bot)
+
+		all_racers.append(bot)
 
 # Once all players have finished their car openings start race countdown
 func _start_count_down() -> void:
@@ -103,6 +126,8 @@ func _race_over_player(player) -> void:
 	var _save_path = "res://data/story/series_{index}/chapter_{chapter}.tres"
 
 	save_story_progress(series_chapter_data, new_time, finish_data['race_result'], user_save_path)
+
+	show_post_race_ui.emit()
 
 func award_medal() -> void:
 	pass

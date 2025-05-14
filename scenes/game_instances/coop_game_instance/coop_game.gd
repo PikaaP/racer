@@ -10,6 +10,7 @@ const PLAYER_CAMERA = preload("res://player/camera/PlayerCamera.tscn")
 const PLAYER_VIEWPORT = preload('res://scenes/player_viewport/PlayerViewport.tscn')
 
 func _ready() -> void:
+	SceneManager.fade_scene_in()
 	GameManager.current_game = self
 	var game_data: GameInstance = GameManager.get_game_data()
 	selected_track = load(game_data.selected_track_dict['path']).instantiate()

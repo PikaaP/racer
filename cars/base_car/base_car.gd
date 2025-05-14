@@ -42,6 +42,7 @@ var points: PackedVector3Array
 
 # Break lights
 @onready var break_light_holder: Node3D = $BreakLightHolder
+
 # Light trails
 @onready var right_light_trail: Trail3D = $LightTrailRight/LightTrail
 @onready var left_light_trail: Trail3D = $LightTrailLeft/LightTrail
@@ -49,9 +50,6 @@ var points: PackedVector3Array
 # Speed effects
 # Speed particles
 @onready var speed_particles: GPUParticles3D = $SpeedParticles
-# Speed lines (overlay)
-@onready var speed_lines_shader: ColorRect = $Control/ColorRect
-
 
 # Wheel textures
 @onready var fr_wheel_visual = $FrontRightWheel/Wheel
@@ -64,11 +62,11 @@ var fl_visual_start_position: Vector3
 var br_visual_start_position: Vector3
 var bl_visual_start_position: Vector3
 
-# Camera Points
-@onready var camera_points = $CameraShowCase
 
 @onready var engine: CarEngine = $Engine
 @onready var exhaust = $ExhaustHolder/Exhaust
+@export var exhaust_holder: Array[Exhaust]
+
 
 # Car function variables
 var accel_input: float
@@ -84,15 +82,11 @@ enum RaceState {START, RACE, FINISH}
 enum State {NEUTRAL, DRIVE, DRIFT, DISABLED}
 
 # Starting states
-var current_state: State = State.NEUTRAL
+var current_state: State = State.DRIVE
 var current_race_state = RaceState.START
 
-# Timers
-# Timer to remove neutral torque boost when moving from State.NEUTRAL to State,DRIVE
-@onready var neutral_transition_timer: Timer = $NeutralTransitionTimer
 # Respawn timer to re-enable PlayerCar and Bot collisions
 @onready var respawn_timer: Timer = $RespawnTimer
-
 
 func _ready() -> void:
 	#lock_rotation = true
@@ -112,11 +106,6 @@ func _ready() -> void:
 
 	global_position = start_position
 	look_at(start_direction, global_basis.y)
-	
-	# Timer properites
-	neutral_transition_timer.wait_time = 0.5
-	neutral_transition_timer.timeout.connect(_on_neutral_drive_timeout)
-	neutral_transition_timer.one_shot = true
 	
 	points = path.curve.get_baked_points()
 	
@@ -177,33 +166,6 @@ func wheel_visuals(delta) -> void:
 
 var speed_visual_threshold: float = 0.5
 
-# Emit speed effects when going x% of max speed
-func speed_visuals() -> void:
-	if !normalized_speed >= speed_visual_threshold or linear_velocity.dot(-basis.z) <= 0.3:
-		speed_particles.emitting = false
-		# Fade light trail out slowly
-		#left_light_trail.material_override.emission_energy_multiplier = lerpf(left_light_trail.material_override.emission_energy_multiplier, 16, normalized_speed/20)
-		#right_light_trail.material_override.emission_energy_multiplier = lerpf(right_light_trail.material_override.emission_energy_multiplier, 16, normalized_speed/20)
-
-		left_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
-		right_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
-		# Hide speed lines
-		speed_lines_shader.visible = false
-	else:
-		speed_particles.amount = max_speed_particles * normalized_speed
-		speed_particles.emitting = true
-		left_light_trail.emit = true
-		left_light_trail.material_override.emission_energy_multiplier = 16
-		
-		#left_light_trail.material_override.emission_energy_multiplier = 16 + 20 * (speed_visual_threshold - normalized_speed/1-speed_visual_threshold)
-		right_light_trail.material_override.emission_energy_multiplier = 16 + 20 * (speed_visual_threshold - normalized_speed/1-speed_visual_threshold)
-		right_light_trail.emit = true
-		# Fade light trail in slowly :D
-		left_light_trail.material_override.albedo_color = Color(car_stat_resource.light_trail_color, lerpf(left_light_trail.material_override.albedo_color.a, 0.01 , normalized_speed/200))
-		right_light_trail.material_override.albedo_color = Color(car_stat_resource.light_trail_color, lerpf(right_light_trail.material_override.albedo_color.a, 0.010,  normalized_speed/200))
-		# Show speed lines >>>>!
-		speed_lines_shader.visible = true
-
 # Turn on break lights when under breaking :D
 func brake_light_visuals() -> void:
 	pass
@@ -214,7 +176,9 @@ func get_engine_power() -> float:
 
 # Emit exhaust effects when changing gear
 func _handle_exaust_emmision() -> void:
-	exhaust.pop()
+	for exhaust in exhaust_holder:
+		exhaust.pop()
+
 
 # Returns tire grip (between 0,1)
 func get_tire_grip(traction: bool = false) -> float:
@@ -222,10 +186,6 @@ func get_tire_grip(traction: bool = false) -> float:
 		return car_stat_resource.front_grip_curve.sample(normalized_speed)
 	else:
 		return car_stat_resource.rear_grip_curve.sample(normalized_speed)
-
-# Switch current state to State.DRIVE so initial boost fades
-func _on_neutral_drive_timeout() -> void:
-	current_state = State.DRIVE
 
 # Respawn player between last checkpoint and next checkpoint
 func respawn() -> void:
@@ -247,7 +207,6 @@ func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add
 # Start Race
 func start_race() -> void:
 	axis_lock_angular_y = false
-	
 	current_race_state = RaceState.RACE
 	engine.start_race()
 

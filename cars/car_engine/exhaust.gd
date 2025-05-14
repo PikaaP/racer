@@ -1,4 +1,4 @@
-extends Node
+class_name Exhaust extends Node
 
 @onready var pop_effect = $ExhaustEffects
 @onready var pop_sound = $SoundEffect

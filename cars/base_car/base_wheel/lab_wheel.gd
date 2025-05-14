@@ -56,6 +56,9 @@ func _ready() -> void:
 	target_position = Vector3(0, -car.car_stat_resource.wheel_radius, 0)
 
 func _physics_process(delta: float) -> void:
+	# Manually update raycast detection
+	force_raycast_update()
+
 	# Apply forces if colliding
 	if is_colliding():
 		# Get collision point
@@ -165,10 +168,12 @@ func apply_x_force(delta) -> void:
 			if transition_out_of_drift:
 				desired_velocity_change = lerpf(desired_velocity_change, -lateral_velocity, delta)
 				if name == 'BackRightWheel':
-					print('iREVOERY')
+					#print('iREVOERY')
+					pass
 			else:
 				if name == 'BackRightWheel':
-					print('drift revoery over')
+					pass
+					#print('drift revoery over')
 				desired_velocity_change = -lateral_velocity
 			
 			if abs(desired_velocity_change- lateral_velocity) <= 0.1:
@@ -177,7 +182,8 @@ func apply_x_force(delta) -> void:
 		else:
 			desired_velocity_change = -lateral_velocity/5
 			if name == 'BackRightWheel':
-				print('is drifting')
+				pass
+				#print('is drifting')
 
 	else:
 		if car.current_state != car.State.DRIFT:

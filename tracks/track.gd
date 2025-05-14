@@ -20,7 +20,7 @@ var all_racers: Array = []
 var all_checkpoints: Array = []
 var test_bot = preload('res://bot/Bot.tscn')
 
-
+var player_start_position: int
 var avalible_grid_slots: Array = []
 var max_grid_slot_size: int = 7
 

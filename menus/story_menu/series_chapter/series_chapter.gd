@@ -53,7 +53,7 @@ func _handle_on_press() -> void:
 	
 	scene.pack(story_instance)
 	# Make new scene scene root
-	get_tree().change_scene_to_packed(scene)
+	SceneManager.change_scene_to_packed(scene)
 
 func format_lap_time(time: float) -> String:
 	var finish_time_delta: float = time

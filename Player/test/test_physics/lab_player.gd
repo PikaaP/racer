@@ -1,5 +1,10 @@
 class_name LabPlayer extends CustomCar
 
+# Camera Points
+@onready var camera_points = $CameraShowCase
+# Speed lines (overlay)
+@onready var speed_lines_shader: ColorRect = $Control/ColorRect
+
 signal lap_completed(player)
 
 # Player instance variables
@@ -40,7 +45,6 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 			apply_force((-global_basis.y * abs((state.linear_velocity * state.linear_velocity).dot(-global_basis.z))) * 5, $COMBACK.position)
 			apply_force((-global_basis.y * abs((state.linear_velocity * state.linear_velocity).dot(-global_basis.z))) * 5, $COMFRONT.position)
 
-
 func _physics_process(delta: float) -> void:
 	match current_race_state:
 		# State for pre race camera showroom
@@ -75,12 +79,7 @@ func _physics_process(delta: float) -> void:
 			# State Machine, car function state
 			match current_state:
 				State.NEUTRAL:
-					# Exit condition
-					# On receving acceleration input, ensure torque boost timer starts/has started\
-					# neutral_transition_timer.timeout signal response will exit to DRIVE state
-					if accel_input != 0 and neutral_transition_timer.is_stopped():
-						neutral_transition_timer.start()
-
+					pass
 				State.DRIVE:
 					# Apply traction
 					#Enter drift state
@@ -132,6 +131,32 @@ func _physics_process(delta: float) -> void:
 func brake_light_visuals() -> void:
 	break_light_holder.visible = Input.is_action_pressed('ui_down')
 
+# Emit speed effects when going x% of max speed
+func speed_visuals() -> void:
+	if !normalized_speed >= speed_visual_threshold or linear_velocity.dot(-basis.z) <= 0.3:
+		speed_particles.emitting = false
+		# Fade light trail out slowly
+		#left_light_trail.material_override.emission_energy_multiplier = lerpf(left_light_trail.material_override.emission_energy_multiplier, 16, normalized_speed/20)
+		#right_light_trail.material_override.emission_energy_multiplier = lerpf(right_light_trail.material_override.emission_energy_multiplier, 16, normalized_speed/20)
+
+		left_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
+		right_light_trail.material_override.albedo_color.a = lerpf(left_light_trail.material_override.albedo_color.a, 0, normalized_speed/20)
+		# Hide speed lines
+		speed_lines_shader.visible = false
+	else:
+		speed_particles.amount = max_speed_particles * normalized_speed
+		speed_particles.emitting = true
+		left_light_trail.emit = true
+		left_light_trail.material_override.emission_energy_multiplier = 16
+		
+		#left_light_trail.material_override.emission_energy_multiplier = 16 + 20 * (speed_visual_threshold - normalized_speed/1-speed_visual_threshold)
+		right_light_trail.material_override.emission_energy_multiplier = 16 + 20 * (speed_visual_threshold - normalized_speed/1-speed_visual_threshold)
+		right_light_trail.emit = true
+		# Fade light trail in slowly :D
+		left_light_trail.material_override.albedo_color = Color(car_stat_resource.light_trail_color, lerpf(left_light_trail.material_override.albedo_color.a, 0.01 , normalized_speed/200))
+		right_light_trail.material_override.albedo_color = Color(car_stat_resource.light_trail_color, lerpf(right_light_trail.material_override.albedo_color.a, 0.010,  normalized_speed/200))
+		# Show speed lines >>>>!
+		speed_lines_shader.visible = true
 
 func respawn():
 # Remove player control by setting state to disabled
@@ -228,6 +253,24 @@ func respawn():
 	await get_tree().create_timer(0.25).timeout
 	freeze = false
 	current_state = State.DRIVE
+
+# Getter to update engine data ui //
+# Current gear
+func get_current_gear() -> int:
+	return engine.current_gear
+
+# Current speed
+func get_current_speed() -> int:
+	return roundi(abs(linear_velocity.dot(transform.basis.z)*3.8))
+
+# Current engine rpm
+func get_current_engine_rpm() -> int:
+	return engine.current_rpm
+
+# Current boost reserve
+func get_current_boost_reserve() -> float:
+	return engine.current_boost_reserve
+# // Engine ui data
 
 # Update checkpoint count
 func add_checkpoint(new_current_checkpoint: int, new_target_checkpoint: int, add_lap: bool = false) -> void:

@@ -28,12 +28,12 @@ func _handle_restart() -> void:
 # Quit to select track menu
 func _handle_select_new_track_car() -> void:
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://menus/car_select_menu/CarSelectMenu.tscn")
+	SceneManager.change_scene_to_file("res://menus/car_select_menu/CarSelectMenu.tscn")
 
 # Quit to main menu
 func _handle_quit_button() -> void:
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://menus/car_select_menu/CarSelectMenu.tscn")
+	SceneManager.change_scene_to_file("res://menus/car_select_menu/CarSelectMenu.tscn")
 
 # Unpause and return to race ;D
 func _handle_back_button_pressed() -> void:

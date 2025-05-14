@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 PlayerManager="*res://autoloads/PlayerManager.gd"
 GameManager="*res://autoloads/CoopGameManager.gd"
+SceneManager="*res://autoloads/scene_manager/SceneManager.tscn"
 
 [display]
 
@@ -39,6 +40,8 @@ obstacle="wall collider "
 player_viewport=""
 sub_viewport=""
 track_path=""
+bot=""
+in_game_ui=""
 
 [input]
 
@@ -92,7 +95,6 @@ jolt_physics_3d/quality/msaa_2d=3
 
 [rendering]
 
-anti_aliasing/quality/msaa_2d=3
 anti_aliasing/quality/msaa_3d=3
 anti_aliasing/quality/screen_space_aa=1
 anti_aliasing/quality/use_taa=true

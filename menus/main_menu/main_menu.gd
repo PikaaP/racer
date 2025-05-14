@@ -5,8 +5,11 @@ class_name MainMenu extends Node
 @onready var contorls_button: Button = $MenuOverlay/RootMenu/VBoxContainer/Controls
 
 @onready var background_camera: Camera3D = $Background/SubViewportContainer/SubViewport/Camera3D
-
 @onready var exit_game_button: Button = $MenuOverlay/RootMenu/Exit
+
+enum OpenTo {MAIN, STORY}
+@export var direct_open_state: OpenTo
+
 
 func _ready() -> void:
 	# Connect Exit button pressed
@@ -24,6 +27,12 @@ func _ready() -> void:
 
 	# Play backdrop animations
 	$Background/AnimationPlayer.play("light")
+	
+	match direct_open_state:
+		OpenTo.MAIN:
+			pass
+		OpenTo.STORY:
+			_handle_start_story()
 
 # Menu Controls //
 func _handle_start_coop() -> void:
@@ -48,7 +57,6 @@ func transition_to_story() -> void:
 	var tween = get_tree().create_tween()
 	tween.tween_property(background_camera, 'transform', $Background/CameraPoints/Story.transform, 0.5)
 
-
 func transition_to_coop() -> void:
 	var tween = get_tree().create_tween()
 	tween.tween_property(background_camera, 'transform', $Background/CameraPoints/Coop.transform, 0.5)
@@ -56,7 +64,6 @@ func transition_to_coop() -> void:
 func transition_to_controls() -> void:
 	var tween = get_tree().create_tween()
 	tween.tween_property(background_camera, 'transform', $Background/CameraPoints/Controls.transform, 0.5)
-
 
 func transition_reset() -> void:
 	var tween = get_tree().create_tween()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://c0byxb6vlpqvx"]
+[gd_scene load_steps=7 format=3 uid="uid://c0byxb6vlpqvx"]
 
 [ext_resource type="Script" uid="uid://um6dhbbw4y4h" path="res://player/camera/player_camera.gd" id="1_j0sl7"]
 [ext_resource type="Shader" uid="uid://gvm2qj45g446" path="res://addons/motion_blur/moblur_shader.gdshader" id="3_5sjhg"]
@@ -16,6 +16,9 @@ shader_parameter/iteration_count = 50
 shader_parameter/intensity = 1.0
 shader_parameter/startRadius = 0.1
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qtrdv"]
+bg_color = Color(1, 0.211645, 0.716868, 1)
+
 [node name="PlayerCamera" type="Camera3D" groups=["player_camera"]]
 top_level = true
 script = ExtResource("1_j0sl7")
@@ -23,6 +26,7 @@ metadata/_custom_type_script = "uid://um6dhbbw4y4h"
 
 [node name="motion_blur" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -3.41307)
+visible = false
 cast_shadow = 0
 extra_cull_margin = 16384.0
 mesh = SubResource("1")
@@ -37,6 +41,7 @@ anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
 color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
 
 [node name="ColorRectBot" type="ColorRect" parent="Effects"]
 anchors_preset = 12
@@ -46,8 +51,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
 color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
 
-[node name="Hud" type="CanvasLayer" parent="."]
+[node name="Hud" type="CanvasLayer" parent="." groups=["in_game_ui"]]
 layer = 10
 
 [node name="UI" type="MarginContainer" parent="Hud"]
@@ -62,7 +68,6 @@ theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
 [node name="LeaderBoard" type="GridContainer" parent="Hud/UI"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
@@ -107,3 +112,82 @@ layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 text = "1 / 10"
+
+[node name="Engine" type="Control" parent="Hud/UI"]
+layout_mode = 2
+
+[node name="Gear" type="Label" parent="Hud/UI/Engine"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -133.0
+offset_top = -377.0
+offset_right = -93.0
+offset_bottom = -354.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Speed" type="Label" parent="Hud/UI/Engine"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 313.0
+offset_top = 200.0
+offset_right = 403.0
+offset_bottom = 275.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+theme_override_font_sizes/font_size = 25
+text = "0 KPH"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RPM" type="ProgressBar" parent="Hud/UI/Engine"]
+custom_minimum_size = Vector2(40, 300)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -131.0
+offset_top = -335.0
+offset_right = -91.0
+offset_bottom = -35.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0.954458, 0, 0.151785, 1)
+theme_override_styles/fill = SubResource("StyleBoxFlat_qtrdv")
+max_value = 9000.0
+step = 10.0
+value = 1000.0
+fill_mode = 3
+
+[node name="Boost" type="ProgressBar" parent="Hud/UI/Engine"]
+custom_minimum_size = Vector2(40, 300)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -75.0
+offset_top = -336.0
+offset_right = -35.0
+offset_bottom = -36.0
+grow_horizontal = 0
+grow_vertical = 0
+step = 1.0
+rounded = true
+fill_mode = 3

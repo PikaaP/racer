@@ -79,7 +79,6 @@ func _physics_process(delta: float) -> void:
 			var rand_x = randf_range(-0.008, 0.008)
 			global_position += Vector3(rand_x, rand_y, 0)
 
-
 # Handle race start animation
 func play_start_animation() -> void:
 	current = true
@@ -105,7 +104,6 @@ func play_start_animation() -> void:
 	await get_tree().create_timer(1.0).timeout
 	
 	follow_target.race_ready.emit()
-	leader_board.show()
 
 # Reposition camer to set position
 func move_to_position(new_position: Vector3) -> void:
@@ -123,3 +121,9 @@ func update_leader_board(sorted_leader_board: Array) -> void:
 		var lable = Label.new()
 		lable.text = '%s, lap: %s, checkpoint: %s' % [card_info[0].name, card_info[1], card_info[2]]
 		leader_board.add_child(lable)
+
+func update_engine_ui() -> void:
+	$Hud/UI/Engine/Gear.text = str(get_parent().get_current_gear()) if get_parent().get_current_gear() != -1 else 'R'
+	$Hud/UI/Engine/Speed.text = str(get_parent().get_current_speed) + "  KMPH"
+	$Hud/UI/Engine/RPM.value = str(get_parent().get_current_rpm())
+	$Hud/UI/Engine/Boost.text = str(get_parent().get_current_boost_reserve())

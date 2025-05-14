@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bxlxy34vrgg4r"]
+[gd_scene load_steps=10 format=3 uid="uid://bxlxy34vrgg4r"]
 
 [ext_resource type="Script" uid="uid://cnc2ugjoodcvw" path="res://scenes/game_instances/story_game_instance/story_game.gd" id="1_1vytx"]
 [ext_resource type="PackedScene" uid="uid://b25r4pkrsxn8w" path="res://player/ui/countdown_ui/countdown_ui.tscn" id="2_xldat"]
@@ -6,6 +6,105 @@
 [ext_resource type="PackedScene" uid="uid://dj131u0oa6h2h" path="res://menus/story_pause_menu/StoryPauseMenu.tscn" id="4_1vytx"]
 [ext_resource type="Script" uid="uid://exdyoehmftqx" path="res://menus/story_pause_menu/story_pause_menu.gd" id="5_xldat"]
 [ext_resource type="PackedScene" uid="uid://dxvkn7v4q72p7" path="res://menus/story_race_over/race_over_menu.tscn" id="6_li7uu"]
+
+[sub_resource type="Animation" id="Animation_li7uu"]
+resource_name = "post_race_scene"
+length = 5.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("UI/ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(0, 0, 0, 0.596)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("UI/RaceOverMenu:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1.5),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_post_race_black_bars"
+}]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("UI/ColorRect:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_qkxy0"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("UI/ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("UI/RaceOverMenu:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("UI/ColorRect:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_cijh6"]
+_data = {
+&"RESET": SubResource("Animation_qkxy0"),
+&"post_race_scene": SubResource("Animation_li7uu")
+}
 
 [node name="StoryGame" type="Node"]
 script = ExtResource("1_1vytx")
@@ -23,7 +122,49 @@ texture = ExtResource("3_li7uu")
 [node name="RaceOptionsMenu" parent="UI" instance=ExtResource("4_1vytx")]
 script = ExtResource("5_xldat")
 
+[node name="ColorRect" type="ColorRect" parent="UI"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0)
+
+[node name="Effects" type="Control" parent="UI"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRectTop" type="ColorRect" parent="UI/Effects"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRectBot" type="ColorRect" parent="UI/Effects"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 608.0
+offset_bottom = 608.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
 [node name="RaceOverMenu" parent="UI" instance=ExtResource("6_li7uu")]
 visible = false
 
 [node name="TrackHolder" type="Node" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_cijh6")
+}

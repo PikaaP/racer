@@ -19,7 +19,7 @@ func set_grid_slots():
 	grid_sep_space = 10
 	curve_length = path.curve.get_baked_length()
 	
-	for i in 10:
+	for i in get_parent().bot_count + 2:
 		var point: Transform3D = path.curve.sample_baked_with_rotation(curve_length - grid_sep_space * i - grid_sep_space, false, true)
 		if i % 2 == 0.0:
 			point.origin = point.origin - point.basis.x * center_offset
